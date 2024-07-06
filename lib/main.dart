@@ -4,6 +4,7 @@ import 'package:route_partners/core/utils/themes.dart';
 import 'package:route_partners/screens/additional_info/landing_page.dart';
 import 'package:route_partners/screens/authentication_screens/sign_up_with_phone.dart';
 import 'package:route_partners/screens/authentication_screens/verification_screen.dart';
+import 'package:route_partners/screens/splash.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: lightTheme,
-      home:  const Landing(),
+      home:  const SplashScreen(),
     );
   }
 }

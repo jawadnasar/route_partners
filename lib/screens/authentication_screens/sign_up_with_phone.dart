@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
+import 'package:route_partners/screens/additional_info/landing_page.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/my_textfield_widget.dart';
@@ -59,7 +60,9 @@ class PhoneAuthAndSocial extends StatelessWidget {
               bgColor: kPrimaryColor,
               textColor: kWhiteColor2,
               weight: FontWeight.w900,
-              onTap: () {},
+              onTap: () {
+                Get.to(()=>const Landing());
+              },
               width: Get.width,
             ),
             const SizedBox(

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
+import 'package:route_partners/screens/additional_info/landing_page.dart';
+import 'package:route_partners/screens/authentication_screens/sign_up_with_phone.dart';
 import 'package:route_partners/screens/onboarding_screens/onboarding1.dart';
 import 'package:route_partners/screens/onboarding_screens/onboarding2.dart';
 import 'package:route_partners/screens/onboarding_screens/onboarding3.dart';
@@ -90,13 +92,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     width: Get.width * 0.5,
                     bgColor: kPrimaryColor,
                     onTap: () {
-                      if (_pageController.page?.toInt() != 3) {
+                      if (_pageController.page?.toInt() != 2) {
                         _pageController.nextPage(
                           duration: Duration(milliseconds: 500),
                           curve: Curves.ease,
                         );
                       } else {
-                        // Get.offAll(()=> SignInPage());
+                        Get.offAll(()=> PhoneAuthAndSocial());
                       }
                     }),
                 SizedBox(

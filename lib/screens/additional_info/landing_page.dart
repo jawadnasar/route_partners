@@ -81,8 +81,8 @@ class _SCompleteProfileState extends State<Landing> {
                         ? 'NEXT'
                         : OnboardingController.instance.currentStep.value ==
                                 OnboardingController.instance.steps.length - 1
-                            ? 'Accept'
-                            : 'Continue',
+                            ? 'CONTINUE'
+                            : 'NEXT',
                     onTap: () => OnboardingController.instance.onContinue(),
                   ),
                   if (OnboardingController.instance.currentStep.value == 4 ||
