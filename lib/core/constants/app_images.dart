@@ -770,4 +770,13 @@ class Assets {
   static const String apple = 'assets/svg/apple_icon.svg';
 
   static const String googleSignIn = 'assets/svg/google_icon.svg';
+
+  static const String boyIcon = 'assets/images/boy.png';
+
+    static const String check = 'assets/images/check.png';
+
+  static const String list = 'assets/images/list.png';
+
+  static const String completed = 'assets/images/activity.png';
+
 }

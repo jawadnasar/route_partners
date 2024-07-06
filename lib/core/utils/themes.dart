@@ -4,12 +4,12 @@ import 'package:route_partners/core/constants/app_colors.dart';
 
 final ThemeData lightTheme = ThemeData(
   scaffoldBackgroundColor: kBackgroundColor,
-  fontFamily: GoogleFonts.dmSans().fontFamily,
-  appBarTheme:  AppBarTheme(
+  fontFamily: GoogleFonts.rubik().fontFamily,
+  
+  appBarTheme: AppBarTheme(
     titleTextStyle: TextStyle(
-      fontFamily: GoogleFonts.dmSans().fontFamily,
-      fontWeight: FontWeight.w400
-    ),
+        fontFamily: GoogleFonts.rubik().fontFamily,
+        fontWeight: FontWeight.w400),
     elevation: 0,
     backgroundColor: kBackgroundColor,
   ),
@@ -18,7 +18,7 @@ final ThemeData lightTheme = ThemeData(
   highlightColor: kQuaternaryColor.withOpacity(0.10),
   colorScheme: ColorScheme.fromSwatch().copyWith(
       secondary: kPrimaryColor, primary: kTertiaryColor, tertiary: kGreyColor2),
-  textSelectionTheme: const  TextSelectionThemeData(
+  textSelectionTheme: const TextSelectionThemeData(
     cursorColor: kQuaternaryColor,
   ),
 );

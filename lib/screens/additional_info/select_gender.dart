@@ -16,6 +16,7 @@ class _SelectGenderState extends State<SelectGender> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: AppSizes.DEFAULT,
         child: Column(

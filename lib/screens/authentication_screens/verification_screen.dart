@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
-import 'package:route_partners/core/constants/app_styling.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
@@ -14,6 +13,8 @@ class VerificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+            resizeToAvoidBottomInset: false,
+
       appBar: simpleAppBar(
         title: 'VERIFY YOUR NUMBER',
       ),
@@ -84,7 +85,6 @@ class VerificationScreen extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            
             const Spacer(),
             MyButton(
                 bgColor: kPrimaryColor, textColor: kWhiteColor2, onTap: () {})

@@ -3,6 +3,7 @@ import 'package:route_partners/screens/additional_info/date_of_birth.dart';
 import 'package:route_partners/screens/additional_info/enter_email.dart';
 import 'package:route_partners/screens/additional_info/enter_first_name.dart';
 import 'package:route_partners/screens/additional_info/select_gender.dart';
+import 'package:route_partners/screens/dashboard/bottom_bar.dart';
 import 'package:route_partners/screens/onboarding_screens/onboarding1.dart';
 import 'package:route_partners/screens/onboarding_screens/onboarding2.dart';
 import 'package:route_partners/screens/onboarding_screens/onboarding3.dart';
@@ -62,7 +63,7 @@ class OnboardingController extends GetxController {
 
   void onContinue() {
     if (currentStep == steps.length - 1) {
-      // Get.to(() => const Welcome());
+      Get.to(() => const BottomBar());
     } else {
       currentStep++;
     }

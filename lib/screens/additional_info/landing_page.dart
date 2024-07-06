@@ -27,6 +27,8 @@ class _SCompleteProfileState extends State<Landing> {
             return false;
           },
           child: Scaffold(
+                  resizeToAvoidBottomInset: false,
+
             appBar: simpleAppBar(
               onLeadingTap: () => OnboardingController.instance.onBack(),
               title: 'FINISH SIGNING UP',

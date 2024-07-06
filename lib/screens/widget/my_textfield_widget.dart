@@ -7,39 +7,48 @@ import 'my_text_widget.dart';
 
 // ignore: must_be_immutable
 class MyTextField extends StatelessWidget {
-  MyTextField({
-    Key? key,
-    this.controller,
-    this.keyboardType,
-    this.hintText,
-    this.marginBottom = 12,
-    this.isObSecure = false,
-    this.maxLength,
-    this.maxLines = 1,
-    this.isEnabled = true,
-    this.labelText,
-    this.suffixIcon,
-    this.validator,
-    this.onTap,
-    this.haveSuffix = false,
-    this.onChanged,
-    this.suffixIconSize,
-    this.onSuffixTap,
-    this.focusBorderColor,
-    this.radius,
-    this.inputFormatters,
-  }) : super(key: key);
+  MyTextField(
+      {Key? key,
+      this.controller,
+      this.keyboardType,
+      this.hintText,
+      this.marginBottom = 12,
+      this.isObSecure = false,
+      this.maxLength,
+      this.maxLines = 1,
+      this.isEnabled = true,
+      this.labelText,
+      this.suffixIcon,
+      this.validator,
+      this.onTap,
+      this.haveSuffix = false,
+      this.onChanged,
+      this.suffixIconSize,
+      this.onSuffixTap,
+      this.focusBorderColor,
+      this.radius,
+      this.inputFormatters,
+      this.fillColor,
+      this.filled,
+      this.contentPadding,
+      this.underLineBorderColor
+      })
+      : super(key: key);
   String? hintText, labelText, suffixIcon;
   double? marginBottom, suffixIconSize, radius;
   bool? isObSecure, isEnabled, haveSuffix;
   int? maxLength, maxLines;
   VoidCallback? onSuffixTap;
   Color? focusBorderColor;
+  Color? fillColor;
+  Color? underLineBorderColor;
+  bool? filled;
 
   TextInputType? keyboardType;
   TextEditingController? controller;
   FormFieldValidator<String>? validator;
   ValueChanged<String>? onChanged;
+  EdgeInsetsGeometry? contentPadding;
 
   List<TextInputFormatter>? inputFormatters;
 
@@ -68,6 +77,7 @@ class MyTextField extends StatelessWidget {
                 BoxShadow(
                   color: kBlackColor.withOpacity(0.03),
                   blurRadius: 47,
+                  // ignore: prefer_const_constructors
                   offset: Offset(-2, 6),
                 ),
               ],
@@ -95,11 +105,11 @@ class MyTextField extends StatelessWidget {
                 // fontFamily: AppFonts.POPPINS,
               ),
               decoration: InputDecoration(
-                
                 // fillColor: kPrimaryColor,
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: maxLines! > 1 ? 15 : 0,
-                ),
+                contentPadding: contentPadding ??
+                    EdgeInsets.symmetric(
+                      vertical: maxLines! > 1 ? 15 : 0,
+                    ),
                 hintText: hintText,
                 hintStyle: const TextStyle(
                   fontSize: 14,
@@ -127,15 +137,14 @@ class MyTextField extends StatelessWidget {
                       ),
                   ],
                 ),
-                enabledBorder: const UnderlineInputBorder(      
-                      borderSide: BorderSide(color: kGreyColor3),   
-                      ),  
-              focusedBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: kGreyColor3),
-                   ),  
-
-                
-                
+                fillColor: fillColor,
+                filled: filled ?? false,
+                enabledBorder:  UnderlineInputBorder(
+                  borderSide: BorderSide(color: underLineBorderColor ?? kGreyColor3 ),
+                ),
+                focusedBorder:  UnderlineInputBorder(
+                  borderSide: BorderSide(color: underLineBorderColor ?? kGreyColor3 ),
+                ),
               ),
             ),
           ),

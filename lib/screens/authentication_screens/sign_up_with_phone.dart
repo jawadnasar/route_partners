@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
@@ -20,6 +19,7 @@ class PhoneAuthAndSocial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: kBackgroundColor,
       appBar: simpleAppBar(
         title: 'Sign up',
@@ -61,7 +61,7 @@ class PhoneAuthAndSocial extends StatelessWidget {
               textColor: kWhiteColor2,
               weight: FontWeight.w900,
               onTap: () {
-                Get.to(()=>const Landing());
+                Get.to(() => const Landing());
               },
               width: Get.width,
             ),
