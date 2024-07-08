@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/core/utils/themes.dart';
+import 'package:route_partners/screens/my_rides/my_rides.dart';
 import 'package:route_partners/screens/splash.dart';
 
 void main() {
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: lightTheme,
-      home:  const SplashScreen(),
+      home:  const MyRides(),
     );
   }
 }
