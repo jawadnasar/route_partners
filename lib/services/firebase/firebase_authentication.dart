@@ -56,6 +56,41 @@ class FirebaseAuthService extends GetxController {
     return null;
   }
 
+  //signing in user with email and password
+  Future<User?> signInUsingEmailAndPassword(
+      {required String email, required String password}) async {
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      if (FirebaseAuth.instance.currentUser != null) {
+        User user = FirebaseAuth.instance.currentUser!;
+
+        return user;
+      }
+      if (FirebaseAuth.instance.currentUser == null) {
+        return null;
+      }
+    } on FirebaseAuthException catch (e) {
+      //showing failure snackbar
+      CustomSnackBars.instance.showFailureSnackbar(
+          title: 'Authentication Error', message: '${e.message}');
+
+      return null;
+    } on FirebaseException catch (e) {
+      //showing failure snackbar
+      CustomSnackBars.instance.showFailureSnackbar(
+          title: 'Authentication Error', message: '${e.message}');
+
+      return null;
+    } catch (e) {
+      log("This was the exception while signing up: $e");
+
+      return null;
+    }
+
+    return null;
+  }
+
   //method to check if the user's account already exists on firebase
   Future<bool> isAlreadyExist({required String uid}) async {
     bool isExist = await FirebaseCRUDService.instance

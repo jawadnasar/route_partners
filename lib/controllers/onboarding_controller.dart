@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
+import 'package:route_partners/controllers/auth_controller.dart';
+import 'package:route_partners/core/bindings/bindings.dart';
 import 'package:route_partners/screens/additional_info/date_of_birth.dart';
 import 'package:route_partners/screens/additional_info/enter_email.dart';
 import 'package:route_partners/screens/additional_info/enter_first_name.dart';
@@ -11,21 +15,22 @@ import 'package:route_partners/screens/onboarding_screens/onboarding3.dart';
 class OnboardingController extends GetxController {
   static final OnboardingController instance =
       Get.put<OnboardingController>(OnboardingController());
+  final _authController = Get.find<AuthController>();
 
   RxInt currentStep = 0.obs;
 
   final List<Map<String, dynamic>> steps = [
     {
       'progress': 0.25,
-      'child': const EnterFirstAndLastName(),
+      'child': EnterFirstAndLastName(),
     },
     {
       'progress': 0.50,
-      'child': const EnterEmail(),
+      'child': EnterEmail(),
     },
     {
       'progress': 0.75,
-      'child': const DateOfBirth(),
+      'child': DateOfBirth(),
     },
     {
       'progress': 1.0,
@@ -61,9 +66,12 @@ class OnboardingController extends GetxController {
     // },
   ];
 
-  void onContinue() {
-    if (currentStep == steps.length - 1) {
-      Get.to(() => const BottomBar());
+  Future<void> onContinue() async {
+    if (currentStep.value == steps.length - 1) {
+      await _authController.singupEmailPassword();
+      if (_authController.isAuth.value) {
+        Get.offAll(() => const BottomBar(), binding: HomeBindings());
+      }
     } else {
       currentStep++;
     }

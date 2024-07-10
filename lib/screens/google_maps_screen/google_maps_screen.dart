@@ -13,7 +13,8 @@ import 'package:route_partners/screens/widget/my_textfield_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
 
 class GoogleMapsScreen extends StatefulWidget {
-  const GoogleMapsScreen({super.key});
+  const GoogleMapsScreen({required this.controller, super.key});
+  final TextEditingController controller;
 
   @override
   State<GoogleMapsScreen> createState() => _GoogleMapsScreenState();
@@ -101,6 +102,8 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                               address.currentLocation =
                                   await locationFromAddress(
                                       AddressController.address!);
+                              widget.controller.text =
+                                  AddressController.address!;
                             },
                             initialCameraPosition: CameraPosition(
                                 target: LatLng(AddressController.i.latitude!,
@@ -212,6 +215,8 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                                             .latitude,
                                         address.currentLocation!.reversed.last
                                             .longitude)));
+                                widget.controller.text =
+                                    AddressController.address!;
                               },
                               child: Container(
                                 color: Colors.white,
@@ -233,25 +238,25 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                 ),
               ],
             ),
-            const Spacer(),
-            ListView.builder(
-              itemCount: 2,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                List<String> genders = ['Islamabad Highway', '9th Avenue'];
-                return RadioListTile<String>(
-                  title: MyText(text: genders[index]),
-                  controlAffinity: ListTileControlAffinity.trailing,
-                  value: genders[index],
-                  groupValue: selectedRoute,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedRoute = value;
-                    });
-                  },
-                );
-              },
-            ),
+            // const Spacer(),
+            // ListView.builder(
+            //   itemCount: 2,
+            //   shrinkWrap: true,
+            //   itemBuilder: (context, index) {
+            //     List<String> genders = ['Islamabad Highway', '9th Avenue'];
+            //     return RadioListTile<String>(
+            //       title: MyText(text: genders[index]),
+            //       controlAffinity: ListTileControlAffinity.trailing,
+            //       value: genders[index],
+            //       groupValue: selectedRoute,
+            //       onChanged: (value) {
+            //         setState(() {
+            //           selectedRoute = value;
+            //         });
+            //       },
+            //     );
+            //   },
+            // ),
             const SizedBox(
               height: 50,
             ),
@@ -260,8 +265,8 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                 buttonText: 'PROCEED',
                 weight: FontWeight.w900,
                 onTap: () async {
-                  
-                  Get.to(()=> const PublishRideScreen());
+                  // Get.to(() => const PublishRideScreen());
+                  Get.back();
                 },
                 bgColor: kPrimaryColor,
                 textColor: Colors.white)

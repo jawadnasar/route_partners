@@ -1,10 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:route_partners/core/bindings/bindings.dart';
 import 'package:route_partners/core/utils/themes.dart';
-import 'package:route_partners/screens/my_rides/my_rides.dart';
+import 'package:route_partners/firebase_options.dart';
 import 'package:route_partners/screens/splash.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -17,11 +23,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: lightTheme,
-      home:  const MyRides(),
+      home: const SplashScreen(),
+      debugShowCheckedModeBanner: false,
+      initialBinding: InitialBindings(),
     );
   }
 }
-
-
-
-

@@ -9,7 +9,6 @@ import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/core/enums/location_permission.dart';
 import 'package:route_partners/core/utils/permissions/permissions.dart';
 import 'package:route_partners/screens/widget/dialogs/permission_dialog.dart';
-import 'package:route_partners/services/api/api.dart';
 
 class GoogleMapsService {
   //private constructor
@@ -56,13 +55,13 @@ class GoogleMapsService {
       // App to enable the location services.
       // return Future.error('Location services are disabled.');
 
-      Get.dialog(PermissionDialog(
-          onAllowTap: () {
-            openAppSettings();
-          },
-          description: "Please turn on the device location",
-          permission: "",
-          icon: Assets.imagesEventIcon));
+      // Get.dialog(PermissionDialog(
+      //     onAllowTap: () {
+      //       openAppSettings();
+      //     },
+      //     description: "Please turn on the device location",
+      //     permission: "",
+      //     icon: Assets.imagesEventIcon));
     }
 
     // When we reach here, permissions are granted and we can
@@ -82,14 +81,14 @@ class GoogleMapsService {
     if (status == LocationPermissionStatus.granted) {
       userLocation = await _determinePosition();
     } else if (status == LocationPermissionStatus.permanentlyDenied) {
-      await Get.dialog(PermissionDialog(
-        onAllowTap: () {
-          //opening app settings to allow user to give permissions
-          openAppSettings();
-        },
-        permission: "Location",
-        icon: Assets.imagesEventIcon,
-      ));
+      // await Get.dialog(PermissionDialog(
+      //   onAllowTap: () {
+      //     //opening app settings to allow user to give permissions
+      //     openAppSettings();
+      //   },
+      //   permission: "Location",
+      //   icon: Assets.imagesEventIcon,
+      // ));
 
       //closing dialog
       Get.back();

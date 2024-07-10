@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:route_partners/controllers/create_ride_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
@@ -11,7 +12,8 @@ import 'package:route_partners/screens/widget/my_textfield_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
 
 class PublishRideScreen extends StatelessWidget {
-  const PublishRideScreen({super.key});
+  final _createRideController = Get.find<CreateRideController>();
+  PublishRideScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -71,35 +73,36 @@ class PublishRideScreen extends StatelessWidget {
                 filled: true,
                 underLineBorderColor: kWhiteColor2,
                 maxLines: 5,
+                controller: _createRideController.noteController,
               ),
               const SizedBox(
                 height: 20,
               ),
-              const Divider(
-                color: kDarkGreyColor,
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Row(
-                children: [
-                  MyText(
-                    text: 'Luggage Allowance',
-                    color: kBlackColor2,
-                    weight: FontWeight.w700,
-                  ),
-                  const Spacer(),
-                  MyText(
-                    text: '1 carry on bag',
-                    color: kGreyColor3,
-                    weight: FontWeight.w700,
-                  ),
-                  const Icon(
-                    Icons.arrow_right_sharp,
-                    color: kGreyColor3,
-                  )
-                ],
-              ),
+              // const Divider(
+              //   color: kDarkGreyColor,
+              // ),
+              // const SizedBox(
+              //   height: 5,
+              // ),
+              // Row(
+              //   children: [
+              //     MyText(
+              //       text: 'Luggage Allowance',
+              //       color: kBlackColor2,
+              //       weight: FontWeight.w700,
+              //     ),
+              //     const Spacer(),
+              //     MyText(
+              //       text: '1 carry on bag',
+              //       color: kGreyColor3,
+              //       weight: FontWeight.w700,
+              //     ),
+              //     const Icon(
+              //       Icons.arrow_right_sharp,
+              //       color: kGreyColor3,
+              //     )
+              //   ],
+              // ),
               const SizedBox(
                 height: 5,
               ),
@@ -115,7 +118,7 @@ class PublishRideScreen extends StatelessWidget {
                   ),
                   const Spacer(),
                   MyText(
-                    text: 'Cash or Card',
+                    text: 'Cash',
                     color: kGreyColor3,
                     weight: FontWeight.w700,
                   ),
@@ -153,15 +156,24 @@ class PublishRideScreen extends StatelessWidget {
               const SizedBox(
                 height: 50,
               ),
-              MyButton(
-                radius: 5,
-                  weight: FontWeight.w900,
-                  buttonText: 'PUBLISH RIDE',
-                  bgColor: kPrimaryColor,
-                  textColor: Colors.white,
-                  onTap: () {
-                    Get.to(()=>RidePushSuccessful());
-                  })
+              Obx(
+                () => _createRideController.isCreatingLoading.value
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: kPrimaryColor,
+                        ),
+                      )
+                    : MyButton(
+                        radius: 5,
+                        weight: FontWeight.w900,
+                        buttonText: 'PUBLISH RIDE',
+                        bgColor: kPrimaryColor,
+                        textColor: Colors.white,
+                        onTap: () async {
+                          await _createRideController.createRide();
+                          Get.to(() => const RidePushSuccessful());
+                        }),
+              )
             ],
           ),
         ),

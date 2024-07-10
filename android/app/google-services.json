@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "392482287545",
+    "project_id": "routepartners-9f2d4",
+    "storage_bucket": "routepartners-9f2d4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392482287545:android:f1551124e47a705a38d068",
+        "android_client_info": {
+          "package_name": "com.example.route_partners"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392482287545-7mpb7ori7qchkg9f9j6ss2drvh3cnnbc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0D-fvuIHoVNotjtiAM0exHh1iuM3gc90"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392482287545-7mpb7ori7qchkg9f9j6ss2drvh3cnnbc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -54,8 +54,8 @@ class ValidationService {
       return 'Password is required';
     }
 
-    if (password.length < 8) {
-      return 'Password must be at least 8 characters long';
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters long';
     }
 
     if (password.isUpperCase() == false) {
@@ -96,5 +96,13 @@ class ValidationService {
     } else {
       return null;
     }
+  }
+
+  // phone number validation pakistan
+  String? phoneNumberValidator(String? value) {
+    if (value == null || value.isEmpty || value.length != 10) {
+      return "Enter correct number";
+    }
+    return null;
   }
 }

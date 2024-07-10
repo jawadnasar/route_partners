@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
 import 'package:route_partners/screens/additional_info/landing_page.dart';
+import 'package:route_partners/screens/authentication_screens/login_screen.dart';
 import 'package:route_partners/screens/authentication_screens/sign_up_with_phone.dart';
 import 'package:route_partners/screens/onboarding_screens/onboarding1.dart';
 import 'package:route_partners/screens/onboarding_screens/onboarding2.dart';
@@ -98,7 +99,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           curve: Curves.ease,
                         );
                       } else {
-                        Get.offAll(()=> PhoneAuthAndSocial());
+                        Get.offAll(() => LoginScreen());
                       }
                     }),
                 SizedBox(

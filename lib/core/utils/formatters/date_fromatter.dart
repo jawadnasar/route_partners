@@ -24,14 +24,10 @@ class DateFormatters {
   }
 
   //get date in mm/yyyy format
-  String formatStringDate({required String dateString}) {
+  String formatStringDate({required DateTime date}) {
     String _formattedDate = "";
 
-    DateTime? date = convertStringIntoDateTime(dateString);
-
-    if (date != null) {
-      _formattedDate = DateFormat('dd-MM-yyyy').format(date);
-    }
+    _formattedDate = DateFormat('dd-MM-yyyy').format(date);
 
     return _formattedDate;
   }

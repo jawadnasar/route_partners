@@ -7,36 +7,36 @@ import 'my_text_widget.dart';
 
 // ignore: must_be_immutable
 class MyTextField extends StatelessWidget {
-  MyTextField(
-      {Key? key,
-      this.controller,
-      this.keyboardType,
-      this.hintText,
-      this.marginBottom = 12,
-      this.isObSecure = false,
-      this.maxLength,
-      this.maxLines = 1,
-      this.isEnabled = true,
-      this.labelText,
-      this.suffixIcon,
-      this.validator,
-      this.onTap,
-      this.haveSuffix = false,
-      this.onChanged,
-      this.suffixIconSize,
-      this.onSuffixTap,
-      this.focusBorderColor,
-      this.radius,
-      this.inputFormatters,
-      this.fillColor,
-      this.filled,
-      this.contentPadding,
-      this.underLineBorderColor
-      })
-      : super(key: key);
+  MyTextField({
+    Key? key,
+    this.controller,
+    this.keyboardType,
+    this.hintText,
+    this.marginBottom = 12,
+    this.isObSecure = false,
+    this.maxLength,
+    this.maxLines = 1,
+    this.isEnabled = true,
+    this.labelText,
+    this.suffixIcon,
+    this.validator,
+    this.onTap,
+    this.haveSuffix = false,
+    this.onChanged,
+    this.suffixIconSize,
+    this.onSuffixTap,
+    this.focusBorderColor,
+    this.radius,
+    this.inputFormatters,
+    this.fillColor,
+    this.filled,
+    this.contentPadding,
+    this.underLineBorderColor,
+    this.readonly = false,
+  }) : super(key: key);
   String? hintText, labelText, suffixIcon;
   double? marginBottom, suffixIconSize, radius;
-  bool? isObSecure, isEnabled, haveSuffix;
+  bool? isObSecure, isEnabled, haveSuffix, readonly;
   int? maxLength, maxLines;
   VoidCallback? onSuffixTap;
   Color? focusBorderColor;
@@ -83,6 +83,7 @@ class MyTextField extends StatelessWidget {
               ],
             ),
             child: TextFormField(
+              readOnly: readonly ?? false,
               cursorColor: kDarkGreyColor,
               onTap: onTap,
               enabled: isEnabled,
@@ -139,11 +140,13 @@ class MyTextField extends StatelessWidget {
                 ),
                 fillColor: fillColor,
                 filled: filled ?? false,
-                enabledBorder:  UnderlineInputBorder(
-                  borderSide: BorderSide(color: underLineBorderColor ?? kGreyColor3 ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide:
+                      BorderSide(color: underLineBorderColor ?? kGreyColor3),
                 ),
-                focusedBorder:  UnderlineInputBorder(
-                  borderSide: BorderSide(color: underLineBorderColor ?? kGreyColor3 ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide:
+                      BorderSide(color: underLineBorderColor ?? kGreyColor3),
                 ),
               ),
             ),

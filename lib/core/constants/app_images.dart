@@ -773,10 +773,12 @@ class Assets {
 
   static const String boyIcon = 'assets/images/boy.png';
 
-    static const String check = 'assets/images/check.png';
+  static const String check = 'assets/images/check.png';
 
   static const String list = 'assets/images/list.png';
 
   static const String completed = 'assets/images/activity.png';
 
+  static const String passwordShow = 'assets/images/password_show.png';
+  static const String passwordHide = 'assets/images/password_hide.png';
 }

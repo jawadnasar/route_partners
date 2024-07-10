@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:route_partners/controllers/auth_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
@@ -11,8 +13,7 @@ class SelectGender extends StatefulWidget {
 }
 
 class _SelectGenderState extends State<SelectGender> {
-  String? _selectedGender;
-
+  final _authController = Get.find<AuthController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,20 +28,19 @@ class _SelectGenderState extends State<SelectGender> {
               color: kTextColor,
             ),
             ListView.builder(
-              itemCount: 3,
+              itemCount: _authController.genders.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
-                List<String> genders = ['Mr', 'Ms/Mrs', 'Not specified'];
-                return RadioListTile<String>(
-                  title: MyText(text: genders[index]),
-                  controlAffinity: ListTileControlAffinity.trailing,
-                  value: genders[index],
-                  groupValue: _selectedGender,
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedGender = value;
-                    });
-                  },
+                return Obx(
+                  () => RadioListTile<String>(
+                    title: MyText(text: _authController.genders[index]),
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    value: _authController.genders[index],
+                    groupValue: _authController.selectedGender.value,
+                    onChanged: (value) {
+                      _authController.selectedGender.value = value.toString();
+                    },
+                  ),
                 );
               },
             ),

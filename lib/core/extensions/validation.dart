@@ -62,3 +62,31 @@ extension NumberValidation on String {
     return false;
   }
 }
+
+extension DateValidator on String {
+  bool isValidDate() {
+    // Regular expression for dd/mm/yyyy format
+    final RegExp dateRegExp = RegExp(
+      r'^([0-2][0-9]|(3)[0-1])\/((0)[1-9]|(1)[0-2])\/\d{4}$',
+    );
+
+    // Check if the string matches the regex pattern
+    if (!dateRegExp.hasMatch(this)) {
+      return false;
+    }
+
+    // Extract day, month, and year from the string
+    final List<String> parts = this.split('/');
+    final int day = int.parse(parts[0]);
+    final int month = int.parse(parts[1]);
+    final int year = int.parse(parts[2]);
+
+    // Check if the date is valid using DateTime
+    try {
+      final DateTime date = DateTime(year, month, day);
+      return date.day == day && date.month == month && date.year == year;
+    } catch (e) {
+      return false;
+    }
+  }
+}
