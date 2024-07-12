@@ -6,6 +6,7 @@ import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/core/utils/formatters/date_fromatter.dart';
 import 'package:route_partners/core/utils/snackbars.dart';
+import 'package:route_partners/screens/browse_rides/browse_rides.dart';
 import 'package:route_partners/screens/google_maps_screen/google_maps_screen.dart';
 import 'package:route_partners/screens/publish_ride/publish_ride.dart';
 import 'package:route_partners/screens/widget/custom_drop_down_widget.dart';
@@ -14,14 +15,14 @@ import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/my_textfield_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
 
-class BottomBar extends StatefulWidget {
-  const BottomBar({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<BottomBar> createState() => _BottomBarState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _BottomBarState extends State<BottomBar> {
+class _HomePageState extends State<HomePage> {
   String? price = '50';
   int? index = 0;
 
@@ -191,7 +192,9 @@ class _BottomBarState extends State<BottomBar> {
                       ),
 
                       MyButton(
-                        onTap: () {},
+                        onTap: () {
+                          Get.to(()=> const BrowseRides());
+                        },
                         bgColor: kPrimaryColor,
                         buttonText: 'SEARCH',
                         textColor: Colors.white,

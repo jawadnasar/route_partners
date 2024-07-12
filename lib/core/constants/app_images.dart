@@ -784,4 +784,7 @@ class Assets {
   static const String covidFree = 'assets/images/covid-free.png';
   static const String travelbag = 'assets/images/travelbag.png';
   static const String car = 'assets/images/car.png';
+  static const String chat = 'assets/images/chat.png';
+  static const String carpool = 'assets/images/dashboardIcon.png';
+  static const String profile = 'assets/images/profile.png';
 }

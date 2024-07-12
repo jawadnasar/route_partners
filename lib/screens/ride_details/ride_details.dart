@@ -20,242 +20,19 @@ class RideDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: simpleAppBar(centerTitle: false, title: 'Ride Details'),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 10,
-          ),
-          Container(
-            width: Get.width,
-            decoration: const BoxDecoration(color: Colors.white),
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MyText(
-                  text: 'Trip Info',
-                  color: kTextColor4,
-                  weight: FontWeight.w900,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.calendar_month_outlined,
-                      size: 15,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    MyText(
-                      text: 'Saturday, 15th May 2021',
-                      color: kGreyColor4,
-                      weight: FontWeight.w500,
-                      fontFamily: AppFonts.SYNE,
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.schedule,
-                      size: 15,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    MyText(
-                        text: '2 hr 45 minutes (Estimated)',
-                        color: kGreyColor4,
-                        weight: FontWeight.w500,
-                        fontFamily: AppFonts.SYNE)
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.route,
-                      size: 15,
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    MyText(
-                      text: '110 km',
-                      color: kGreyColor8,
-                      weight: FontWeight.w500,
-                    )
-                  ],
-                ),
-                const Divider(
-                  color: kDarkGreyColor,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const StepperLeadingIcon(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 5, horizontal: Get.width * 0.06),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: SizedBox(
-                              height: 80,
-                              child: CustomPaint(
-                                painter: DashedLineVerticalPainter(),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const StepperLeadingIcon(),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    locationWidget(),
-                  ],
-                ),
-                const Divider(
-                  color: kGreyColor8,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    MyText(
-                      text: 'Seats left',
-                      color: kGreyColor8,
-                    ),
-                    MyText(
-                      text: '2',
-                      color: kDarkGreyColor,
-                      weight: FontWeight.w800,
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    MyText(
-                      text: 'Price for one seat ',
-                      color: kGreyColor8,
-                    ),
-                    MyText(
-                      text: '240',
-                      color: kDarkGreyColor,
-                      weight: FontWeight.w800,
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    MyText(
-                      text: 'Pay via wallet, Cash or Card',
-                      color: kGreyColor8,
-                      size: 12,
-                    ),
-                  ],
-                )
-              ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(
+              height: 10,
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Container(
-            padding: const EdgeInsets.all(10),
-            width: Get.width,
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Image.asset(Assets.covidFree),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    MyText(
-                      text: 'Follow Covid 19 Safety Measures',
-                      size: 12,
-                      color: kPrimaryColor,
-                      weight: FontWeight.w700,
-                    )
-                  ],
-                ),
-                const Divider(
-                  color: kDarkGreyColor,
-                ),
-                ListTile(
-                  visualDensity: VisualDensity.comfortable,
-                  contentPadding: EdgeInsets.zero,
-                  leading: const CircleAvatar(
-                    radius: 20,
-                    backgroundImage: AssetImage(Assets.boyIcon),
-                  ),
-                  title: MyText(
-                    text: 'Driver',
-                    size: 12,
-                    weight: FontWeight.w900,
-                    color: kTextColor,
-                  ),
-                  subtitle: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      MyText(
-                        text: '4.5',
-                        color: kGreyColor8,
-                        weight: FontWeight.w900,
-                        size: 12,
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      const Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                        size: 15,
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      MyText(
-                        text: '27 ratings',
-                        color: kGreyColor8,
-                        weight: FontWeight.w900,
-                        size: 12,
-                      ),
-                    ],
-                  ),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: kGreyColor8,
-                  ),
-                ),
-                const Divider(
-                  color: kDarkGreyColor,
-                )
-              ],
+            tripInfo(),
+            const SizedBox(
+              height: 10,
             ),
-          )
-        ],
+            driverDetailsAndCoPassengers()
+          ],
+        ),
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(color: Colors.white),
@@ -284,21 +61,311 @@ class RideDetails extends StatelessWidget {
                   ),
                 ),
                 MyButton(
-                  bgColor: kPrimaryColor,
-                  textColor: Colors.white,
-                  radius: 5,
-                  width: Get.width*0.4,
-                  onTap: (){
-                    Get.to(()=> const RideBookedSuccessfully());
-                })
+                    bgColor: kPrimaryColor,
+                    textColor: Colors.white,
+                    radius: 5,
+                    width: Get.width * 0.4,
+                    onTap: () {
+                      Get.to(() => const RideBookedSuccessfully());
+                    })
               ],
             ),
             MyText(
-                  text: 'Select a Seat',
-                  weight: FontWeight.w900,
-                ),
+              text: 'Select a Seat',
+              weight: FontWeight.w900,
+            ),
           ],
         ),
+      ),
+    );
+  }
+
+  Container driverDetailsAndCoPassengers() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      width: Get.width,
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Image.asset(Assets.covidFree),
+              const SizedBox(
+                width: 10,
+              ),
+              MyText(
+                text: 'Follow Covid 19 Safety Measures',
+                size: 12,
+                color: kPrimaryColor,
+                weight: FontWeight.w700,
+              )
+            ],
+          ),
+          const Divider(
+            color: kDarkGreyColor,
+          ),
+          ListTile(
+            visualDensity: VisualDensity.comfortable,
+            contentPadding: EdgeInsets.zero,
+            leading: CircleAvatar(
+              child: CommonImageView(
+                fit: BoxFit.contain,
+                radius: 20,
+                imagePath: Assets.boyIcon,
+              ),
+            ),
+            title: MyText(
+              text: 'Driver',
+              size: 12,
+              weight: FontWeight.w900,
+              color: kTextColor,
+            ),
+            subtitle: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                MyText(
+                  text: '4.5',
+                  color: kGreyColor8,
+                  weight: FontWeight.w900,
+                  size: 12,
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                const Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                  size: 15,
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                MyText(
+                  text: '27 ratings',
+                  color: kGreyColor8,
+                  weight: FontWeight.w900,
+                  size: 12,
+                ),
+              ],
+            ),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              color: kGreyColor8,
+              size: 12,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Image.asset(Assets.carpool),
+              const SizedBox(
+                width: 10,
+              ),
+              SizedBox(
+                width: Get.width * 0.3,
+                child: MyText(
+                  text: 'Nexon HR26 7788 (blue)',
+                  color: kGreyColor8,
+                ),
+              ),
+              const Spacer(),
+              TextButton(
+                  onPressed: () {},
+                  child: MyText(
+                    text: 'Contact Driver',
+                    color: kPrimaryColor,
+                    weight: FontWeight.w600,
+                  ))
+            ],
+          ),
+          const Divider(
+            color: kDarkGreyColor,
+          ),
+          MyText(
+            text: 'Co-Passengers',
+            color: kBlackColor,
+            weight: FontWeight.bold,
+          ),
+          ListView.builder(
+              itemCount: 2,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const CircleAvatar(
+                    radius: 25,
+                    backgroundImage: AssetImage(Assets.boyIcon),
+                  ),
+                  title: MyText(
+                    text: 'Sher Ali ktk',
+                    color: kGreyColor8,
+                  ),
+                  subtitle: MyText(
+                    text: 'Gurgoon -> Meerut',
+                    color: kGreyColor8,
+                  ),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 15,
+                  ),
+                );
+              })
+        ],
+      ),
+    );
+  }
+
+  Container tripInfo() {
+    return Container(
+      width: Get.width,
+      decoration: const BoxDecoration(color: Colors.white),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MyText(
+            text: 'Trip Info',
+            color: kTextColor4,
+            weight: FontWeight.w900,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              const Icon(
+                Icons.calendar_month_outlined,
+                size: 15,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              MyText(
+                text: 'Saturday, 15th May 2021',
+                color: kGreyColor4,
+                weight: FontWeight.w500,
+                fontFamily: AppFonts.SYNE,
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              const Icon(
+                Icons.schedule,
+                size: 15,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              MyText(
+                  text: '2 hr 45 minutes (Estimated)',
+                  color: kGreyColor4,
+                  weight: FontWeight.w500,
+                  fontFamily: AppFonts.SYNE)
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              const Icon(
+                Icons.route,
+                size: 15,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              MyText(
+                text: '110 km',
+                color: kGreyColor8,
+                weight: FontWeight.w500,
+              )
+            ],
+          ),
+          const Divider(
+            color: kDarkGreyColor,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const StepperLeadingIcon(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 5, horizontal: Get.width * 0.06),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: SizedBox(
+                        height: 80,
+                        child: CustomPaint(
+                          painter: DashedLineVerticalPainter(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const StepperLeadingIcon(),
+                ],
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              locationWidget(),
+            ],
+          ),
+          const Divider(
+            color: kGreyColor8,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              MyText(
+                text: 'Seats left',
+                color: kGreyColor8,
+              ),
+              MyText(
+                text: '2',
+                color: kDarkGreyColor,
+                weight: FontWeight.w800,
+              )
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              MyText(
+                text: 'Price for one seat ',
+                color: kGreyColor8,
+              ),
+              MyText(
+                text: '240',
+                color: kDarkGreyColor,
+                weight: FontWeight.w800,
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              MyText(
+                text: 'Pay via wallet, Cash or Card',
+                color: kGreyColor8,
+                size: 12,
+              ),
+            ],
+          )
+        ],
       ),
     );
   }
@@ -402,7 +469,7 @@ class SelectSeat extends StatelessWidget {
                 Center(
                   child: MyText(
                     text: "Select Seats",
-                    size: 25,
+                    size: 18,
                     weight: FontWeight.w700,
                     fontFamily: AppFonts.DM_SANS,
                   ),

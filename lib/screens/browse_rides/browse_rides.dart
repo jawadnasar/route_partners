@@ -32,7 +32,7 @@ class _BrowseRidesState extends State<BrowseRides>
           leadingIconColor: kWhiteColor2,
           bgColor: kPrimaryColor,
           titleColor: kWhiteColor2,
-          title: 'Islamabad -> RawalPindi'),
+          title: 'Islamabad -> Rawalpindi'),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
@@ -95,7 +95,7 @@ class _BrowseRidesState extends State<BrowseRides>
                   itemBuilder: (context, index) {
                     return InkWell(
                       onTap: () {
-                        Get.to(()=> const RideDetails());
+                        Get.to(() => const RideDetails());
                       },
                       child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 10),
@@ -209,7 +209,7 @@ class _BrowseRidesState extends State<BrowseRides>
                                 const Divider(
                                   color: kGreyColor8,
                                 ),
-                               const DriverProfileDetails()
+                                const DriverProfileDetails()
                               ])),
                     );
                   }),
@@ -229,56 +229,60 @@ class DriverProfileDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        visualDensity: VisualDensity.comfortable,
-        contentPadding: EdgeInsets.zero,
-        leading: const CircleAvatar(
-          radius: 20,
-          backgroundImage: AssetImage(Assets.boyIcon),
-        ),
-        title: MyText(
-          text: 'Driver',
-          size: 12,
-          weight: FontWeight.w900,
-          color: kTextColor,
-        ),
-        subtitle: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            MyText(
-              text: '4.5',
-              color: kGreyColor8,
-              weight: FontWeight.w900,
-              size: 12,
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            const Icon(
-              Icons.star,
-              color: Colors.yellow,
-              size: 15,
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            MyText(
-              text: '27 ratings',
-              color: kGreyColor8,
-              weight: FontWeight.w900,
-              size: 12,
-            ),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(Assets.covidFree),
-            const SizedBox(width: 10,),
-            const FaIcon(FontAwesomeIcons.bolt),
-            const SizedBox(width: 10,),
-            Image.asset(Assets.travelbag)
-          ],
-        ),
-        );
+      visualDensity: VisualDensity.comfortable,
+      contentPadding: EdgeInsets.zero,
+      leading: const CircleAvatar(
+        radius: 20,
+        backgroundImage: AssetImage(Assets.boyIcon),
+      ),
+      title: MyText(
+        text: 'Driver',
+        size: 12,
+        weight: FontWeight.w900,
+        color: kTextColor,
+      ),
+      subtitle: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          MyText(
+            text: '4.5',
+            color: kGreyColor8,
+            weight: FontWeight.w900,
+            size: 12,
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          const Icon(
+            Icons.star,
+            color: Colors.yellow,
+            size: 15,
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          MyText(
+            text: '27 ratings',
+            color: kGreyColor8,
+            weight: FontWeight.w900,
+            size: 12,
+          ),
+        ],
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(Assets.covidFree),
+          const SizedBox(
+            width: 10,
+          ),
+          const FaIcon(FontAwesomeIcons.bolt),
+          const SizedBox(
+            width: 10,
+          ),
+          Image.asset(Assets.travelbag)
+        ],
+      ),
+    );
   }
 }

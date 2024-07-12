@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/controllers/auth_controller.dart';
 import 'package:route_partners/core/bindings/bindings.dart';
@@ -8,9 +9,7 @@ import 'package:route_partners/screens/additional_info/enter_email.dart';
 import 'package:route_partners/screens/additional_info/enter_first_name.dart';
 import 'package:route_partners/screens/additional_info/select_gender.dart';
 import 'package:route_partners/screens/dashboard/bottom_bar.dart';
-import 'package:route_partners/screens/onboarding_screens/onboarding1.dart';
-import 'package:route_partners/screens/onboarding_screens/onboarding2.dart';
-import 'package:route_partners/screens/onboarding_screens/onboarding3.dart';
+import 'package:route_partners/screens/dashboard/bottom_navigation_bar.dart';
 
 class OnboardingController extends GetxController {
   static final OnboardingController instance =
@@ -70,7 +69,7 @@ class OnboardingController extends GetxController {
     if (currentStep.value == steps.length - 1) {
       await _authController.singupEmailPassword();
       if (_authController.isAuth.value) {
-        Get.offAll(() => const BottomBar(), binding: HomeBindings());
+        Get.offAll(() => const DashBoard(), binding: HomeBindings());
       }
     } else {
       currentStep++;

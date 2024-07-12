@@ -12,6 +12,7 @@ import 'package:route_partners/core/constants/app_sizes.dart';
 import 'package:route_partners/core/utils/validators.dart';
 import 'package:route_partners/screens/authentication_screens/sign_up_with_phone.dart';
 import 'package:route_partners/screens/dashboard/bottom_bar.dart';
+import 'package:route_partners/screens/dashboard/bottom_navigation_bar.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/my_textfield_widget.dart';
@@ -25,7 +26,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
- 
   final _generalController = Get.find<GeneralController>();
   final _authController = Get.find<AuthController>();
 
@@ -108,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             await _authController.loginEmailPassword();
                             log(_authController.isAuth.value.toString());
                             if (_authController.isAuth.value) {
-                              Get.offAll(() => const BottomBar(),
+                              Get.offAll(() => const DashBoard(),
                                   binding: HomeBindings());
                             }
                           }
@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: () async {
                           await _authController.googleLogin();
                           if (_authController.isAuth.value) {
-                            Get.offAll(() => const BottomBar(),
+                            Get.offAll(() => const HomePage(),
                                 binding: HomeBindings());
                           }
                         },

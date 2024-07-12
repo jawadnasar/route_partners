@@ -1,15 +1,11 @@
 import 'dart:async';
-import 'dart:developer';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_images.dart';
-import 'package:route_partners/core/utils/permissions/permissions.dart';
 import 'package:route_partners/core/utils/snackbars.dart';
 import 'package:route_partners/screens/onboarding_screens/onboarding.dart';
-import 'package:route_partners/services/google_maps/google_maps.dart';
 
 class SplashScreen extends StatefulWidget {
   final bool? isHerefromGoogleSIgnin;

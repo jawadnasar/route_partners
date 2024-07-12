@@ -4,6 +4,7 @@ import 'package:route_partners/core/bindings/bindings.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/screens/dashboard/bottom_bar.dart';
+import 'package:route_partners/screens/dashboard/bottom_navigation_bar.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 
@@ -55,7 +56,7 @@ class RideBookedSuccessfully extends StatelessWidget {
                   weight: FontWeight.w900,
                   buttonText: 'OKAY',
                   onTap: () {
-                    Get.offAll(() => const BottomBar(),
+                    Get.offAll(() => const DashBoard(),
                         binding: HomeBindings());
                   })
             ],
