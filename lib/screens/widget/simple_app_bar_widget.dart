@@ -54,7 +54,7 @@ AppBar simpleAppBar(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: MyText(
         text: title!,
-        size: 18,
+        size: 12,
         color: titleColor ?? kTextColor4,
         weight: FontWeight.w900,
         fontFamily: GoogleFonts.rubik().fontFamily,

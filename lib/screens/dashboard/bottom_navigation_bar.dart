@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/controllers/bottom_bar_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
+import 'package:route_partners/screens/chat_screens/my_chats.dart';
 import 'package:route_partners/screens/dashboard/bottom_bar.dart';
 import 'package:route_partners/screens/my_rides/my_rides.dart';
 
@@ -26,7 +27,7 @@ class _DashBoardState extends State<DashBoard> {
           return BottomNavigationBar(
             selectedItemColor: kTertiaryColor,
             unselectedItemColor: kBlackColor,
-            backgroundColor: Color.fromRGBO(122, 122, 122, 0.27),
+            backgroundColor: Colors.white,
             type: BottomNavigationBarType.fixed,
             currentIndex: bottomBarCont.selectedIndex,
             onTap: (value) {
@@ -58,7 +59,7 @@ class _DashBoardState extends State<DashBoard> {
                       ? kPrimaryColor
                       : kGreyColor,
                 ),
-                label: 'PLAY',
+                label: 'CHATS',
               ),
               BottomNavigationBarItem(
                 icon: Icon(
@@ -67,7 +68,7 @@ class _DashBoardState extends State<DashBoard> {
                       ? kPrimaryColor
                       : kGreyColor,
                 ),
-                label: 'LEADERS',
+                label: 'PROFILE',
               ),
             ],
           );
@@ -77,10 +78,10 @@ class _DashBoardState extends State<DashBoard> {
         builder: (cont) {
           return IndexedStack(
             index: bottomBarCont.selectedIndex,
-            children: const [
+            children:  const [
               HomePage(),
               MyRides(),
-              MyRides(),
+              MyChats(),
               MyRides(),
             ],
           );

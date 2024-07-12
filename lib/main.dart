@@ -4,8 +4,6 @@ import 'package:get/get.dart';
 import 'package:route_partners/core/bindings/bindings.dart';
 import 'package:route_partners/core/utils/themes.dart';
 import 'package:route_partners/firebase_options.dart';
-import 'package:route_partners/screens/browse_rides/browse_rides.dart';
-import 'package:route_partners/screens/dashboard/bottom_bar.dart';
 import 'package:route_partners/screens/splash.dart';
 
 void main() async {

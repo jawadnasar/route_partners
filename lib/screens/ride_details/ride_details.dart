@@ -41,6 +41,8 @@ class RideDetails extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
+                            const SizedBox(height: 10,),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -55,6 +57,7 @@ class RideDetails extends StatelessWidget {
                         text: 'Select Seats',
                         color: kTextColor4,
                         weight: FontWeight.w400,
+                        size: 12,
                       ),
                       const Icon(Icons.arrow_drop_down)
                     ],
@@ -70,9 +73,11 @@ class RideDetails extends StatelessWidget {
                     })
               ],
             ),
+            
             MyText(
               text: 'Select a Seat',
               weight: FontWeight.w900,
+              size: 12,
             ),
           ],
         ),
@@ -167,6 +172,7 @@ class RideDetails extends StatelessWidget {
                 child: MyText(
                   text: 'Nexon HR26 7788 (blue)',
                   color: kGreyColor8,
+                  size: 12,
                 ),
               ),
               const Spacer(),
@@ -175,6 +181,7 @@ class RideDetails extends StatelessWidget {
                   child: MyText(
                     text: 'Contact Driver',
                     color: kPrimaryColor,
+                    size: 12,
                     weight: FontWeight.w600,
                   ))
             ],
@@ -200,10 +207,12 @@ class RideDetails extends StatelessWidget {
                   title: MyText(
                     text: 'Sher Ali ktk',
                     color: kGreyColor8,
+                    size: 12,
                   ),
                   subtitle: MyText(
                     text: 'Gurgoon -> Meerut',
                     color: kGreyColor8,
+                    size: 12,
                   ),
                   trailing: const Icon(
                     Icons.arrow_forward_ios,
@@ -228,6 +237,7 @@ class RideDetails extends StatelessWidget {
             text: 'Trip Info',
             color: kTextColor4,
             weight: FontWeight.w900,
+            size: 12,
           ),
           const SizedBox(
             height: 10,
@@ -246,6 +256,7 @@ class RideDetails extends StatelessWidget {
                 color: kGreyColor4,
                 weight: FontWeight.w500,
                 fontFamily: AppFonts.SYNE,
+                size: 12,
               )
             ],
           ),
@@ -265,6 +276,7 @@ class RideDetails extends StatelessWidget {
                   text: '2 hr 45 minutes (Estimated)',
                   color: kGreyColor4,
                   weight: FontWeight.w500,
+                  size: 12,
                   fontFamily: AppFonts.SYNE)
             ],
           ),
@@ -282,6 +294,7 @@ class RideDetails extends StatelessWidget {
               ),
               MyText(
                 text: '110 km',
+                size: 12,
                 color: kGreyColor8,
                 weight: FontWeight.w500,
               )
@@ -329,10 +342,12 @@ class RideDetails extends StatelessWidget {
             children: [
               MyText(
                 text: 'Seats left',
+                size: 12,
                 color: kGreyColor8,
               ),
               MyText(
                 text: '2',
+                size: 12,
                 color: kDarkGreyColor,
                 weight: FontWeight.w800,
               )
@@ -347,10 +362,12 @@ class RideDetails extends StatelessWidget {
               MyText(
                 text: 'Price for one seat ',
                 color: kGreyColor8,
+                size: 12,
               ),
               MyText(
                 text: '240',
                 color: kDarkGreyColor,
+                size: 12,
                 weight: FontWeight.w800,
               )
             ],
@@ -376,6 +393,7 @@ class RideDetails extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         MyText(
+          size: 12,
           text: 'Islamabad, Soan Gardens Society \nBlock C Street 8',
           color: kTextColor4,
           weight: FontWeight.w700,
@@ -392,6 +410,7 @@ class RideDetails extends StatelessWidget {
               size: 15,
             ),
             MyText(
+              size: 12,
               text: '4 km from your pickup location',
               color: kGreyColor8,
               weight: FontWeight.w500,
@@ -402,6 +421,7 @@ class RideDetails extends StatelessWidget {
           height: 10,
         ),
         MyText(
+          size: 12,
           text: 'Islamabad, G8 Markaz',
           color: kTextColor4,
           weight: FontWeight.w700,
@@ -418,6 +438,7 @@ class RideDetails extends StatelessWidget {
               size: 15,
             ),
             MyText(
+              size: 12,
               text: '1.5 km from your drop location',
               color: kGreyColor8,
               weight: FontWeight.w500,
@@ -425,6 +446,7 @@ class RideDetails extends StatelessWidget {
           ],
         ),
         MyText(
+          size: 12,
           text: '2:30 PM',
           color: kGreyColor8,
           weight: FontWeight.w500,
