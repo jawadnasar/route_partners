@@ -20,9 +20,12 @@ AppBar simpleAppBar(
     double? leadingIconSize = 24,
     bool? haveLeading = true,
     bool? centerTitle,
-    double? elevation = 0.5
+    Color? color,
+    double? elevation = 0.5,
+    Color? leadingIconColor,
     }) {
   return AppBar(
+    
     elevation: elevation,
     shadowColor: kBorderColor2,
     leadingWidth: 50,
@@ -39,9 +42,9 @@ AppBar simpleAppBar(
                 padding: const EdgeInsets.only(left: 10),
                 child: GestureDetector(
                     onTap: onLeadingTap ?? () => Get.back(),
-                    child: const FaIcon(
+                    child:  FaIcon(
                       FontAwesomeIcons.arrowLeft,
-                      color: kTextColor,
+                      color: leadingIconColor ?? kTextColor,
                     )),
               ),
             ],

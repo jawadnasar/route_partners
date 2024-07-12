@@ -6,15 +6,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:route_partners/controllers/address_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
-import 'package:route_partners/screens/publish_ride/publish_ride.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
-import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/my_textfield_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
 
 class GoogleMapsScreen extends StatefulWidget {
-  const GoogleMapsScreen({required this.controller, super.key});
-  final TextEditingController controller;
+  const GoogleMapsScreen({ this.controller, super.key});
+  final TextEditingController? controller;
 
   @override
   State<GoogleMapsScreen> createState() => _GoogleMapsScreenState();
@@ -102,7 +100,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                               address.currentLocation =
                                   await locationFromAddress(
                                       AddressController.address!);
-                              widget.controller.text =
+                              widget.controller?.text =
                                   AddressController.address!;
                             },
                             initialCameraPosition: CameraPosition(
@@ -215,7 +213,7 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                                             .latitude,
                                         address.currentLocation!.reversed.last
                                             .longitude)));
-                                widget.controller.text =
+                                widget.controller?.text =
                                     AddressController.address!;
                               },
                               child: Container(

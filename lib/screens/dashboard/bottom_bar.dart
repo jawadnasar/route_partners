@@ -1,4 +1,3 @@
-import 'package:casa_vertical_stepper/casa_vertical_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -98,49 +97,51 @@ class _BottomBarState extends State<BottomBar> {
                       //     // Get.to(() => const GoogleMapsScreen());
                       //   },
                       // ),
-                      Stack(
+                      const Stack(
+                        children: [],
+                      ),
+                      stepperContainer(
+                        title: 'Enter Pickup Location',
+                        onTap: () {
+                          Get.to(() => const GoogleMapsScreen());
+                        },
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: Get.width * 0.06),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: SizedBox(
-                                    height: 20,
-                                    child: CustomPaint(
-                                      painter: DashedLineVerticalPainter(),
-                                    ),
-                                  ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 5, horizontal: Get.width * 0.06),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: SizedBox(
+                                height: 20,
+                                child: CustomPaint(
+                                  painter: DashedLineVerticalPainter(),
                                 ),
                               ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: Get.width * 0.06),
-                                child: const Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: SizedBox(
-                                      height: 20,
-                                      child: FaIcon(
-                                        FontAwesomeIcons.arrowDown,
-                                        color: kPrimaryColor,
-                                      )),
-                                ),
-                              ),
-                            ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 5, horizontal: Get.width * 0.06),
+                            child: const Align(
+                              alignment: Alignment.centerLeft,
+                              child: SizedBox(
+                                  height: 20,
+                                  child: FaIcon(
+                                    FontAwesomeIcons.arrowDown,
+                                    color: kPrimaryColor,
+                                  )),
+                            ),
                           ),
                         ],
                       ),
-                      // stepperContainer(
-                      //   title: 'Enter Drop Location',
-                      //   onTap: () {
-                      //     // Get.to(() => const GoogleMapsScreen());
-                      //   },
-                      // ),
-                      const SizedBox(
-                        height: 25,
+                      stepperContainer(
+                        title: 'Enter Drop Location',
+                        onTap: () {
+                          Get.to(() => const GoogleMapsScreen());
+                        },
                       ),
                       MyText(
                         text: 'Date of Departure',
@@ -154,38 +155,49 @@ class _BottomBarState extends State<BottomBar> {
                         onTap: () {
                           selectDate(context);
                         },
-                        child: Container(
-                          child: Row(
-                            children: [
-                              MyText(
-                                text: 'Saturday, 15th May',
-                                color: kGreyColor8,
-                                weight: FontWeight.w700,
-                              ),
-                              const Spacer(),
-                              TextButton(
-                                  onPressed: () {},
-                                  child: MyText(
-                                    text: 'TODAY',
-                                    weight: FontWeight.w900,
-                                    color: kPrimaryColor,
-                                  )),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              TextButton(
-                                  onPressed: () {},
-                                  child: MyText(
-                                    text: 'TOMORROW',
-                                    weight: FontWeight.w900,
-                                    color: kGreyColor5,
-                                  ))
-                            ],
-                          ),
+                        child: Row(
+                          children: [
+                            MyText(
+                              text: 'Saturday, 15th May',
+                              color: kGreyColor8,
+                              weight: FontWeight.w700,
+                            ),
+                            const Spacer(),
+                            TextButton(
+                                onPressed: () {},
+                                child: MyText(
+                                  text: 'TODAY',
+                                  weight: FontWeight.w900,
+                                  color: kPrimaryColor,
+                                )),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            TextButton(
+                                onPressed: () {},
+                                child: MyText(
+                                  text: 'TOMORROW',
+                                  weight: FontWeight.w900,
+                                  color: kGreyColor5,
+                                ))
+                          ],
                         ),
                       ),
                       const Divider(
                         color: kGreyColor8,
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.01,
+                      ),
+
+                      MyButton(
+                        onTap: () {},
+                        bgColor: kPrimaryColor,
+                        buttonText: 'SEARCH',
+                        textColor: Colors.white,
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.02,
                       ),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
@@ -271,6 +283,7 @@ class _BottomBarState extends State<BottomBar> {
                     children: [
                       const SizedBox(height: 10),
                       stepperContainer(
+                        title: 'Enter Pickup Location',
                         controller:
                             _createRideController.pickupLocationController,
                         onTap: () {
@@ -318,6 +331,7 @@ class _BottomBarState extends State<BottomBar> {
                         ],
                       ),
                       stepperContainer(
+                        title: 'Enter Drop Location',
                         controller:
                             _createRideController.dropoffLocationController,
                         onTap: () {
@@ -537,7 +551,9 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   stepperContainer(
-      {TextEditingController? controller, void Function()? onTap}) {
+      {TextEditingController? controller,
+      void Function()? onTap,
+      String? title}) {
     return InkWell(
       onTap: onTap,
       child: Row(
@@ -553,7 +569,7 @@ class _BottomBarState extends State<BottomBar> {
           Expanded(
             child: MyTextField(
               controller: controller,
-              hintText: 'Enter Pickup Location',
+              hintText: '$title',
               readonly: true,
               maxLines: 2,
             ),
@@ -646,13 +662,13 @@ class StepperLeadingIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const CircleAvatar(
-      radius: 15,
+      radius: 10,
       backgroundColor: kGreyColor3,
       child: CircleAvatar(
-        radius: 14,
+        radius: 8,
         backgroundColor: kWhiteColor2,
         child: CircleAvatar(
-          radius: 8.5,
+          radius: 5.5,
           backgroundColor: kGreyColor3,
         ),
       ),

@@ -7,8 +7,8 @@ import 'package:route_partners/screens/dashboard/bottom_bar.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 
-class RidePushSuccessful extends StatelessWidget {
-  const RidePushSuccessful({super.key});
+class RideBookedSuccessfully extends StatelessWidget {
+  const RideBookedSuccessfully({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +31,7 @@ class RidePushSuccessful extends StatelessWidget {
               Center(
                 child: MyText(
                   textAlign: TextAlign.center,
-                  text:
-                      'Your Ride is Now Online ! Passengers Can now Travel with you',
+                  text: 'Your Ride is Booked Successfully Enjoy your Ride',
                   size: 30,
                   color: Colors.white,
                   weight: FontWeight.w900,
@@ -44,7 +43,7 @@ class RidePushSuccessful extends StatelessWidget {
               Center(
                 child: MyText(
                   textAlign: TextAlign.center,
-                  text: 'Go to my Rides to View your published Ride',
+                  text: 'Go to my Rides to View the Status of your ride',
                   size: 15,
                   color: Colors.white,
                 ),

@@ -781,4 +781,7 @@ class Assets {
 
   static const String passwordShow = 'assets/images/password_show.png';
   static const String passwordHide = 'assets/images/password_hide.png';
+  static const String covidFree = 'assets/images/covid-free.png';
+  static const String travelbag = 'assets/images/travelbag.png';
+  static const String car = 'assets/images/car.png';
 }

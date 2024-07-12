@@ -10,7 +10,6 @@ import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
 import 'package:route_partners/core/utils/validators.dart';
-import 'package:route_partners/screens/additional_info/landing_page.dart';
 import 'package:route_partners/screens/authentication_screens/sign_up_with_phone.dart';
 import 'package:route_partners/screens/dashboard/bottom_bar.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
@@ -26,6 +25,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+ 
   final _generalController = Get.find<GeneralController>();
   final _authController = Get.find<AuthController>();
 
