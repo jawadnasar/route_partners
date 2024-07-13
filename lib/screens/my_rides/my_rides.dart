@@ -18,7 +18,7 @@ class MyRides extends StatelessWidget {
         appBar: AppBar(
           title: MyText(
             text: 'My Rides',
-            size: 25,
+            size: 20,
             color: kBlackColor,
             weight: FontWeight.w900,
           ),

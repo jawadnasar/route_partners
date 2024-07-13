@@ -105,12 +105,11 @@ class _ChatScreenState extends State<ChatScreen> {
         backgroundColor: kBackgroundColor,
         bottomNavigationBar: Row(
           children: [
-            
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: SizedBox(
-                height: Get.height*0.08,
-                width: Get.width*0.7,
+                height: Get.height * 0.08,
+                width: Get.width * 0.7,
                 child: Flexible(
                   child: MyTextField(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 10),
@@ -131,8 +130,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ),
-           const Spacer(),
-            
+            const Spacer(),
             InkWell(
               onTap: () => sendMessage,
               child: const CircleAvatar(
@@ -147,7 +145,9 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 20,),
+            const SizedBox(
+              width: 20,
+            ),
           ],
         ),
         appBar: AppBar(
@@ -170,7 +170,6 @@ class _ChatScreenState extends State<ChatScreen> {
             SizedBox(
               width: Get.width * 0.02,
             ),
-            
           ],
           automaticallyImplyLeading: true,
           centerTitle: true,
@@ -204,15 +203,13 @@ class _ChatScreenState extends State<ChatScreen> {
                       height: Get.height * 0.08,
                       width: double.infinity,
                       child: Align(
-                        alignment: message?.isSentByme == true 
-                                ? Alignment.bottomLeft
-                                : Alignment.centerRight,
+                        alignment: message?.isSentByme == true
+                            ? Alignment.bottomLeft
+                            : Alignment.centerRight,
                         child: Center(
                           child: Text(
-                            
                             ChatScreenUtils.formatTime(
                               message.date.toString(),
-                              
                             ),
                             style: const TextStyle(color: kGreyColor4),
                           ),
@@ -221,10 +218,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     itemBuilder: (context, Messages? message) {
                       return Column(
-                        crossAxisAlignment:
-                            message?.isSentByme == true 
-                                ? CrossAxisAlignment.end
-                                : CrossAxisAlignment.start,
+                        crossAxisAlignment: message?.isSentByme == true
+                            ? CrossAxisAlignment.end
+                            : CrossAxisAlignment.start,
                         children: [
                           Card(
                             shape: RoundedRectangleBorder(

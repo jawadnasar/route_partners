@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
+import 'package:route_partners/core/constants/app_fonts.dart';
 import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 
@@ -54,10 +55,10 @@ AppBar simpleAppBar(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: MyText(
         text: title!,
-        size: 12,
+        size: 20,
         color: titleColor ?? kTextColor4,
         weight: FontWeight.w900,
-        fontFamily: GoogleFonts.rubik().fontFamily,
+        fontFamily: AppFonts.MerriWeather,
 
         // fontFamily: AppFonts.NUNITO_SANS,
       ),

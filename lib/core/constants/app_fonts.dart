@@ -10,4 +10,8 @@ class AppFonts {
   static final INTER = GoogleFonts.inter().fontFamily;
 
   static final SYNE = GoogleFonts.syne().fontFamily;
+
+
+    static final MerriWeather = GoogleFonts.merriweather().fontFamily;
+
 }

@@ -68,24 +68,32 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 20,
               ),
-              TabBar(tabs: [
-                Tab(
-                  child: MyText(
-                    text: 'Find a ride',
-                    size: 13,
-                    weight: FontWeight.w900,
-                    color: kGreyColor3,
-                  ),
-                ),
-                Tab(
-                  child: MyText(
-                    text: 'Create a ride',
-                    size: 13,
-                    weight: FontWeight.w900,
-                    color: kGreyColor3,
-                  ),
-                ),
-              ]),
+              TabBar(
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  splashBorderRadius: BorderRadius.circular(5),
+                  tabs: [
+                    AnimatedContainer(
+                      width: Get.width,
+                      decoration: const BoxDecoration(color: kPrimaryColor),
+                      duration: const Duration(seconds: 2),
+                      child: Tab(
+                        child: MyText(
+                          text: 'Find a ride',
+                          size: 13,
+                          weight: FontWeight.w900,
+                          color: kGreyColor3,
+                        ),
+                      ),
+                    ),
+                    Tab(
+                      child: MyText(
+                        text: 'Create a ride',
+                        size: 13,
+                        weight: FontWeight.w900,
+                        color: kGreyColor3,
+                      ),
+                    ),
+                  ]),
 
               Expanded(
                 child: TabBarView(children: [
@@ -192,8 +200,9 @@ class _HomePageState extends State<HomePage> {
                       ),
 
                       MyButton(
+                        radius: 5,
                         onTap: () {
-                          Get.to(()=> const BrowseRides());
+                          Get.to(() => const BrowseRides());
                         },
                         bgColor: kPrimaryColor,
                         buttonText: 'SEARCH',

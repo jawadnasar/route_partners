@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/controllers/auth_controller.dart';
@@ -10,7 +8,6 @@ import 'package:route_partners/core/extensions/validation.dart';
 import 'package:route_partners/core/utils/snackbars.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
-
 import '../widget/my_text_widget.dart';
 
 class Landing extends StatefulWidget {

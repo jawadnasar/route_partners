@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/controllers/auth_controller.dart';
-import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
-import 'package:route_partners/core/utils/validators.dart';
-import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/my_textfield_widget.dart';
 
 class EnterFirstAndLastName extends StatelessWidget {

@@ -68,7 +68,7 @@ class MyText extends StatelessWidget {
             color: color ?? kTertiaryColor,
             fontWeight: weight,
             decoration: decoration,
-            fontFamily: fontFamily ?? GoogleFonts.rubik().fontFamily,
+            fontFamily: fontFamily ?? AppFonts.MerriWeather,
             height: lineHeight,
             fontStyle: fontStyle,
             letterSpacing: letterSpacing,

@@ -36,6 +36,7 @@ class _MyChatsState extends State<MyChats> {
                       child: MyText(
                         text: 'Messages',
                         size: 20,
+                        weight: FontWeight.w800,
                       ),
                     ),
                     // const CircleWithIcon(

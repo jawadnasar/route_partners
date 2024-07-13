@@ -7,6 +7,7 @@ import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/screens/chat_screens/my_chats.dart';
 import 'package:route_partners/screens/dashboard/bottom_bar.dart';
 import 'package:route_partners/screens/my_rides/my_rides.dart';
+import 'package:route_partners/screens/profile_screen/profile_screen.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
@@ -82,7 +83,7 @@ class _DashBoardState extends State<DashBoard> {
               HomePage(),
               MyRides(),
               MyChats(),
-              MyRides(),
+              ProfileScreen()
             ],
           );
         },
