@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_images.dart';
+import 'package:route_partners/screens/settings/settings.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
-import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/my_textfield_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
 
@@ -18,6 +18,14 @@ class ProfileScreen extends StatelessWidget {
           bgColor: kPrimaryColor,
           titleColor: Colors.white,
           leadingIconColor: Colors.white,
+          actions: [
+            IconButton(onPressed: () {
+              Get.to(()=> const SettingsScreen());
+            }, icon: const Icon(Icons.settings)),
+            const SizedBox(
+              width: 10,
+            )
+          ],
           elevation: 0),
       body: SingleChildScrollView(
         child: Column(

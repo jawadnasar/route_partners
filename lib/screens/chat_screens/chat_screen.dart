@@ -203,7 +203,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       height: Get.height * 0.08,
                       width: double.infinity,
                       child: Align(
-                        alignment: message?.isSentByme == true
+                        alignment: message.isSentByme == true
                             ? Alignment.bottomLeft
                             : Alignment.centerRight,
                         child: Center(

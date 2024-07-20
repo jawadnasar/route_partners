@@ -14,10 +14,11 @@ class CommonImageView extends StatelessWidget {
   double? height;
   double? width;
   double? radius;
+  final Color? color;
   final BoxFit fit;
   final String placeHolder;
 
-  CommonImageView({
+  CommonImageView({super.key, 
     this.url,
     this.imagePath,
     this.svgPath,
@@ -27,6 +28,7 @@ class CommonImageView extends StatelessWidget {
     this.radius = 0.0,
     this.fit = BoxFit.cover,
     this.placeHolder = 'assets/images/no_image_found.png',
+    this.color,
   });
 
   @override
@@ -47,6 +49,7 @@ class CommonImageView extends StatelessWidget {
             height: height,
             width: width,
             fit: fit,
+            color: color,
           ),
         ),
       );
@@ -58,6 +61,7 @@ class CommonImageView extends StatelessWidget {
           height: height,
           width: width,
           fit: fit,
+          color: color,
         ),
       );
     } else if (url != null && url!.isNotEmpty) {
@@ -65,6 +69,7 @@ class CommonImageView extends StatelessWidget {
         borderRadius: BorderRadius.circular(radius!),
         child: CachedNetworkImage(
           height: height,
+          color: color,
           width: width,
           fit: fit,
           imageUrl: url!,
@@ -87,6 +92,7 @@ class CommonImageView extends StatelessWidget {
             height: height,
             width: width,
             fit: fit,
+            color: color,
           ),
         ),
       );
@@ -98,6 +104,7 @@ class CommonImageView extends StatelessWidget {
           height: height,
           width: width,
           fit: fit,
+          color: color,
         ),
       );
     }

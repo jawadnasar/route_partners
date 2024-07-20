@@ -9,6 +9,7 @@ import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
 import 'package:route_partners/core/utils/validators.dart';
 import 'package:route_partners/screens/additional_info/landing_page.dart';
+import 'package:route_partners/screens/authentication_screens/login_screen.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/my_textfield_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
@@ -35,6 +36,10 @@ class PhoneAuthAndSocial extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Center(child: logoWidget()),
+            const SizedBox(
+              height: 20,
+            ),
             const Text(
               'Country/Region',
               style: TextStyle(color: kGreyColor3),
@@ -66,7 +71,7 @@ class PhoneAuthAndSocial extends StatelessWidget {
               ),
             ),
             const SizedBox(
-              height: 50,
+              height: 20,
             ),
             MyButton(
               radius: 5,

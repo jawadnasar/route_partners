@@ -1,7 +1,4 @@
-// import 'package:bike_gps/core/constants/app_colors.dart';
-// import 'package:bike_gps/core/constants/app_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_fonts.dart';
 

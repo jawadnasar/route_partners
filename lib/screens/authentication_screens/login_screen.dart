@@ -48,6 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const logoWidget(),
               Form(
                 key: _authController.loginFormKey,
                 child: Column(
@@ -221,6 +222,25 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class logoWidget extends StatelessWidget {
+  const logoWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 120,
+      width: 120,
+      decoration: const BoxDecoration(
+          color: kPrimaryColor,
+          shape: BoxShape.circle,
+          image: DecorationImage(
+              image: AssetImage(Assets.imagesLogo), fit: BoxFit.contain)),
     );
   }
 }

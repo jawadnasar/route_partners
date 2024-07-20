@@ -83,6 +83,7 @@ class MyTextField extends StatelessWidget {
               ],
             ),
             child: TextFormField(
+              
               readOnly: readonly ?? false,
               cursorColor: kDarkGreyColor,
               onTap: onTap,
@@ -106,7 +107,7 @@ class MyTextField extends StatelessWidget {
                 // fontFamily: AppFonts.POPPINS,
               ),
               decoration: InputDecoration(
-                // fillColor: kPrimaryColor,
+                
                 contentPadding: contentPadding ??
                     EdgeInsets.symmetric(
                       vertical: maxLines! > 1 ? 15 : 0,
@@ -138,7 +139,7 @@ class MyTextField extends StatelessWidget {
                       ),
                   ],
                 ),
-                fillColor: fillColor,
+                fillColor: fillColor ?? kPrimaryColor.withOpacity(0.05),
                 filled: filled ?? false,
                 enabledBorder: UnderlineInputBorder(
                   borderSide:

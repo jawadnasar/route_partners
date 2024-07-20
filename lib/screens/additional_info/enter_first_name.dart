@@ -19,6 +19,7 @@ class EnterFirstAndLastName extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             MyTextField(
+              
               labelText: 'What\'s your name?',
               hintText: 'Enter your first name',
               controller: _authController.firstController,

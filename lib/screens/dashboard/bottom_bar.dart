@@ -3,11 +3,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/controllers/create_ride_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
+import 'package:route_partners/core/constants/app_fonts.dart';
 import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/core/utils/formatters/date_fromatter.dart';
 import 'package:route_partners/core/utils/snackbars.dart';
 import 'package:route_partners/screens/browse_rides/browse_rides.dart';
 import 'package:route_partners/screens/google_maps_screen/google_maps_screen.dart';
+import 'package:route_partners/screens/notifications/notifications.dart';
 import 'package:route_partners/screens/publish_ride/publish_ride.dart';
 import 'package:route_partners/screens/widget/custom_drop_down_widget.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
@@ -25,6 +27,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? price = '50';
   int? index = 0;
+  Color? selectedTabColor;
+  int selectedTab = 0;
 
   final _createRideController = Get.find<CreateRideController>();
 
@@ -51,7 +55,9 @@ class _HomePageState extends State<HomePage> {
             centerTitle: false,
             actions: [
               IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(() => const Notifications());
+                  },
                   icon: const FaIcon(
                     FontAwesomeIcons.bell,
                     color: kTextColor,
@@ -69,43 +75,37 @@ class _HomePageState extends State<HomePage> {
                 height: 20,
               ),
               TabBar(
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  splashBorderRadius: BorderRadius.circular(5),
-                  tabs: [
-                    AnimatedContainer(
-                      width: Get.width,
-                      decoration: const BoxDecoration(color: kPrimaryColor),
-                      duration: const Duration(seconds: 2),
-                      child: Tab(
-                        child: MyText(
-                          text: 'Find a ride',
-                          size: 13,
-                          weight: FontWeight.w900,
-                          color: kGreyColor3,
-                        ),
-                      ),
+                onTap: (value) {
+                  setState(() {
+                    selectedTab = value;
+                  });
+                },
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelColor: Colors.white,
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                // Selected tab text color
+                unselectedLabelColor: kGreyColor3, // Unselected tab text color
+                labelStyle: const TextStyle(color: Colors.white),
+                splashBorderRadius: BorderRadius.circular(5),
+                indicator: BoxDecoration(
+                    color: kPrimaryColor,
+                    borderRadius: BorderRadius.circular(40)),
+                tabs: const [
+                  Tab(child: Text('     Find a ride     ')),
+                  Tab(
+                    child: Text(
+                      '     Create a ride     ',
+                      style: TextStyle(fontFamily: AppFonts.DM_SANS),
                     ),
-                    Tab(
-                      child: MyText(
-                        text: 'Create a ride',
-                        size: 13,
-                        weight: FontWeight.w900,
-                        color: kGreyColor3,
-                      ),
-                    ),
-                  ]),
+                  ),
+                ],
+              ),
 
               Expanded(
                 child: TabBarView(children: [
                   ListView(
-                    // crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      // stepperContainer(
-                      //   title: 'Enter Pickup Location',
-                      //   onTap: () {
-                      //     // Get.to(() => const GoogleMapsScreen());
-                      //   },
-                      // ),
                       const Stack(
                         children: [],
                       ),
@@ -198,7 +198,6 @@ class _HomePageState extends State<HomePage> {
                       SizedBox(
                         height: Get.height * 0.01,
                       ),
-
                       MyButton(
                         radius: 5,
                         onTap: () {

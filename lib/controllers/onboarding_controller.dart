@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/controllers/auth_controller.dart';
 import 'package:route_partners/core/bindings/bindings.dart';
@@ -8,7 +5,6 @@ import 'package:route_partners/screens/additional_info/date_of_birth.dart';
 import 'package:route_partners/screens/additional_info/enter_email.dart';
 import 'package:route_partners/screens/additional_info/enter_first_name.dart';
 import 'package:route_partners/screens/additional_info/select_gender.dart';
-import 'package:route_partners/screens/dashboard/bottom_bar.dart';
 import 'package:route_partners/screens/dashboard/bottom_navigation_bar.dart';
 
 class OnboardingController extends GetxController {

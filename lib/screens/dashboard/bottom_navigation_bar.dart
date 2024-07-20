@@ -20,7 +20,6 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     var bottomBarCont = Get.put<BottomBarController>(BottomBarController());
-
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: GetBuilder<BottomBarController>(
@@ -79,12 +78,7 @@ class _DashBoardState extends State<DashBoard> {
         builder: (cont) {
           return IndexedStack(
             index: bottomBarCont.selectedIndex,
-            children:  const [
-              HomePage(),
-              MyRides(),
-              MyChats(),
-              ProfileScreen()
-            ],
+            children: const [HomePage(), MyRides(), MyChats(), ProfileScreen()],
           );
         },
       ),
