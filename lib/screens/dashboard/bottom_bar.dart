@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/controllers/create_ride_controller.dart';
+import 'package:route_partners/controllers/find_ride_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_fonts.dart';
 import 'package:route_partners/core/constants/app_images.dart';
@@ -31,13 +32,15 @@ class _HomePageState extends State<HomePage> {
   int selectedTab = 0;
 
   final _createRideController = Get.find<CreateRideController>();
+  final _findRideController = Get.find<FindRideController>();
 
   Future<DateTime> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
     if (picked != null) {
       return picked;
     }
@@ -106,16 +109,19 @@ class _HomePageState extends State<HomePage> {
                 child: TabBarView(children: [
                   ListView(
                     children: [
-                      const Stack(
-                        children: [],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
                       stepperContainer(
                         title: 'Enter Pickup Location',
+                        controller:
+                            _findRideController.pickupLocationController,
                         onTap: () {
-                          Get.to(() => const GoogleMapsScreen());
+                          Get.to(() => GoogleMapsScreen(
+                                controller: _findRideController
+                                    .pickupLocationController,
+                                latController:
+                                    _findRideController.pickupLatController,
+                                lngController:
+                                    _findRideController.pickupLngController,
+                              ));
                         },
                       ),
                       Row(
@@ -151,9 +157,21 @@ class _HomePageState extends State<HomePage> {
                       ),
                       stepperContainer(
                         title: 'Enter Drop Location',
+                        controller:
+                            _findRideController.dropoffLocationController,
                         onTap: () {
-                          Get.to(() => const GoogleMapsScreen());
+                          Get.to(() => GoogleMapsScreen(
+                                controller: _findRideController
+                                    .dropoffLocationController,
+                                latController:
+                                    _findRideController.dropoffLatController,
+                                lngController:
+                                    _findRideController.dropoffLngController,
+                              ));
                         },
+                      ),
+                      const SizedBox(
+                        height: 25,
                       ),
                       MyText(
                         text: 'Date of Departure',
@@ -163,43 +181,29 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         height: 10,
                       ),
-                      InkWell(
-                        onTap: () {
-                          selectDate(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          decoration: BoxDecoration(
-                            color: kPrimaryColor.withOpacity(0.05)
-                          ),
-                          child: Row(
-                            children: [
-                              MyText(
-                                text: 'Saturday, 15th May',
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Obx(
+                              () => MyText(
+                                text: DateFormatters.instance.formatStringDate(
+                                    date:
+                                        _findRideController.selectedDate.value),
                                 color: kGreyColor8,
                                 weight: FontWeight.w700,
                               ),
-                              const Spacer(),
-                              TextButton(
-                                  onPressed: () {},
-                                  child: MyText(
-                                    text: 'TODAY',
-                                    weight: FontWeight.w900,
-                                    color: kPrimaryColor,
-                                  )),
-                              const SizedBox(
-                                width: 5,
-                              ),
-                              TextButton(
-                                  onPressed: () {},
-                                  child: MyText(
-                                    text: 'TOMORROW',
-                                    weight: FontWeight.w900,
-                                    color: kGreyColor5,
-                                  ))
-                            ],
+                            ),
                           ),
-                        ),
+                          IconButton(
+                              onPressed: () async {
+                                _findRideController.selectedDate.value =
+                                    await selectDate(context);
+                              },
+                              icon: const Icon(
+                                Icons.calendar_month_outlined,
+                                color: kGreyColor6,
+                              )),
+                        ],
                       ),
                       const Divider(
                         color: kGreyColor8,
@@ -210,7 +214,16 @@ class _HomePageState extends State<HomePage> {
                       MyButton(
                         radius: 5,
                         onTap: () {
-                          Get.to(() => const BrowseRides());
+                          final customSnackbars = CustomSnackBars.instance;
+                          if (_findRideController
+                                  .pickupLocationController.text.isEmpty ||
+                              _findRideController
+                                  .dropoffLocationController.text.isEmpty) {
+                            customSnackbars.showFailureSnackbar(
+                                title: 'Error', message: 'Incomplete Details');
+                          } else {
+                            Get.to(() => const BrowseRides());
+                          }
                         },
                         bgColor: kPrimaryColor,
                         buttonText: 'SEARCH',
@@ -267,32 +280,32 @@ class _HomePageState extends State<HomePage> {
                       const Divider(
                         color: kGreyColor8,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          MyText(
-                            text: 'Recent Searches',
-                            weight: FontWeight.w900,
-                          ),
-                          MyText(
-                            text: 'See All',
-                            color: kGreyColor,
-                            weight: FontWeight.w500,
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            for (int i = 0; i < 3; i++)
-                              const RecentSearchesWidget()
-                          ],
-                        ),
-                      )
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     MyText(
+                      //       text: 'Recent Searches',
+                      //       weight: FontWeight.w900,
+                      //     ),
+                      //     MyText(
+                      //       text: 'See All',
+                      //       color: kGreyColor,
+                      //       weight: FontWeight.w500,
+                      //     )
+                      //   ],
+                      // ),
+                      // const SizedBox(
+                      //   height: 15,
+                      // ),
+                      // SingleChildScrollView(
+                      //   scrollDirection: Axis.horizontal,
+                      //   child: Row(
+                      //     children: [
+                      //       for (int i = 0; i < 3; i++)
+                      //         const RecentSearchesWidget()
+                      //     ],
+                      //   ),
+                      // )
                     ],
                   ),
 
@@ -311,6 +324,10 @@ class _HomePageState extends State<HomePage> {
                             () => GoogleMapsScreen(
                               controller: _createRideController
                                   .pickupLocationController,
+                              latController:
+                                  _createRideController.pickupLatController,
+                              lngController:
+                                  _createRideController.pickupLngController,
                             ),
                           );
                         },
@@ -358,6 +375,10 @@ class _HomePageState extends State<HomePage> {
                           Get.to(() => GoogleMapsScreen(
                                 controller: _createRideController
                                     .dropoffLocationController,
+                                latController:
+                                    _createRideController.dropoffLatController,
+                                lngController:
+                                    _createRideController.dropoffLngController,
                               ));
                         },
                       ),
@@ -374,17 +395,16 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: kPrimaryColor.withOpacity(0.05)
-                        ),
+                            color: kPrimaryColor.withOpacity(0.05)),
                         child: Row(
-                          
                           children: [
                             Expanded(
                               child: Obx(
                                 () => MyText(
-                                  text: DateFormatters.instance.formatStringDate(
-                                      date: _createRideController
-                                          .selectedDate.value),
+                                  text: DateFormatters.instance
+                                      .formatStringDate(
+                                          date: _createRideController
+                                              .selectedDate.value),
                                   color: kGreyColor8,
                                   weight: FontWeight.w700,
                                 ),
@@ -420,7 +440,6 @@ class _HomePageState extends State<HomePage> {
                             height: 10,
                           ),
                           MyTextField(
-                            
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 10),
                             hintText: 'Enter your vehicle name',
@@ -441,7 +460,7 @@ class _HomePageState extends State<HomePage> {
                               Expanded(
                                 child: Obx(
                                   () => CustomDropDown(
-                                    bgColor: kPrimaryColor.withOpacity(0.05),
+                                      bgColor: kPrimaryColor.withOpacity(0.05),
                                       heading: 'Available Seats',
                                       hint: 'Select Available Seats',
                                       selectedValue: _createRideController
@@ -465,7 +484,7 @@ class _HomePageState extends State<HomePage> {
                               Expanded(
                                 child: Obx(
                                   () => CustomDropDown(
-                                    bgColor: kPrimaryColor.withOpacity(0.05),
+                                      bgColor: kPrimaryColor.withOpacity(0.05),
                                       heading: 'Price per seat',
                                       hint: 'Select Available Seats',
                                       selectedValue: _createRideController
@@ -626,7 +645,7 @@ class RecentSearchesWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           MyText(
-            text: 'Gol Market, Meerut -> Sector 29 Gurgoon',
+            text: 'Gol Market, Meerut ➡️ Sector 29 Gurgoon',
             color: kTextColor,
             weight: FontWeight.w900,
           ),

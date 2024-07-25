@@ -188,4 +188,9 @@ class GoogleMapsService {
 
     return "";
   }
+
+  // Future<double> getDistance(
+  //     double startLat, double startLng, double endLat, double endLng) async {
+
+  //     }
 }

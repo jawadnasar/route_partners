@@ -8,6 +8,7 @@ import 'package:route_partners/model/user_model.dart';
 import 'package:route_partners/services/firebase/firebase_authentication.dart';
 import 'package:route_partners/services/firebase/firebase_crud.dart';
 import 'package:route_partners/services/google_maps/google_maps.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends GetxController {
   final _generalController = Get.find<GeneralController>();
@@ -29,9 +30,11 @@ class AuthController extends GetxController {
   RxBool isGoogleLoading = false.obs;
   RxBool isAuth = false.obs;
   RxBool isObscure = true.obs;
+  RxBool isEditLoading = false.obs;
 
   Future<void> singupEmailPassword() async {
     isLoading.value = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     final user = await _firebaseAuthService.signUpUsingEmailAndPassword(
         email: emailController.text, password: passwordController.text);
     if (user != null) {
@@ -44,12 +47,13 @@ class AuthController extends GetxController {
         firstName: firstController.text,
         lastName: lastController.text,
         gender: selectedGender.value,
-        phoneNumber: phoneNumberController.text,
-        countryCode: _generalController.dialCode.value,
+        phoneNumber:
+            '${_generalController.dialCode.value}${phoneNumberController.text}',
         latLng: GeoPoint(position?.latitude ?? 0.0, position?.longitude ?? 0),
       );
       await setUserInfo();
       await getUserInfo(user.uid);
+      await prefs.setString('route_partners_uid', user.uid);
       isAuth.value = true;
     }
     isLoading.value = false;
@@ -57,10 +61,14 @@ class AuthController extends GetxController {
 
   Future<void> loginEmailPassword() async {
     isLoading.value = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     final user = await _firebaseAuthService.signInUsingEmailAndPassword(
         email: emailController.text, password: passwordController.text);
     if (user != null) {
       await getUserInfo(user.uid);
+      await prefs.setString('route_partners_uid', user.uid);
+
       isAuth.value = true;
     }
     isLoading.value = false;
@@ -68,6 +76,8 @@ class AuthController extends GetxController {
 
   Future<void> googleLogin() async {
     isGoogleLoading.value = true;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     final user = await _firebaseAuthService.authWithGoogle();
 
     if (user.$1 != null) {
@@ -86,6 +96,8 @@ class AuthController extends GetxController {
         await setUserInfo();
       }
       await getUserInfo(user.$1!.uid);
+      await prefs.setString('route_partners_uid', user.$1!.uid);
+
       isAuth.value = true;
     }
     isGoogleLoading.value = false;
@@ -112,5 +124,83 @@ class AuthController extends GetxController {
       Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
       userModel.value = UserModel.fromMap(data);
     }
+  }
+
+  Future<bool> editUserInfo(String firstName, String lastName) async {
+    isEditLoading.value = true;
+    final edited = await _firebaseCrudService.updateDocumentSingleKey(
+      collection: usersCollection,
+      docId: userModel.value!.userId!,
+      key: 'firstName',
+      value: firstName,
+    );
+    final edited2 = await _firebaseCrudService.updateDocumentSingleKey(
+      collection: usersCollection,
+      docId: userModel.value!.userId!,
+      key: 'lastName',
+      value: lastName,
+    );
+    if (edited && edited2) {
+      await getUserInfo(userModel.value!.userId!);
+      isEditLoading.value = false;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  resetValues() {
+    phoneNumberController.clear();
+    firstController.clear();
+    lastController.clear();
+    emailController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
+    dateOfBirthController.clear();
+    userModel.value = null;
+    selectedGender.value = '';
+    isLoading.value = false;
+    isGoogleLoading.value = false;
+    isAuth.value = false;
+    isObscure.value = true;
+    isEditLoading.value = false;
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    phoneNumberController.dispose();
+    firstController.dispose();
+    lastController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    dateOfBirthController.dispose();
+    userModel.value = null;
+    selectedGender.value = '';
+    isLoading.value = false;
+    isGoogleLoading.value = false;
+    isAuth.value = false;
+    isObscure.value = true;
+    isEditLoading.value = false;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    phoneNumberController.dispose();
+    firstController.dispose();
+    lastController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+    dateOfBirthController.dispose();
+    userModel.value = null;
+    selectedGender.value = '';
+    isLoading.value = false;
+    isGoogleLoading.value = false;
+    isAuth.value = false;
+    isObscure.value = true;
+    isEditLoading.value = false;
   }
 }

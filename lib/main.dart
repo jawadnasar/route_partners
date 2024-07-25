@@ -14,6 +14,9 @@ void main() async {
   runApp(const MyApp());
 }
 
+const dummyProfileImage =
+    'https://firebasestorage.googleapis.com/v0/b/routepartners-9f2d4.appspot.com/o/boy.png?alt=media&token=f1b3a57b-b741-4f49-9638-102285dba0c1';
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

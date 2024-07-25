@@ -1,267 +1,261 @@
-import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:grouped_list/grouped_list.dart';
-import 'package:intl/intl.dart';
+import 'package:route_partners/controllers/chat_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
-import 'package:route_partners/core/enums/message_enum.dart';
-import 'package:route_partners/core/utils/chat_screen_utils/chat_screen_utils.dart';
-import 'package:route_partners/model/messages_model.dart';
-import 'package:route_partners/model/user_model.dart';
-import 'package:route_partners/screens/widget/message_type.dart';
+import 'package:route_partners/main.dart';
+import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/my_textfield_widget.dart';
 
-class ChatScreen extends StatefulWidget {
-  final UserModel? targetuser;
-  final UserModel? currentUser;
-  const ChatScreen({
-    super.key,
-    this.targetuser,
-    this.currentUser,
-  });
+class ChatScreen extends StatelessWidget {
+  final String chatId;
+  final String currentUserId;
 
-  @override
-  State<ChatScreen> createState() => _ChatScreenState();
-}
-
-class _ChatScreenState extends State<ChatScreen> {
-  TextEditingController controller = TextEditingController();
-  ScrollController scrollController = ScrollController();
-  FlutterSoundRecorder? flutterSound;
-  bool isRecorderInit = false;
-  bool isRecording = false;
-  void sendMessage() async {
-    if (controller.text.isNotEmpty) {
-      // ChatRepo().sendTextMessage(context, controller.text,
-      //     widget.targetuser!.uid!, widget.currentUser!);
-    }
-    controller.clear();
-  }
-
-  sendFileMessage(
-    File? file,
-    MessageEnum messageEnum,
-  ) {
-    // ChatRepo().sendImageFile(
-    //     context: context,
-    //     receiverUid: widget.targetuser!.uid!,
-    //     file: file,
-    //     messageEnum: messageEnum,
-    //     sendUserData: widget.currentUser);
-  }
-
-  // selectFile() async {
-  //   File? file = await UserInfoController.i.pickImage(context);
-  //   log(file!.path);
-  //   if (FileUtils.isrequiredImageExtension(file)) {
-  //     sendFileMessage(file, MessageEnum.image);
-  //   } else if (FileUtils.isrequiredVideoExtension(file)) {
-  //     sendFileMessage(file, MessageEnum.video);
-  //   }
-  // }
-
-  @override
-  void initState() {
-    flutterSound = FlutterSoundRecorder();
-    // openAudio();
-    super.initState();
-  }
-
-  // openAudio() async {
-  //   final status = await Permission.microphone.request();
-  //   if (status != PermissionStatus.granted) {
-  //     throw RecordingPermissionException('Mic Permission Not allowed');
-  //   }
-  //   await flutterSound!.openRecorder();
-  //   isRecorderInit = true;
-  // }
-
-  // void sendAudio() async {
-  //   var tempDir = await getTemporaryDirectory();
-  //   var path = '${tempDir.path}/flutter_sound.aac';
-
-  //   if (!ChatScreenController.i.isRecording) {
-  //     log('start recorder');
-  //     await flutterSound!.startRecorder(toFile: path);
-  //   } else {
-  //     await flutterSound!.stopRecorder();
-  //     sendFileMessage(File(path), MessageEnum.audio);
-  //     log('stop recorder');
-  //   }
-  //   ChatScreenController.i.resetisRecording();
-  // }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  ChatScreen({required this.chatId, required this.currentUserId});
 
   @override
   Widget build(BuildContext context) {
+    final _chatController = Get.find<ChatController>();
+    ScrollController scrollController = ScrollController();
     return Scaffold(
-        resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: true,
+      backgroundColor: kBackgroundColor,
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () => Get.back(),
+          child: const Icon(
+            Icons.arrow_back,
+            color: kBlackColor,
+          ),
+        ),
+        actions: [
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Icon(
+              FontAwesomeIcons.phone,
+              size: 20,
+              color: kBlackColor,
+            ),
+          ),
+          SizedBox(
+            width: Get.width * 0.02,
+          ),
+        ],
+        automaticallyImplyLeading: true,
+        centerTitle: true,
+        elevation: 0,
         backgroundColor: kBackgroundColor,
-        bottomNavigationBar: Row(
-          children: [
+        title: const Text(
+          'Chat',
+          style: TextStyle(
+            wordSpacing: 0.7,
+            fontWeight: FontWeight.w500,
+            color: kBlackColor,
+            fontSize: 20,
+          ),
+        ),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('chats')
+                  .doc(chatId)
+                  .collection('messages')
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.data!.docs.isEmpty) {
+                  return Center(
+                    child: MyText(text: 'No Messages Yet!'),
+                  );
+                }
+                final messages = snapshot.data!.docs;
+                List<Widget> messageBubbles = [];
+                for (var message in messages) {
+                  final messageText = message['text'];
+                  final messageSender = message['sender'];
+
+                  messageBubbles.add(
+                    FutureBuilder<DocumentSnapshot>(
+                      future: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(messageSender)
+                          .get(),
+                      builder: (context, userSnapshot) {
+                        if (!userSnapshot.hasData) {
+                          // return const Center(
+                          //     child: CircularProgressIndicator());
+                          return Container();
+                        }
+                        final userDoc = userSnapshot.data!;
+                        final userName = userDoc['firstName'];
+                        // final userProfileImage = userDoc['profileImage'];
+
+                        return MessageBubble(
+                          sender: userName,
+                          text: messageText,
+                          isMe: currentUserId == messageSender,
+                          userProfileImage: dummyProfileImage,
+                        );
+                      },
+                    ),
+                  );
+                }
+                return ListView(
+                  reverse: true,
+                  children: messageBubbles,
+                );
+              },
+            ),
+          ),
+          MessageInput(
+            chatId: chatId,
+            currentUserId: currentUserId,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MessageBubble extends StatelessWidget {
+  final String sender;
+  final String text;
+  final bool isMe;
+  final String userProfileImage;
+
+  MessageBubble(
+      {required this.sender,
+      required this.text,
+      required this.isMe,
+      required this.userProfileImage});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Row(
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          if (!isMe)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: SizedBox(
-                height: Get.height * 0.08,
-                width: Get.width * 0.7,
-                child: Flexible(
-                  child: MyTextField(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                    hintText: 'Write here...',
-                    controller: controller,
-                    isObSecure: false,
-                    // i const Icon(
-                    //   FontAwesomeIcons.faceSmile,
-                    //   color: Colors.grey,
-                    // ),
-                    // suffixIcon: GestureDetector(
-                    //   child: Icon(
-                    //      FontAwesomeIcons.microphone,
-                    //     color: Colors.red,
-                    //   ),
-                    // ),
-                  ),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(userProfileImage),
+              ),
+            ),
+          Column(
+            crossAxisAlignment:
+                isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: [
+              Text(
+                sender,
+                style: TextStyle(
+                  fontSize: 12.0,
+                  color: Colors.black54,
                 ),
               ),
-            ),
-            const Spacer(),
-            InkWell(
-              onTap: () => sendMessage,
-              child: const CircleAvatar(
-                radius: 25,
-                backgroundColor: kPrimaryColor,
-                child: Center(
-                  child: Icon(
-                    FontAwesomeIcons.paperPlane,
-                    size: 18,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-          ],
-        ),
-        appBar: AppBar(
-          leading: GestureDetector(
-            onTap: () => Get.back(),
-            child: const Icon(
-              Icons.arrow_back,
-              color: kBlackColor,
-            ),
-          ),
-          actions: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(
-                FontAwesomeIcons.phone,
-                size: 20,
-                color: kBlackColor,
-              ),
-            ),
-            SizedBox(
-              width: Get.width * 0.02,
-            ),
-          ],
-          automaticallyImplyLeading: true,
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: kBackgroundColor,
-          title: const Text(
-            'Ahmad',
-            style: TextStyle(
-              wordSpacing: 0.7,
-              fontWeight: FontWeight.w500,
-              color: kBlackColor,
-              fontSize: 20,
-            ),
-          ),
-        ),
-        body: SafeArea(
-          child: Container(
-            margin: const EdgeInsets.all(10),
-            child: Column(
-              children: [
-                Expanded(
-                  child: GroupedListView<Messages, DateTime>(
-                    controller: scrollController,
-                    elements: messages,
-                    groupBy: (Messages message) => DateTime(
-                      message.date!.year,
-                      message.date!.month,
-                      message.date!.day,
-                    ),
-                    groupHeaderBuilder: (Messages message) => SizedBox(
-                      height: Get.height * 0.08,
-                      width: double.infinity,
-                      child: Align(
-                        alignment: message.isSentByme == true
-                            ? Alignment.bottomLeft
-                            : Alignment.centerRight,
-                        child: Center(
-                          child: Text(
-                            ChatScreenUtils.formatTime(
-                              message.date.toString(),
-                            ),
-                            style: const TextStyle(color: kGreyColor4),
-                          ),
-                        ),
+              Material(
+                borderRadius: isMe
+                    ? BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        bottomLeft: Radius.circular(30.0),
+                        bottomRight: Radius.circular(30.0),
+                      )
+                    : BorderRadius.only(
+                        topRight: Radius.circular(30.0),
+                        bottomLeft: Radius.circular(30.0),
+                        bottomRight: Radius.circular(30.0),
                       ),
+                elevation: 5.0,
+                color: isMe ? Colors.lightBlueAccent : Colors.white,
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color: isMe ? Colors.white : Colors.black54,
+                      fontSize: 15.0,
                     ),
-                    itemBuilder: (context, Messages? message) {
-                      return Column(
-                        crossAxisAlignment: message?.isSentByme == true
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        children: [
-                          Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  ChatScreenUtils().borderSide(message!),
-                            ),
-                            color: message.isSentByme == true
-                                ? kPrimaryColor
-                                : Colors.white,
-                            elevation: 2,
-                            child: Padding(
-                              padding: const EdgeInsets.all(15.0),
-                              child: MessageType(
-                                message: message,
-                                type: message.type,
-                              ),
-                            ),
-                          ),
-                          Align(
-                            alignment: message.isSentByme!
-                                ? Alignment.centerRight
-                                : Alignment.centerLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                                DateFormat('hh:mm a').format(message.date!),
-                                style: const TextStyle(
-                                  color: kTextColor,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
                   ),
                 ),
-              ],
+              ),
+            ],
+          ),
+          if (isMe)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: CircleAvatar(
+                backgroundImage: NetworkImage(userProfileImage),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class MessageInput extends StatefulWidget {
+  final String chatId;
+  final String currentUserId;
+
+  MessageInput({required this.chatId, required this.currentUserId});
+
+  @override
+  _MessageInputState createState() => _MessageInputState();
+}
+
+class _MessageInputState extends State<MessageInput> {
+  final _chatController = Get.find<ChatController>();
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: SizedBox(
+            height: Get.height * 0.08,
+            width: Get.width * 0.7,
+            child: MyTextField(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+              hintText: 'Write here...',
+              controller: _chatController.messageController,
+              isObSecure: false,
             ),
           ),
-        ));
+        ),
+        const Spacer(),
+        InkWell(
+          onTap: () {
+            if (_chatController.messageController.text.trim().isNotEmpty) {
+              _chatController.sendMessage(widget.chatId, widget.currentUserId,
+                  _chatController.messageController.text.trim());
+            }
+            _chatController.messageController.clear();
+          },
+          child: const CircleAvatar(
+            radius: 25,
+            backgroundColor: kPrimaryColor,
+            child: Center(
+              child: Icon(
+                FontAwesomeIcons.paperPlane,
+                size: 18,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+      ],
+    );
   }
 }

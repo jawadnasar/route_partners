@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:route_partners/controllers/auth_controller.dart';
 import 'package:route_partners/core/constants/firebase_collection_references.dart';
 import 'package:route_partners/model/ride_request_model.dart';
@@ -18,25 +20,42 @@ class CreateRideController extends GetxController {
   final pickupLocationController = TextEditingController();
   final dropoffLocationController = TextEditingController();
   final noteController = TextEditingController();
+  final pickupLatController = TextEditingController();
+  final pickupLngController = TextEditingController();
+  final dropoffLatController = TextEditingController();
+  final dropoffLngController = TextEditingController();
   RxBool isCreatingLoading = false.obs;
-  LatLng? pickupLatLng;
-  LatLng? dropoffLatLng;
 
   Future<void> createRide() async {
     isCreatingLoading.value = true;
     final requestId = const Uuid().v4();
-    rideRequest.value = RideRequestModel(
-      requestId: requestId,
-      availableSeats: selectedSeats.value,
-      pickupAddress: pickupLocationController.text,
-      dropOfAddress: dropoffLocationController.text,
-      ownerId: _authController.userModel.value?.userId,
-      ownerLocation: _authController.userModel.value?.latLng,
-      pricePerSeat: selectedSeatPrice.value,
-      rideDate: selectedDate.value,
-      status: 'Requested',
-      vehicleName: vehicleNameController.text,
+    final pickupGeoPoint = GeoPoint(
+      double.parse(pickupLatController.text),
+      double.parse(pickupLngController.text),
     );
+    final dropoffGeoPoint = GeoPoint(
+      double.parse(dropoffLatController.text),
+      double.parse(dropoffLngController.text),
+    );
+    rideRequest.value = RideRequestModel(
+        requestId: requestId,
+        availableSeats: int.parse(selectedSeats.value),
+        pickupAddress: pickupLocationController.text,
+        dropOfAddress: dropoffLocationController.text,
+        ownerId: _authController.userModel.value?.userId,
+        ownerLocation: _authController.userModel.value?.latLng,
+        pricePerSeat: selectedSeatPrice.value,
+        rideDate: selectedDate.value,
+        rideDay: DateFormat('yyyy-MM-dd').format(selectedDate.value),
+        status: 'Published',
+        vehicleName: vehicleNameController.text,
+        pickupLocation: pickupGeoPoint,
+        dropoffLocation: dropoffGeoPoint,
+        note: noteController.text,
+        ownerPhoneNumber: _authController.userModel.value?.phoneNumber,
+        publishDate: DateTime.now(),
+        ownerName:
+            '${_authController.userModel.value?.firstName ?? ''} ${_authController.userModel.value?.lastName ?? ''}');
     await _firebaseCRUDService.createDocument(
       collectionReference: rideRequestsCollection,
       docId: requestId,

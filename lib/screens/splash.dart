@@ -2,10 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:route_partners/controllers/auth_controller.dart';
+import 'package:route_partners/core/bindings/bindings.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/core/utils/snackbars.dart';
+import 'package:route_partners/screens/dashboard/bottom_navigation_bar.dart';
 import 'package:route_partners/screens/onboarding_screens/onboarding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   final bool? isHerefromGoogleSIgnin;
@@ -49,9 +53,18 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  void _handleSplashScreen() {
-    Timer(const Duration(seconds: 6), () {
-      Get.to(() => const OnboardingScreen());
+  void _handleSplashScreen() async {
+    final authController = Get.find<AuthController>();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final uid = prefs.getString('route_partners_uid');
+
+    Timer(const Duration(seconds: 3), () async {
+      if (uid == null) {
+        Get.to(() => const OnboardingScreen());
+      } else {
+        await authController.getUserInfo(uid);
+        Get.offAll(() => const DashBoard(), binding: HomeBindings());
+      }
     });
   }
 }

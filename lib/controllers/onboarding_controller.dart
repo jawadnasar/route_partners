@@ -65,6 +65,7 @@ class OnboardingController extends GetxController {
     if (currentStep.value == steps.length - 1) {
       await _authController.singupEmailPassword();
       if (_authController.isAuth.value) {
+        OnboardingController.instance.currentStep.value = 0;
         Get.offAll(() => const DashBoard(), binding: HomeBindings());
       }
     } else {
@@ -96,5 +97,17 @@ class OnboardingController extends GetxController {
     } else {
       trainerStep--;
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    currentStep.value = 0;
+  }
+
+  @override
+  void onClose() {
+    currentStep.value = 0;
+    super.onClose();
   }
 }

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:route_partners/controllers/auth_controller.dart';
 import 'package:route_partners/controllers/bottom_bar_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/screens/chat_screens/my_chats.dart';
@@ -20,6 +21,8 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     var bottomBarCont = Get.put<BottomBarController>(BottomBarController());
+    final _authController = Get.find<AuthController>();
+
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: GetBuilder<BottomBarController>(
@@ -78,7 +81,14 @@ class _DashBoardState extends State<DashBoard> {
         builder: (cont) {
           return IndexedStack(
             index: bottomBarCont.selectedIndex,
-            children: const [HomePage(), MyRides(), MyChats(), ProfileScreen()],
+            children: [
+              HomePage(),
+              MyRides(),
+              MyChats(
+                currentUserId: _authController.userModel.value!.userId!,
+              ),
+              ProfileScreen()
+            ],
           );
         },
       ),

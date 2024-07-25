@@ -130,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   MyText(
                     onTap: () {
+                      _authController.resetValues();
                       Get.to(() => PhoneAuthAndSocial());
                     },
                     text: 'Signup',
@@ -180,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: () async {
                           await _authController.googleLogin();
                           if (_authController.isAuth.value) {
-                            Get.offAll(() => const HomePage(),
+                            Get.offAll(() => const DashBoard(),
                                 binding: HomeBindings());
                           }
                         },

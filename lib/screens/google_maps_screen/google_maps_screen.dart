@@ -11,8 +11,11 @@ import 'package:route_partners/screens/widget/my_textfield_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
 
 class GoogleMapsScreen extends StatefulWidget {
-  const GoogleMapsScreen({ this.controller, super.key});
+  const GoogleMapsScreen(
+      {this.controller, this.latController, this.lngController, super.key});
   final TextEditingController? controller;
+  final TextEditingController? latController;
+  final TextEditingController? lngController;
 
   @override
   State<GoogleMapsScreen> createState() => _GoogleMapsScreenState();
@@ -27,6 +30,14 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
       AddressController.i.longitude = value.longitude;
       AddressController.i.initialAddress(value.latitude, value.longitude);
       log('latitude: ${AddressController.i.latitude} , longitude ${AddressController.i.longitude}');
+
+      widget.controller?.text = AddressController.address!;
+      widget.latController?.text = AddressController.i.latitude.toString();
+      widget.lngController?.text = AddressController.i.longitude.toString();
+      log('Address : ${AddressController.address}');
+      log('Address : ${AddressController.i.latitude.toString()}');
+      log('Address : ${AddressController.i.longitude.toString()}');
+
       AddressController.i.markers.clear();
       AddressController.i.markers.add(Marker(
           infoWindow: const InfoWindow(
@@ -85,8 +96,11 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                                       zoom: 14,
                                       target: LatLng(argument.latitude,
                                           argument.longitude))));
-                              log(AddressController.i.currentLocation
-                                  .toString());
+                              // log(AddressController.i.currentLocation
+                              //         .toString() +
+                              //     'hahah');
+                              // log('ARG LAT : ${argument.latitude}');
+                              // log('ARG LNG : ${argument.longitude}');
 
                               List<Placemark>? placemark =
                                   await placemarkFromCoordinates(
@@ -102,6 +116,15 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                                       AddressController.address!);
                               widget.controller?.text =
                                   AddressController.address!;
+                              widget.latController?.text = AddressController
+                                  .i.currentLocation!.last.latitude
+                                  .toString();
+                              widget.lngController?.text = AddressController
+                                  .i.currentLocation!.last.longitude
+                                  .toString();
+                              log('Address : ${widget.controller!.text.toString()}');
+                              log('LAT : ${widget.latController?.text}');
+                              log('LNG : ${widget.lngController?.text}');
                             },
                             initialCameraPosition: CameraPosition(
                                 target: LatLng(AddressController.i.latitude!,
@@ -215,6 +238,15 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
                                             .longitude)));
                                 widget.controller?.text =
                                     AddressController.address!;
+                                widget.latController?.text = AddressController
+                                    .i.currentLocation!.last.latitude
+                                    .toString();
+                                widget.lngController?.text = AddressController
+                                    .i.currentLocation!.last.longitude
+                                    .toString();
+                                log('Address : ${AddressController.address}');
+                                log('LAT : ${widget.latController?.text}');
+                                log('LNG : ${widget.lngController?.text}');
                               },
                               child: Container(
                                 color: Colors.white,

@@ -36,7 +36,11 @@ class CustomSnackBars {
         snackPosition: SnackPosition.BOTTOM,
         borderRadius: 5.0,
         mainButton: TextButton(
-            onPressed: () => Get.back(), child: const Text('Dismiss')),
+            onPressed: () => Get.back(),
+            child: const Text(
+              'Dismiss',
+              style: TextStyle(color: Colors.white),
+            )),
         // boxShadows: BoxShadow()
         icon: const Icon(Icons.check_circle_rounded, color: Colors.green));
   }
@@ -57,13 +61,22 @@ class CustomSnackBars {
         snackPosition: SnackPosition.BOTTOM,
         borderRadius: 5.0,
         mainButton: TextButton(
-            onPressed: () => Get.back(), child: const Text('Dismiss')),
+            onPressed: () => Get.back(),
+            child: const Text(
+              'Dismiss',
+              style: TextStyle(color: Colors.white),
+            )),
         // boxShadows: BoxShadow()
         icon: const Icon(Icons.warning, color: Colors.red));
   }
 
-
-  void showToast({required String message}){
-    Fluttertoast.showToast(msg: message,fontSize: 14,backgroundColor: kSecondaryColor,textColor: kPrimaryColor,toastLength: Toast.LENGTH_SHORT,);
+  void showToast({required String message}) {
+    Fluttertoast.showToast(
+      msg: message,
+      fontSize: 14,
+      backgroundColor: kSecondaryColor,
+      textColor: kPrimaryColor,
+      toastLength: Toast.LENGTH_SHORT,
+    );
   }
 }

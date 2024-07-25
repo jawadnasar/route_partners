@@ -1,38 +1,71 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:route_partners/controllers/ride_details.dart';
+import 'package:intl/intl.dart';
+import 'package:route_partners/controllers/find_ride_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_fonts.dart';
 import 'package:route_partners/core/constants/app_images.dart';
+import 'package:route_partners/core/utils/snackbars.dart';
+import 'package:route_partners/model/ride_request_model.dart';
 import 'package:route_partners/screens/browse_rides/browse_rides.dart';
 import 'package:route_partners/screens/dashboard/bottom_bar.dart';
+import 'package:route_partners/screens/google_maps_screen/google_map_route_screen.dart';
 import 'package:route_partners/screens/ride_booked/ride_booked.dart';
 import 'package:route_partners/screens/widget/common_image_view_widget.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RideDetails extends StatelessWidget {
-  const RideDetails({super.key});
+  RideRequestModel request;
+  double distance;
+  RideDetails({required this.request, required this.distance, super.key});
+  final _findRideController = Get.find<FindRideController>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: simpleAppBar(centerTitle: false, title: 'Ride Details'),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 10,
-            ),
-            tripInfo(),
-            const SizedBox(
-              height: 10,
-            ),
-            driverDetailsAndCoPassengers()
-          ],
-        ),
+      body: Column(
+        children: [
+          const SizedBox(
+            height: 10,
+          ),
+          tripInfo(),
+          const SizedBox(
+            height: 10,
+          ),
+          driverDetailsAndCoPassengers(),
+          // const Spacer(),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 20),
+          //   child: Row(
+          //     children: [
+          //       Expanded(
+          //         child: Obx(
+          //           () => MyButton(
+          //               buttonText: 'Book',
+          //               showLoading: _findRideController.isBookLoading.value
+          //                   ? true
+          //                   : false,
+          //               bgColor: kPrimaryColor,
+          //               textColor: Colors.white,
+          //               radius: 5,
+          //               width: Get.width * 0.4,
+          //               onTap: () async {
+          //                 _findRideController.bookRide(request.requestId ?? '');
+          //                 Get.to(() => const RideBookedSuccessfully());
+          //               }),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // )
+        ],
       ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(color: Colors.white),
@@ -41,39 +74,56 @@ class RideDetails extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-                            const SizedBox(height: 10,),
-
+            const SizedBox(
+              height: 10,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
                   onTap: () {
-                    showSelectSeatsBottomSheet();
+                    showSelectSeatsBottomSheet(request.availableSeats ?? 0);
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      MyText(
-                        text: 'Select Seats',
-                        color: kTextColor4,
-                        weight: FontWeight.w400,
-                        size: 12,
+                      Obx(
+                        () => MyText(
+                          text: _findRideController.numberOfSeats.value == 0
+                              ? 'Select Seats'
+                              : '${_findRideController.numberOfSeats.value} selected',
+                          color: kTextColor4,
+                          weight: FontWeight.w400,
+                          size: 12,
+                        ),
                       ),
                       const Icon(Icons.arrow_drop_down)
                     ],
                   ),
                 ),
-                MyButton(
-                    bgColor: kPrimaryColor,
-                    textColor: Colors.white,
-                    radius: 5,
-                    width: Get.width * 0.4,
-                    onTap: () {
-                      Get.to(() => const RideBookedSuccessfully());
-                    })
+                Obx(
+                  () => MyButton(
+                      buttonText: 'Book',
+                      showLoading: _findRideController.isBookLoading.value
+                          ? true
+                          : false,
+                      bgColor: kPrimaryColor,
+                      textColor: Colors.white,
+                      radius: 5,
+                      width: Get.width * 0.4,
+                      onTap: () async {
+                        if (_findRideController.numberOfSeats.value == 0) {
+                          CustomSnackBars.instance.showFailureSnackbar(
+                              title: 'Select Seats',
+                              message: 'Select number of seats to continue');
+                        } else {
+                          _findRideController.bookRide(request.requestId ?? '');
+                          Get.to(() => const RideBookedSuccessfully());
+                        }
+                      }),
+                )
               ],
             ),
-            
             MyText(
               text: 'Select a Seat',
               weight: FontWeight.w900,
@@ -83,6 +133,16 @@ class RideDetails extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _launchDialer(String phoneNumber) async {
+    log(phoneNumber);
+    final url = 'tel:$phoneNumber';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   Container driverDetailsAndCoPassengers() {
@@ -121,39 +181,39 @@ class RideDetails extends StatelessWidget {
               ),
             ),
             title: MyText(
-              text: 'Driver',
+              text: request.ownerName ?? 'Driver',
               size: 12,
               weight: FontWeight.w900,
               color: kTextColor,
             ),
-            subtitle: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                MyText(
-                  text: '4.5',
-                  color: kGreyColor8,
-                  weight: FontWeight.w900,
-                  size: 12,
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                const Icon(
-                  Icons.star,
-                  color: Colors.yellow,
-                  size: 15,
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                MyText(
-                  text: '27 ratings',
-                  color: kGreyColor8,
-                  weight: FontWeight.w900,
-                  size: 12,
-                ),
-              ],
-            ),
+            // subtitle: Row(
+            //   mainAxisSize: MainAxisSize.min,
+            //   children: [
+            //     MyText(
+            //       text: '4.5',
+            //       color: kGreyColor8,
+            //       weight: FontWeight.w900,
+            //       size: 12,
+            //     ),
+            //     const SizedBox(
+            //       width: 5,
+            //     ),
+            //     const Icon(
+            //       Icons.star,
+            //       color: Colors.yellow,
+            //       size: 15,
+            //     ),
+            //     const SizedBox(
+            //       width: 5,
+            //     ),
+            //     MyText(
+            //       text: '27 ratings',
+            //       color: kGreyColor8,
+            //       weight: FontWeight.w900,
+            //       size: 12,
+            //     ),
+            //   ],
+            // ),
             trailing: const Icon(
               Icons.arrow_forward_ios,
               color: kGreyColor8,
@@ -170,14 +230,15 @@ class RideDetails extends StatelessWidget {
               SizedBox(
                 width: Get.width * 0.3,
                 child: MyText(
-                  text: 'Nexon HR26 7788 (blue)',
+                  text: request.vehicleName ?? '',
                   color: kGreyColor8,
                   size: 12,
                 ),
               ),
               const Spacer(),
               TextButton(
-                  onPressed: () {},
+                  onPressed: () => _launchDialer(
+                      request.ownerPhoneNumber ?? '+923209343053'),
                   child: MyText(
                     text: 'Contact Driver',
                     color: kPrimaryColor,
@@ -189,37 +250,37 @@ class RideDetails extends StatelessWidget {
           const Divider(
             color: kDarkGreyColor,
           ),
-          MyText(
-            text: 'Co-Passengers',
-            color: kBlackColor,
-            weight: FontWeight.bold,
-          ),
-          ListView.builder(
-              itemCount: 2,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const CircleAvatar(
-                    radius: 25,
-                    backgroundImage: AssetImage(Assets.boyIcon),
-                  ),
-                  title: MyText(
-                    text: 'Sher Ali ktk',
-                    color: kGreyColor8,
-                    size: 12,
-                  ),
-                  subtitle: MyText(
-                    text: 'Gurgoon -> Meerut',
-                    color: kGreyColor8,
-                    size: 12,
-                  ),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 15,
-                  ),
-                );
-              })
+          // MyText(
+          //   text: 'Co-Passengers',
+          //   color: kBlackColor,
+          //   weight: FontWeight.bold,
+          // ),
+          // ListView.builder(
+          //     itemCount: 2,
+          //     shrinkWrap: true,
+          //     itemBuilder: (context, index) {
+          //       return ListTile(
+          //         contentPadding: EdgeInsets.zero,
+          //         leading: const CircleAvatar(
+          //           radius: 25,
+          //           backgroundImage: AssetImage(Assets.boyIcon),
+          //         ),
+          //         title: MyText(
+          //           text: 'Sher Ali ktk',
+          //           color: kGreyColor8,
+          //           size: 12,
+          //         ),
+          //         subtitle: MyText(
+          //           text: 'Gurgoon -> Meerut',
+          //           color: kGreyColor8,
+          //           size: 12,
+          //         ),
+          //         trailing: const Icon(
+          //           Icons.arrow_forward_ios,
+          //           size: 15,
+          //         ),
+          //       );
+          //     })
         ],
       ),
     );
@@ -252,7 +313,8 @@ class RideDetails extends StatelessWidget {
                 width: 10,
               ),
               MyText(
-                text: 'Saturday, 15th May 2021',
+                text: DateFormat('EEEE, d MMMM y, h:mm a')
+                    .format(request.rideDate!),
                 color: kGreyColor4,
                 weight: FontWeight.w500,
                 fontFamily: AppFonts.SYNE,
@@ -263,26 +325,26 @@ class RideDetails extends StatelessWidget {
           const SizedBox(
             height: 10,
           ),
-          Row(
-            children: [
-              const Icon(
-                Icons.schedule,
-                size: 15,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              MyText(
-                  text: '2 hr 45 minutes (Estimated)',
-                  color: kGreyColor4,
-                  weight: FontWeight.w500,
-                  size: 12,
-                  fontFamily: AppFonts.SYNE)
-            ],
-          ),
-          const SizedBox(
-            height: 10,
-          ),
+          // Row(
+          //   children: [
+          //     const Icon(
+          //       Icons.schedule,
+          //       size: 15,
+          //     ),
+          //     const SizedBox(
+          //       width: 10,
+          //     ),
+          //     MyText(
+          //         text: '2 hr 45 minutes (Estimated)',
+          //         color: kGreyColor4,
+          //         weight: FontWeight.w500,
+          //         size: 12,
+          //         fontFamily: AppFonts.SYNE)
+          //   ],
+          // ),
+          // const SizedBox(
+          //   height: 10,
+          // ),
           Row(
             children: [
               const Icon(
@@ -293,7 +355,7 @@ class RideDetails extends StatelessWidget {
                 width: 10,
               ),
               MyText(
-                text: '110 km',
+                text: '${distance.toStringAsFixed(2)} km',
                 size: 12,
                 color: kGreyColor8,
                 weight: FontWeight.w500,
@@ -318,7 +380,7 @@ class RideDetails extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: SizedBox(
-                        height: 80,
+                        height: 20,
                         child: CustomPaint(
                           painter: DashedLineVerticalPainter(),
                         ),
@@ -331,7 +393,7 @@ class RideDetails extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              locationWidget(),
+              locationWidget(request),
             ],
           ),
           const Divider(
@@ -346,7 +408,7 @@ class RideDetails extends StatelessWidget {
                 color: kGreyColor8,
               ),
               MyText(
-                text: '2',
+                text: '${request.availableSeats ?? 0}',
                 size: 12,
                 color: kDarkGreyColor,
                 weight: FontWeight.w800,
@@ -365,7 +427,7 @@ class RideDetails extends StatelessWidget {
                 size: 12,
               ),
               MyText(
-                text: '240',
+                text: request.pricePerSeat ?? '0',
                 color: kDarkGreyColor,
                 size: 12,
                 weight: FontWeight.w800,
@@ -376,7 +438,7 @@ class RideDetails extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               MyText(
-                text: 'Pay via wallet, Cash or Card',
+                text: 'Pay via Cash (Card & Wallet Coming Soon!)',
                 color: kGreyColor8,
                 size: 12,
               ),
@@ -387,83 +449,106 @@ class RideDetails extends StatelessWidget {
     );
   }
 
-  locationWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        MyText(
-          size: 12,
-          text: 'Islamabad, Soan Gardens Society \nBlock C Street 8',
-          color: kTextColor4,
-          weight: FontWeight.w700,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const Icon(
-              Icons.directions_walk,
-              color: Colors.orange,
-              size: 15,
-            ),
-            MyText(
+  locationWidget(RideRequestModel request) {
+    return InkWell(
+      onTap: () {
+        Get.to(() => GoogleMapRoute(
+            startLoc: request.pickupLocation!,
+            endLoc: request.dropoffLocation!,
+            pickupAddress: request.pickupAddress ?? '',
+            dropoffAddress: request.dropOfAddress ?? '',
+            pricePerSeat: request.pricePerSeat ?? '50',
+            rideDate: request.rideDate ?? DateTime.now(),
+            publishedDate: request.publishDate ?? DateTime.now(),
+            name: request.ownerName ?? 'Driver',
+            vehicleName: request.vehicleName ?? 'Other Car',
+            phoneNumber: request.ownerPhoneNumber ?? '+923211010101',
+            isCustomerInfo: false));
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: Get.width * 0.7,
+            child: MyText(
               size: 12,
-              text: '4 km from your pickup location',
-              color: kGreyColor8,
-              weight: FontWeight.w500,
+              text: request.pickupAddress ?? '',
+              color: kTextColor4,
+              weight: FontWeight.w700,
             ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        MyText(
-          size: 12,
-          text: 'Islamabad, G8 Markaz',
-          color: kTextColor4,
-          weight: FontWeight.w700,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const Icon(
-              Icons.directions_walk,
-              color: kGreenColor,
-              size: 15,
-            ),
-            MyText(
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.start,
+          //   children: [
+          //     const Icon(
+          //       Icons.directions_walk,
+          //       color: Colors.orange,
+          //       size: 15,
+          //     ),
+          //     MyText(
+          //       size: 12,
+          //       text: '4 km from your pickup location',
+          //       color: kGreyColor8,
+          //       weight: FontWeight.w500,
+          //     ),
+          //   ],
+          // ),
+
+          SizedBox(
+            width: Get.width * 0.7,
+            child: MyText(
               size: 12,
-              text: '1.5 km from your drop location',
-              color: kGreyColor8,
-              weight: FontWeight.w500,
+              text: request.dropOfAddress ?? '',
+              color: kTextColor4,
+              weight: FontWeight.w700,
             ),
-          ],
-        ),
-        MyText(
-          size: 12,
-          text: '2:30 PM',
-          color: kGreyColor8,
-          weight: FontWeight.w500,
-        ),
-      ],
+          ),
+          // const SizedBox(
+          //   height: 10,
+          // ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.start,
+          //   children: [
+          //     const Icon(
+          //       Icons.directions_walk,
+          //       color: kGreenColor,
+          //       size: 15,
+          //     ),
+          //     MyText(
+          //       size: 12,
+          //       text: '1.5 km from your drop location',
+          //       color: kGreyColor8,
+          //       weight: FontWeight.w500,
+          //     ),
+          //   ],
+          // ),
+          // MyText(
+          //   size: 12,
+          //   text: '2:30 PM',
+          //   color: kGreyColor8,
+          //   weight: FontWeight.w500,
+          // ),
+        ],
+      ),
     );
   }
 }
 
 class SelectSeat extends StatelessWidget {
+  final int availableSeats;
   const SelectSeat({
     super.key,
+    required this.availableSeats,
   });
 
   @override
   Widget build(BuildContext context) {
-    var cont = Get.put<RideDetailsController>(RideDetailsController());
+    final findRideController = Get.find<FindRideController>();
+
     return Container(
       height: Get.height * 0.6,
       decoration: const BoxDecoration(
@@ -505,8 +590,8 @@ class SelectSeat extends StatelessWidget {
             const SizedBox(
               height: 28,
             ),
-            GetBuilder<RideDetailsController>(builder: (cont) {
-              return Row(
+            Obx(
+              () => Row(
                 children: [
                   incOrDecButton(
                     icon: const Center(
@@ -515,13 +600,12 @@ class SelectSeat extends StatelessWidget {
                       color: kPrimaryColor,
                     )),
                     onTap: () {
-                      RideDetailsController.instance.decrementSeats();
+                      findRideController.decrementSeats();
                     },
                   ),
                   const Spacer(),
                   MyText(
-                    text:
-                        RideDetailsController.instance.numberOfSeats.toString(),
+                    text: findRideController.numberOfSeats.toString(),
                     size: 20,
                     color: kBlackColor,
                     weight: FontWeight.w900,
@@ -533,12 +617,12 @@ class SelectSeat extends StatelessWidget {
                       color: kPrimaryColor,
                     ),
                     onTap: () {
-                      RideDetailsController.instance.incrementSeats();
+                      findRideController.incrementSeats(availableSeats);
                     },
                   ),
                 ],
-              );
-            }),
+              ),
+            ),
             RotatedBox(
                 quarterTurns: 5,
                 child: Image.asset(
@@ -572,7 +656,7 @@ class SelectSeat extends StatelessWidget {
   }
 }
 
-void showSelectSeatsBottomSheet() {
+void showSelectSeatsBottomSheet(int availableSeats) {
   showModalBottomSheet<void>(
     context: Get.context!,
     isScrollControlled: true,
@@ -580,7 +664,7 @@ void showSelectSeatsBottomSheet() {
     builder: (BuildContext context) {
       return Padding(
         padding: MediaQuery.of(context).viewInsets,
-        child: const SelectSeat(),
+        child: SelectSeat(availableSeats: availableSeats),
       );
     },
   );

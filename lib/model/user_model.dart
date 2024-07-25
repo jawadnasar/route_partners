@@ -12,7 +12,6 @@ class UserModel {
   GeoPoint? latLng;
   String? address;
   String? phoneNumber;
-  String? countryCode;
   UserModel({
     this.userId,
     this.firstName,
@@ -25,7 +24,6 @@ class UserModel {
     this.latLng,
     this.address,
     this.phoneNumber,
-    this.countryCode,
   });
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -40,7 +38,6 @@ class UserModel {
       'latLng': latLng,
       'address': address,
       'phoneNumber': phoneNumber,
-      'countryCode': countryCode,
     };
   }
 
@@ -57,7 +54,6 @@ class UserModel {
       imageUrl: map['imageUrl'],
       latLng: map['latLng'],
       phoneNumber: map['phoneNumber'],
-      countryCode: map['countryCode'],
     );
   }
 }
