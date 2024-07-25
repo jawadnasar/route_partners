@@ -109,6 +109,9 @@ class _HomePageState extends State<HomePage> {
                       const Stack(
                         children: [],
                       ),
+                      const SizedBox(
+                        height: 20,
+                      ),
                       stepperContainer(
                         title: 'Enter Pickup Location',
                         onTap: () {
@@ -164,32 +167,38 @@ class _HomePageState extends State<HomePage> {
                         onTap: () {
                           selectDate(context);
                         },
-                        child: Row(
-                          children: [
-                            MyText(
-                              text: 'Saturday, 15th May',
-                              color: kGreyColor8,
-                              weight: FontWeight.w700,
-                            ),
-                            const Spacer(),
-                            TextButton(
-                                onPressed: () {},
-                                child: MyText(
-                                  text: 'TODAY',
-                                  weight: FontWeight.w900,
-                                  color: kPrimaryColor,
-                                )),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            TextButton(
-                                onPressed: () {},
-                                child: MyText(
-                                  text: 'TOMORROW',
-                                  weight: FontWeight.w900,
-                                  color: kGreyColor5,
-                                ))
-                          ],
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                            color: kPrimaryColor.withOpacity(0.05)
+                          ),
+                          child: Row(
+                            children: [
+                              MyText(
+                                text: 'Saturday, 15th May',
+                                color: kGreyColor8,
+                                weight: FontWeight.w700,
+                              ),
+                              const Spacer(),
+                              TextButton(
+                                  onPressed: () {},
+                                  child: MyText(
+                                    text: 'TODAY',
+                                    weight: FontWeight.w900,
+                                    color: kPrimaryColor,
+                                  )),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              TextButton(
+                                  onPressed: () {},
+                                  child: MyText(
+                                    text: 'TOMORROW',
+                                    weight: FontWeight.w900,
+                                    color: kGreyColor5,
+                                  ))
+                            ],
+                          ),
                         ),
                       ),
                       const Divider(
@@ -292,7 +301,7 @@ class _HomePageState extends State<HomePage> {
                   ListView(
                     // crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 20),
                       stepperContainer(
                         title: 'Enter Pickup Location',
                         controller:
@@ -363,29 +372,35 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(
                         height: 10,
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Obx(
-                              () => MyText(
-                                text: DateFormatters.instance.formatStringDate(
-                                    date: _createRideController
-                                        .selectedDate.value),
-                                color: kGreyColor8,
-                                weight: FontWeight.w700,
+                      Container(
+                        decoration: BoxDecoration(
+                          color: kPrimaryColor.withOpacity(0.05)
+                        ),
+                        child: Row(
+                          
+                          children: [
+                            Expanded(
+                              child: Obx(
+                                () => MyText(
+                                  text: DateFormatters.instance.formatStringDate(
+                                      date: _createRideController
+                                          .selectedDate.value),
+                                  color: kGreyColor8,
+                                  weight: FontWeight.w700,
+                                ),
                               ),
                             ),
-                          ),
-                          IconButton(
-                              onPressed: () async {
-                                _createRideController.selectedDate.value =
-                                    await selectDate(context);
-                              },
-                              icon: const Icon(
-                                Icons.calendar_month_outlined,
-                                color: kGreyColor6,
-                              )),
-                        ],
+                            IconButton(
+                                onPressed: () async {
+                                  _createRideController.selectedDate.value =
+                                      await selectDate(context);
+                                },
+                                icon: const Icon(
+                                  Icons.calendar_month_outlined,
+                                  color: kGreyColor6,
+                                )),
+                          ],
+                        ),
                       ),
                       const Divider(
                         color: kGreyColor8,
@@ -405,10 +420,11 @@ class _HomePageState extends State<HomePage> {
                             height: 10,
                           ),
                           MyTextField(
+                            
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 10),
                             hintText: 'Enter your vehicle name',
-                            fillColor: kGreyColor9,
+                            fillColor: kPrimaryColor.withOpacity(0.05),
                             filled: true,
                             focusBorderColor: kGreyColor9,
                             controller:
@@ -425,6 +441,7 @@ class _HomePageState extends State<HomePage> {
                               Expanded(
                                 child: Obx(
                                   () => CustomDropDown(
+                                    bgColor: kPrimaryColor.withOpacity(0.05),
                                       heading: 'Available Seats',
                                       hint: 'Select Available Seats',
                                       selectedValue: _createRideController
@@ -448,6 +465,7 @@ class _HomePageState extends State<HomePage> {
                               Expanded(
                                 child: Obx(
                                   () => CustomDropDown(
+                                    bgColor: kPrimaryColor.withOpacity(0.05),
                                       heading: 'Price per seat',
                                       hint: 'Select Available Seats',
                                       selectedValue: _createRideController
@@ -579,10 +597,10 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: MyTextField(
+              filled: true,
               controller: controller,
               hintText: '$title',
               readonly: true,
-              maxLines: 2,
             ),
           ),
         ],

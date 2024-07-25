@@ -83,7 +83,6 @@ class MyTextField extends StatelessWidget {
               ],
             ),
             child: TextFormField(
-              
               readOnly: readonly ?? false,
               cursorColor: kDarkGreyColor,
               onTap: onTap,
@@ -107,9 +106,9 @@ class MyTextField extends StatelessWidget {
                 // fontFamily: AppFonts.POPPINS,
               ),
               decoration: InputDecoration(
-                
                 contentPadding: contentPadding ??
                     EdgeInsets.symmetric(
+                      horizontal: 10,
                       vertical: maxLines! > 1 ? 15 : 0,
                     ),
                 hintText: hintText,
@@ -125,30 +124,25 @@ class MyTextField extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (haveSuffix!)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          right: 10,
-                        ),
-                        child: GestureDetector(
-                          onTap: onSuffixTap,
-                          child: Image.asset(
-                            suffixIcon!,
-                            height: suffixIconSize ?? 20,
-                          ),
+                      GestureDetector(
+                        onTap: onSuffixTap,
+                        child: Image.asset(
+                          suffixIcon!,
+                          height: suffixIconSize ?? 20,
                         ),
                       ),
                   ],
                 ),
                 fillColor: fillColor ?? kPrimaryColor.withOpacity(0.05),
                 filled: filled ?? false,
-                enabledBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(color: underLineBorderColor ?? kGreyColor3),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide:
-                      BorderSide(color: underLineBorderColor ?? kGreyColor3),
-                ),
+                // enabledBorder: UnderlineInputBorder(
+                //   borderSide:
+                //       BorderSide(color: underLineBorderColor ?? kGreyColor3),
+                // ),
+                // focusedBorder: UnderlineInputBorder(
+                //   borderSide:
+                //       BorderSide(color: underLineBorderColor ?? kGreyColor3),
+                // ),
               ),
             ),
           ),

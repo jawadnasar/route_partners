@@ -75,9 +75,8 @@ class SettingsScreen extends StatelessWidget {
             ),
             firstImagePath: Assets.wallet,
             onTap: () {},
-            title: 'Set Preferencess',
+            title: 'Set Preferences',
           ),
-          
         ],
       ),
     );
@@ -92,6 +91,7 @@ class CustomRowWidget extends StatelessWidget {
   final String? secondImagePath;
   final Color? firstImageColor;
   final Widget? icon;
+  final Widget? trailingIcon;
 
   const CustomRowWidget({
     super.key,
@@ -102,6 +102,7 @@ class CustomRowWidget extends StatelessWidget {
     this.thirdImage,
     this.firstImageColor,
     this.icon,
+    this.trailingIcon,
   });
 
   @override
@@ -140,12 +141,13 @@ class CustomRowWidget extends StatelessWidget {
                 width: 5,
               ),
               if (thirdImage != null)
-                CommonImageView(
-                  imagePath: thirdImage!,
-                  fit: BoxFit.contain,
-                  height: 20,
-                  width: 120,
-                ),
+                trailingIcon ??
+                    CommonImageView(
+                      imagePath: thirdImage!,
+                      fit: BoxFit.contain,
+                      height: 20,
+                      width: 120,
+                    ),
               // if (secondImagePath != null)
               // CommonImageView(
               //   imagePath: secondImagePath!,

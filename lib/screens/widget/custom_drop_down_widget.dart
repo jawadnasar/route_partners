@@ -48,9 +48,11 @@ class CustomDropDown extends StatelessWidget {
           ),
           DropdownButtonHideUnderline(
             child: DropdownButton2(
+              barrierColor: kPrimaryColor.withOpacity(0.05),
               items: items!
                   .map(
                     (item) => DropdownMenuItem<dynamic>(
+                      
                       value: item,
                       child: MyText(
                         text: item,
@@ -71,6 +73,7 @@ class CustomDropDown extends StatelessWidget {
                   horizontal: 15,
                 ),
                 decoration: BoxDecoration(
+                  color: kPrimaryColor.withOpacity(0.05),
                   border: Border(
                     bottom: BorderSide(
                       color: kTertiaryColor.withOpacity(0.4),

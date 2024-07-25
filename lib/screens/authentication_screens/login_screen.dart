@@ -54,6 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     MyTextField(
+                      filled: true,
                       labelText: 'Email',
                       hintText: 'Enter your email',
                       controller: _authController.emailController,
@@ -63,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Obx(
                       () => MyTextField(
+                        filled: true,
                         labelText: 'Password',
                         hintText: 'Enter your password',
                         controller: _authController.passwordController,

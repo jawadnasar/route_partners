@@ -61,6 +61,7 @@ class PhoneAuthAndSocial extends StatelessWidget {
             Form(
               key: _authController.singupFormKey,
               child: MyTextField(
+                filled: true,
                 hintText: 'Enter your phone Number',
                 controller: _authController.phoneNumberController,
                 keyboardType: TextInputType.phone,
