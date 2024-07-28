@@ -230,6 +230,7 @@ class ProfileScreen extends StatelessWidget {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     prefs.remove('route_partners_uid');
+                    await _authController.logout();
                     _authController.resetValues();
                     Get.offAll(() => const LoginScreen());
                   },

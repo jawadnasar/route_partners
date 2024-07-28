@@ -9,20 +9,13 @@ import 'package:route_partners/screens/widget/my_text_widget.dart';
 class MyChats extends StatelessWidget {
   final String currentUserId;
 
-  MyChats({required this.currentUserId});
+  const MyChats({super.key, required this.currentUserId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: const Icon(
-            Icons.arrow_back,
-            color: kBlackColor,
-          ),
-        ),
         automaticallyImplyLeading: true,
         centerTitle: true,
         elevation: 0,
@@ -43,8 +36,13 @@ class MyChats extends StatelessWidget {
             .where('users', arrayContains: currentUserId)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (!snapshot.hasData ||
+              snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text('No Chats Yet!'),
+            );
           }
           final chatThreads = snapshot.data!.docs;
           List<Widget> chatThreadWidgets = [];

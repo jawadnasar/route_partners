@@ -788,6 +788,6 @@ class Assets {
   static const String carpool = 'assets/images/dashboardIcon.png';
   static const String profile = 'assets/images/profile.png';
   static const String notifications = "assets/images/notification_icon.png";
-    static const String wallet = "assets/images/wallet.png";
-
+  static const String wallet = "assets/images/wallet.png";
+  static const String lottieAnimation = "assets/lottie/matching.json";
 }
