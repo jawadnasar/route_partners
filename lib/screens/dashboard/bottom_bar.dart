@@ -77,37 +77,34 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 20,
               ),
-              Center(
-                child: TabBar(
-                  onTap: (value) {
-                    setState(() {
-                      selectedTab = value;
-                    });
-                  },
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  labelColor: Colors.white,
-                  isScrollable: true,
-                  tabAlignment: TabAlignment.start,
-                  // Selected tab text color
-                  unselectedLabelColor:
-                      kGreyColor3, // Unselected tab text color
-                  labelStyle: const TextStyle(color: Colors.white),
-                  splashBorderRadius: BorderRadius.circular(5),
-                  indicator: BoxDecoration(
-                      color: kPrimaryColor,
-                      borderRadius: BorderRadius.circular(40)),
-                  tabs: const [
-                    Tab(child: Text('     Find a ride     ')),
-                    Tab(
-                      child: Text(
-                        '     Create a ride     ',
-                        style: TextStyle(fontFamily: AppFonts.DM_SANS),
-                      ),
+              TabBar(
+                onTap: (value) {
+                  setState(() {
+                    selectedTab = value;
+                  });
+                },
+                indicatorSize: TabBarIndicatorSize.tab,
+                labelColor: Colors.white,
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                // Selected tab text color
+                unselectedLabelColor: kGreyColor3, // Unselected tab text color
+                labelStyle: const TextStyle(color: Colors.white),
+                splashBorderRadius: BorderRadius.circular(5),
+                indicator: BoxDecoration(
+                    color: kPrimaryColor,
+                    borderRadius: BorderRadius.circular(40)),
+                tabs: const [
+                  Tab(child: Text('     Find a ride     ')),
+                  Tab(
+                    child: Text(
+                      '     Create a ride     ',
+                      style: TextStyle(fontFamily: AppFonts.DM_SANS),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
+
               Expanded(
                 child: TabBarView(children: [
                   ListView(

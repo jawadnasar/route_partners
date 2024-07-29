@@ -126,40 +126,27 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<bool> editUserInfo(
-      String firstName, String lastName, String phoneNumber) async {
+  Future<bool> editUserInfo(String firstName, String lastName) async {
     isEditLoading.value = true;
-    final firstNameEdited = await _firebaseCrudService.updateDocumentSingleKey(
+    final edited = await _firebaseCrudService.updateDocumentSingleKey(
       collection: usersCollection,
       docId: userModel.value!.userId!,
       key: 'firstName',
       value: firstName,
     );
-    final lastNameEdited = await _firebaseCrudService.updateDocumentSingleKey(
+    final edited2 = await _firebaseCrudService.updateDocumentSingleKey(
       collection: usersCollection,
       docId: userModel.value!.userId!,
       key: 'lastName',
       value: lastName,
     );
-    final phoneNumberEdited =
-        await _firebaseCrudService.updateDocumentSingleKey(
-      collection: usersCollection,
-      docId: userModel.value!.userId!,
-      key: 'phoneNumber',
-      value: phoneNumber,
-    );
-
-    if (firstNameEdited && lastNameEdited && phoneNumberEdited) {
+    if (edited && edited2) {
       await getUserInfo(userModel.value!.userId!);
       isEditLoading.value = false;
       return true;
     } else {
       return false;
     }
-  }
-
-  Future<void> logout() async {
-    await _firebaseAuthService.logout();
   }
 
   resetValues() {

@@ -25,8 +25,7 @@ class RideRequestModel {
   String? requestedUserId;
   String? requestedUserPhoneNumber;
   String? requestedUserName;
-  double? routeDistance;
-  double? distanceToPickup;
+
   RideRequestModel({
     this.requestId,
     this.ownerId,
@@ -52,8 +51,6 @@ class RideRequestModel {
     this.requestedUserId,
     this.requestedUserPhoneNumber,
     this.requestedUserName,
-    this.routeDistance,
-    this.distanceToPickup,
   });
   Map<String, dynamic> toMap() {
     return <String, dynamic>{

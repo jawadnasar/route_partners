@@ -9,16 +9,13 @@ import 'package:route_partners/core/constants/app_sizes.dart';
 import 'package:route_partners/screens/widget/common_image_view_widget.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 
-
 class Onboarding2 extends StatelessWidget {
   const Onboarding2({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        
-      ),
+      decoration: BoxDecoration(),
       child: Padding(
         padding: AppSizes.DEFAULT,
         child: Column(
@@ -42,7 +39,8 @@ class Onboarding2 extends StatelessWidget {
               paddingRight: 44,
             ),
             MyText(
-              text: "Driving somewhere? Publish your ride and choose who goes with you and enjoy the least expensive ride you have ever made ",
+              text:
+                  "Driving somewhere? Publish your ride and choose who goes with you and enjoy the least expensive ride you have ever made ",
               size: 12,
               color: kGreyColor3,
               textAlign: TextAlign.center,

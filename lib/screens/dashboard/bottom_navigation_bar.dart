@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:route_partners/controllers/auth_controller.dart';
 import 'package:route_partners/controllers/bottom_bar_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
+import 'package:route_partners/screens/car_upload_screens/car_ads.dart';
 import 'package:route_partners/screens/chat_screens/my_chats.dart';
 import 'package:route_partners/screens/dashboard/bottom_bar.dart';
 import 'package:route_partners/screens/my_rides/my_rides.dart';
@@ -71,6 +72,15 @@ class _DashBoardState extends State<DashBoard> {
                       ? kPrimaryColor
                       : kGreyColor,
                 ),
+                label: 'My Ads',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.person_4,
+                  color: bottomBarCont.selectedIndex == 4
+                      ? kPrimaryColor
+                      : kGreyColor,
+                ),
                 label: 'PROFILE',
               ),
             ],
@@ -87,6 +97,7 @@ class _DashBoardState extends State<DashBoard> {
               MyChats(
                 currentUserId: _authController.userModel.value!.userId!,
               ),
+              MyAds(),
               ProfileScreen()
             ],
           );
