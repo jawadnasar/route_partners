@@ -36,7 +36,8 @@ class AuthController extends GetxController {
     isLoading.value = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final user = await _firebaseAuthService.signUpUsingEmailAndPassword(
-        email: emailController.text, password: passwordController.text);
+        email: emailController.text.trim(),
+        password: passwordController.text.trim());
     if (user != null) {
       final Position? position =
           await GoogleMapsService.instance.getUserLocation();
@@ -64,7 +65,8 @@ class AuthController extends GetxController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     final user = await _firebaseAuthService.signInUsingEmailAndPassword(
-        email: emailController.text, password: passwordController.text);
+        email: emailController.text.trim(),
+        password: passwordController.text.trim());
     if (user != null) {
       await getUserInfo(user.uid);
       await prefs.setString('route_partners_uid', user.uid);

@@ -51,6 +51,7 @@ class _BrowseRidesState extends State<BrowseRides>
             stream: _findRideController.getRideRequestsStream(),
             builder: (context, snapshot) {
               log('rebuilding');
+
               if (snapshot.connectionState == ConnectionState.waiting ||
                   isLoading) {
                 if (!delayHandled) {
@@ -88,7 +89,7 @@ class _BrowseRidesState extends State<BrowseRides>
               }
               List<RideRequestModel> requests = [];
               List<RideRequestModel> filteredRequests = [];
-
+              log('Total Requests : ${snapshot.data!.docs.length.toString()}');
               snapshot.data?.docs.forEach(
                 (doc) {
                   final Map<String, dynamic> data =
@@ -115,7 +116,24 @@ class _BrowseRidesState extends State<BrowseRides>
                 request.routeDistance = rideDistance.value;
                 request.distanceToPickup = distanceToPickup.value;
                 if (request.distanceToPickup! < 5) {
-                  filteredRequests.add(request);
+                  List<String> requestedIds = [];
+                  List<String> acceptedIds = [];
+
+                  for (var user in request.requestedUsers!) {
+                    acceptedIds.add(user.id ?? '');
+                  }
+                  for (var user in request.requestedUsers!) {
+                    requestedIds.add(user.id ?? '');
+                  }
+
+                  if (!requestedIds
+                          .contains(_authController.userModel.value!.userId) &&
+                      !acceptedIds
+                          .contains(_authController.userModel.value!.userId) &&
+                      !request.rejectedUserIds!
+                          .contains(_authController.userModel.value!.userId)) {
+                    filteredRequests.add(request);
+                  }
                 }
                 log(distanceToPickup.value.toString());
               }
@@ -214,6 +232,7 @@ class _BrowseRidesState extends State<BrowseRides>
                                                 weight: FontWeight.w700,
                                               ),
                                             ),
+                                            const SizedBox(width: 20),
                                             MyText(
                                               text: filteredRequests[index]
                                                       .pricePerSeat ??
