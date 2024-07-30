@@ -2,7 +2,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
+import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
+import 'package:route_partners/screens/car_details/car_details.dart';
 import 'package:route_partners/screens/car_upload_screens/car_info.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
@@ -63,7 +65,7 @@ class _MyAdsState extends State<MyAds> with TickerProviderStateMixin {
               ),
               Expanded(
                 child: TabBarView(controller: _controller, children: [
-                  uploadedCars.isEmpty
+                  uploadedCars.isNotEmpty
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
@@ -85,8 +87,16 @@ class _MyAdsState extends State<MyAds> with TickerProviderStateMixin {
                             ),
                           ],
                         )
-                      : const SizedBox.shrink(),
-                  Center(
+                      : ListView.separated(
+                        separatorBuilder: (context, index) {
+                          return const Padding(padding: EdgeInsets.all(5));
+                        },
+                          itemCount: 3,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return const CarDetailsContainers();
+                          }),
+                  const Center(
                     child: Text('Coming Soon'),
                   )
 
@@ -407,5 +417,164 @@ class PopupMenuWidget extends StatelessWidget {
             ),
           ];
         });
+  }
+}
+
+class CarDetailsContainers extends StatelessWidget {
+  const CarDetailsContainers({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Get.to(() => const CarDetails());
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: kGreyColor8)),
+        height: Get.height * 0.2,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 5,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    bottomLeft: Radius.circular(15)),
+                child: Container(
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(
+                            Assets.carImage,
+                          ),
+                          fit: BoxFit.cover)),
+                ),
+              ),
+            ),
+            Expanded(
+                flex: 9,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 8,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'My Car',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 6,
+                        child: Row(
+                          children: [
+                            Text(
+                              'PKR 1000 /hr',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(fontSize: 15),
+                            )
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: Row(
+                          children: [
+                            Text(
+                              '2021',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            SizedBox(
+                              width: Get.width * 0.03,
+                            ),
+                            DividerCustom(
+                              color: kGreyColor,
+                              height: Get.height * 0.03,
+                              width: 1,
+                            ),
+                            SizedBox(
+                              width: Get.width * 0.03,
+                            ),
+                            Text(
+                              '100 Km',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            SizedBox(
+                              width: Get.width * 0.03,
+                            ),
+                            DividerCustom(
+                              color: kDarkGreyColor,
+                              height: Get.height * 0.03,
+                              width: 1,
+                            ),
+                            SizedBox(
+                              width: Get.width * 0.03,
+                            ),
+                            Text(
+                              'BMW',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Expanded(
+                        flex: 5,
+                        child: MyButton(
+                          textColor: Colors.white,
+                          bgColor: kPrimaryColor,
+                          onTap: () {},
+                          height: 50,
+                          width: Get.width * 0.35,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                    ],
+                  ),
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DividerCustom extends StatelessWidget {
+  final double? width;
+  final Color? color;
+  final double? height;
+  const DividerCustom({
+    this.color = kBlackColor,
+    this.height = 0.05,
+    super.key,
+    this.width,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height ?? Get.height * 0.05,
+      width: 1,
+      color: color ?? kBlackColor,
+      child: const Text(''),
+    );
   }
 }

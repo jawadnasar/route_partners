@@ -1,17 +1,18 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:route_partners/controllers/auth_controller.dart';
 import 'package:route_partners/controllers/find_ride_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_fonts.dart';
 import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/core/utils/snackbars.dart';
 import 'package:route_partners/model/ride_request_model.dart';
+import 'package:route_partners/screens/browse_rides/browse_rides.dart';
 import 'package:route_partners/screens/dashboard/bottom_bar.dart';
-import 'package:route_partners/screens/google_maps_screen/google_map_route_customer_screen.dart';
+import 'package:route_partners/screens/google_maps_screen/google_map_route_screen.dart';
 import 'package:route_partners/screens/ride_booked/ride_booked.dart';
 import 'package:route_partners/screens/widget/common_image_view_widget.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
@@ -24,7 +25,6 @@ class RideDetails extends StatelessWidget {
   double distance;
   RideDetails({required this.request, required this.distance, super.key});
   final _findRideController = Get.find<FindRideController>();
-  final _authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -117,18 +117,7 @@ class RideDetails extends StatelessWidget {
                               title: 'Select Seats',
                               message: 'Select number of seats to continue');
                         } else {
-                          _findRideController.bookRide(
-                              requestId: request.requestId ?? '',
-                              userId:
-                                  _authController.userModel.value?.userId ?? '',
-                              selectedSeats:
-                                  _findRideController.numberOfSeats.value,
-                              userName:
-                                  _authController.userModel.value?.firstName ??
-                                      '',
-                              phoneNumber: _authController
-                                      .userModel.value?.phoneNumber ??
-                                  '');
+                          _findRideController.bookRide(request.requestId ?? '');
                           Get.to(() => const RideBookedSuccessfully());
                         }
                       }),
@@ -146,15 +135,15 @@ class RideDetails extends StatelessWidget {
     );
   }
 
-  // void _launchDialer(String phoneNumber) async {
-  //   log(phoneNumber);
-  //   final url = 'tel:$phoneNumber';
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   } else {
-  //     throw 'Could not launch $url';
-  //   }
-  // }
+  void _launchDialer(String phoneNumber) async {
+    log(phoneNumber);
+    final url = 'tel:$phoneNumber';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   Container driverDetailsAndCoPassengers() {
     return Container(
@@ -231,7 +220,6 @@ class RideDetails extends StatelessWidget {
               size: 12,
             ),
           ),
-          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -248,15 +236,15 @@ class RideDetails extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              // TextButton(
-              //     onPressed: () => _launchDialer(
-              //         request.ownerPhoneNumber ?? '+923209343053'),
-              //     child: MyText(
-              //       text: 'Contact Driver',
-              //       color: kPrimaryColor,
-              //       size: 12,
-              //       weight: FontWeight.w600,
-              //     ))
+              TextButton(
+                  onPressed: () => _launchDialer(
+                      request.ownerPhoneNumber ?? '+923209343053'),
+                  child: MyText(
+                    text: 'Contact Driver',
+                    color: kPrimaryColor,
+                    size: 12,
+                    weight: FontWeight.w600,
+                  ))
             ],
           ),
           const Divider(
@@ -464,20 +452,18 @@ class RideDetails extends StatelessWidget {
   locationWidget(RideRequestModel request) {
     return InkWell(
       onTap: () {
-        Get.to(() => GoogleMapRouteCustomer(
-              startLoc: request.pickupLocation!,
-              endLoc: request.dropoffLocation!,
-              pickupAddress: request.pickupAddress ?? '',
-              dropoffAddress: request.dropOfAddress ?? '',
-              pricePerSeat: request.pricePerSeat ?? '50',
-              rideDate: request.rideDate ?? DateTime.now(),
-              publishedDate: request.publishDate ?? DateTime.now(),
-              name: request.ownerName ?? 'Driver',
-              vehicleName: request.vehicleName ?? 'Other Car',
-              phoneNumber: request.ownerPhoneNumber ?? '+923211010101',
-              customers: request.acceptedUsers,
-              ownerId: request.ownerId,
-            ));
+        Get.to(() => GoogleMapRoute(
+            startLoc: request.pickupLocation!,
+            endLoc: request.dropoffLocation!,
+            pickupAddress: request.pickupAddress ?? '',
+            dropoffAddress: request.dropOfAddress ?? '',
+            pricePerSeat: request.pricePerSeat ?? '50',
+            rideDate: request.rideDate ?? DateTime.now(),
+            publishedDate: request.publishDate ?? DateTime.now(),
+            name: request.ownerName ?? 'Driver',
+            vehicleName: request.vehicleName ?? 'Other Car',
+            phoneNumber: request.ownerPhoneNumber ?? '+923211010101',
+            isCustomerInfo: false));
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -495,6 +481,23 @@ class RideDetails extends StatelessWidget {
           const SizedBox(
             height: 30,
           ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.start,
+          //   children: [
+          //     const Icon(
+          //       Icons.directions_walk,
+          //       color: Colors.orange,
+          //       size: 15,
+          //     ),
+          //     MyText(
+          //       size: 12,
+          //       text: '4 km from your pickup location',
+          //       color: kGreyColor8,
+          //       weight: FontWeight.w500,
+          //     ),
+          //   ],
+          // ),
+
           SizedBox(
             width: Get.width * 0.7,
             child: MyText(
@@ -504,6 +507,31 @@ class RideDetails extends StatelessWidget {
               weight: FontWeight.w700,
             ),
           ),
+          // const SizedBox(
+          //   height: 10,
+          // ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.start,
+          //   children: [
+          //     const Icon(
+          //       Icons.directions_walk,
+          //       color: kGreenColor,
+          //       size: 15,
+          //     ),
+          //     MyText(
+          //       size: 12,
+          //       text: '1.5 km from your drop location',
+          //       color: kGreyColor8,
+          //       weight: FontWeight.w500,
+          //     ),
+          //   ],
+          // ),
+          // MyText(
+          //   size: 12,
+          //   text: '2:30 PM',
+          //   color: kGreyColor8,
+          //   weight: FontWeight.w500,
+          // ),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:route_partners/controllers/all_rides_controller.dart';
 import 'package:route_partners/controllers/auth_controller.dart';
@@ -10,13 +11,15 @@ import 'package:route_partners/core/constants/app_sizes.dart';
 import 'package:route_partners/model/ride_request_model.dart';
 import 'package:route_partners/screens/chat_screens/chat_screen.dart';
 import 'package:route_partners/screens/google_maps_screen/google_map_route_screen.dart';
+import 'package:route_partners/screens/widget/common_image_view_widget.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
+import 'package:route_partners/screens/widget/my_textfield_widget.dart';
+import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
 
 class MyRides extends StatelessWidget {
   MyRides({super.key});
   final _allRideController = Get.find<AllRidesController>();
-  final _authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +68,6 @@ class MyRides extends StatelessWidget {
                     return Center(child: MyText(text: 'No Available Rides'));
                   }
                   List<RideRequestModel> requests = [];
-                  List<RideRequestModel> filteredRequests = [];
                   snapshot.data?.docs.forEach(
                     (doc) {
                       final Map<String, dynamic> data =
@@ -73,33 +75,15 @@ class MyRides extends StatelessWidget {
                       requests.add(RideRequestModel.fromMap(data));
                     },
                   );
-
-                  for (var request in requests) {
-                    for (var req in request.acceptedUsers!) {
-                      if (req.id == _authController.userModel.value?.userId) {
-                        filteredRequests.add(request);
-                      }
-                    }
-                    for (var req in request.requestedUsers!) {
-                      if (req.id == _authController.userModel.value?.userId) {
-                        filteredRequests.add(request);
-                      }
-                    }
-                    if (request.rejectedUserIds!
-                        .contains(_authController.userModel.value?.userId)) {
-                      filteredRequests.add(request);
-                    }
-                  }
-
-                  return filteredRequests.isEmpty
+                  return requests.isEmpty
                       ? Center(child: MyText(text: 'No Available Rides'))
                       : ListView.builder(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          itemCount: filteredRequests.length,
+                          itemCount: requests.length,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
                             return RideWidget(
-                              request: filteredRequests[index],
+                              request: requests[index],
                             );
                           },
                         );
@@ -162,23 +146,9 @@ class RideWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final _chatController = Get.find<ChatController>();
     final _authController = Get.find<AuthController>();
-    RxString status = ''.obs;
-    for (var r in request.requestedUsers!) {
-      if (r.id == _authController.userModel.value?.userId &&
-          request.status == 'Requested') {
-        status.value = 'Requested';
-      }
-    }
-    for (var r in request.acceptedUsers!) {
-      if (r.id == _authController.userModel.value?.userId &&
-          (request.status == 'Requested' || request.status == 'Accepted')) {
-        status.value = 'Accepted';
-      }
-    }
     return GestureDetector(
       onTap: () {
-        if (!request.rejectedUserIds!
-            .contains(_authController.userModel.value?.userId)) {
+        if (request.status != 'Rejected') {
           Get.to(() => GoogleMapRoute(
                 startLoc: request.pickupLocation!,
                 endLoc: request.dropoffLocation!,
@@ -219,6 +189,14 @@ class RideWidget extends StatelessWidget {
               height: 15,
             ),
             MyText(
+              text: '${request.selectedSeats} seats selected',
+              color: kDarkGreyColor,
+              weight: FontWeight.w900,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            MyText(
               text: '${request.pricePerSeat} per seat',
               color: kDarkGreyColor,
               weight: FontWeight.w900,
@@ -242,13 +220,12 @@ class RideWidget extends StatelessWidget {
             const SizedBox(
               height: 15,
             ),
-            status.value == 'Accepted'
+            request.status == 'Accepted'
                 ? GestureDetector(
                     onTap: () async {
                       // openComingSoonDialog();
                       final ref = await _chatController.getOrCreateChat(
-                          request.ownerId!,
-                          _authController.userModel.value?.userId ?? '');
+                          request.ownerId!, request.requestedUserId!);
 
                       Get.to(() => ChatScreen(
                           chatId: ref.id,
@@ -269,9 +246,33 @@ class RideWidget extends StatelessWidget {
                     ),
                   )
                 : Container(),
+            // Row(
+            //   children: [
+            //     const Icon(Icons.timer_sharp),
+            //     const SizedBox(
+            //       width: 5,
+            //     ),
+            //     MyText(
+            //       text: '11:30 AM - 2:30 PM',
+            //       color: kGreyColor3,
+            //     )
+            //   ],
+            // ),
             const SizedBox(
               height: 15,
             ),
+            // Row(
+            //   children: [
+            //     const Icon(Icons.person_2_outlined),
+            //     const SizedBox(
+            //       width: 5,
+            //     ),
+            //     MyText(
+            //       text: '1 Person',
+            //       color: kGreyColor3,
+            //     )
+            //   ],
+            // ),
             const SizedBox(),
             ListTile(
               contentPadding: EdgeInsets.zero,
@@ -291,29 +292,25 @@ class RideWidget extends StatelessWidget {
               trailing: Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: request.rejectedUserIds!
-                            .contains(_authController.userModel.value?.userId)
+                    color: request.status == 'Rejected'
                         ? Colors.red
-                        : status.value == 'Accepted'
+                        : request.status == 'Accepted'
                             ? kPrimaryColor
                             : request.status == 'Completed'
                                 ? Colors.green
-                                : status.value == 'Requested'
+                                : request.status == 'Requested'
                                     ? Colors.amber
                                     : Colors.white),
                 padding:
                     const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                 child: MyText(
-                  text: status.value == 'Accepted'
-                      ? 'Upcoming'
-                      : status.value == 'Requested'
-                          ? 'Requested'
-                          : request.rejectedUserIds!.contains(
-                                  _authController.userModel.value?.userId)
-                              ? 'Rejected'
-                              : request.status == 'Completed'
-                                  ? 'Completed'
-                                  : '',
+                  text: request.status == 'Requested'
+                      ? 'Requested'
+                      : request.status == 'Rejected'
+                          ? 'Rejected'
+                          : request.status == 'Accepted'
+                              ? 'Upcoming'
+                              : 'Completed',
                   color: Colors.white,
                 ),
               ),
@@ -341,495 +338,472 @@ class RideWidget extends StatelessWidget {
   }
 }
 
-class PublishedRides extends StatefulWidget {
+class PublishedRides extends StatelessWidget {
   final RideRequestModel request;
   PublishedRides({
     required this.request,
     super.key,
   });
-
-  @override
-  State<PublishedRides> createState() => _PublishedRidesState();
-}
-
-class _PublishedRidesState extends State<PublishedRides> {
   final _allRideController = Get.find<AllRidesController>();
 
   @override
   Widget build(BuildContext context) {
     final chatController = Get.find<ChatController>();
     final authController = Get.find<AuthController>();
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(10)),
-      padding: AppSizes.DEFAULT,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: MyText(
-                  onTap: () {
-                    if (widget.request.status == 'Rejected') {
-                      return;
-                    } else if (widget.request.status == 'Published') {
-                      Get.to(() => GoogleMapRoute(
-                            startLoc: widget.request.pickupLocation!,
-                            endLoc: widget.request.dropoffLocation!,
-                            name: widget.request.ownerName ?? 'Driver',
-                            dropoffAddress: widget.request.dropOfAddress!,
-                            pickupAddress: widget.request.pickupAddress!,
-                            pricePerSeat: widget.request.pricePerSeat ?? '50',
-                            phoneNumber: widget.request.ownerPhoneNumber ??
-                                '+923211010101',
-                            publishedDate:
-                                widget.request.publishDate ?? DateTime.now(),
-                            rideDate: widget.request.rideDate ?? DateTime.now(),
-                            vehicleName:
-                                widget.request.vehicleName ?? 'Other Car',
-                            isCustomerInfo: false,
-                          ));
-                    } else {
-                      Get.to(() => GoogleMapRoute(
-                            startLoc: widget.request.pickupLocation!,
-                            endLoc: widget.request.dropoffLocation!,
-                            dropoffAddress: widget.request.dropOfAddress!,
-                            pickupAddress: widget.request.pickupAddress!,
-                            pricePerSeat: widget.request.pricePerSeat ?? '50',
-                            publishedDate:
-                                widget.request.publishDate ?? DateTime.now(),
-                            rideDate: widget.request.rideDate ?? DateTime.now(),
-                            vehicleName:
-                                widget.request.vehicleName ?? 'Other Car',
-                            isCustomerInfo: true,
-                            customers: widget.request.acceptedUsers,
-                            ownerId: widget.request.ownerId,
-                          ));
-                    }
-                  },
-                  text:
-                      '${widget.request.pickupAddress} ➡️ ${widget.request.dropOfAddress}',
-                  color: kDarkGreyColor,
-                  weight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          MyText(
-            text: '${widget.request.availableSeats} seats available',
-            color: kDarkGreyColor,
-            weight: FontWeight.w900,
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          MyText(
-            text: '${widget.request.pricePerSeat} per seat',
-            color: kDarkGreyColor,
-            weight: FontWeight.w900,
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          Row(
-            children: [
-              const Icon(Icons.calendar_month),
-              const SizedBox(
-                width: 5,
-              ),
-              MyText(
-                text: DateFormat('d MMMM, h:mm a')
-                    .format(widget.request.rideDate ?? DateTime.now()),
-                color: kGreyColor3,
-              )
-            ],
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          const Divider(),
-          Row(
-            children: [
-              Expanded(
-                child: MyText(
-                  text:
-                      'Published on ${DateFormat('d MMMM, h:mm a').format(widget.request.publishDate ?? DateTime.now())}',
-                  color: kGreyColor3,
-                ),
-              ),
-              SizedBox(width: Get.width * 0.05),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: widget.request.status == 'Rejected'
-                          ? Colors.red
-                          : widget.request.status == 'Accepted'
-                              ? kPrimaryColor
-                              : widget.request.status == 'Completed'
-                                  ? Colors.green
-                                  : widget.request.status == 'Published'
-                                      ? Colors.amber
-                                      : Colors.white),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+    return GestureDetector(
+      onTap: () {
+        if (request.status == 'Rejected') {
+          return;
+        } else if (request.status == 'Published') {
+          Get.to(() => GoogleMapRoute(
+                startLoc: request.pickupLocation!,
+                endLoc: request.dropoffLocation!,
+                name: request.ownerName ?? 'Driver',
+                dropoffAddress: request.dropOfAddress!,
+                pickupAddress: request.pickupAddress!,
+                pricePerSeat: request.pricePerSeat ?? '50',
+                phoneNumber: request.ownerPhoneNumber ?? '+923211010101',
+                publishedDate: request.publishDate ?? DateTime.now(),
+                rideDate: request.rideDate ?? DateTime.now(),
+                vehicleName: request.vehicleName ?? 'Other Car',
+                isCustomerInfo: false,
+              ));
+        } else {
+          Get.to(() => GoogleMapRoute(
+                startLoc: request.pickupLocation!,
+                endLoc: request.dropoffLocation!,
+                name: request.requestedUserName ?? 'User',
+                dropoffAddress: request.dropOfAddress!,
+                pickupAddress: request.pickupAddress!,
+                pricePerSeat: request.pricePerSeat ?? '50',
+                phoneNumber:
+                    request.requestedUserPhoneNumber ?? '+923211010101',
+                publishedDate: request.publishDate ?? DateTime.now(),
+                rideDate: request.rideDate ?? DateTime.now(),
+                vehicleName: request.vehicleName ?? 'Other Car',
+                isCustomerInfo: true,
+              ));
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(10)),
+        padding: AppSizes.DEFAULT,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
                   child: MyText(
-                    textAlign: TextAlign.center,
-                    text: widget.request.status == 'Published'
-                        ? 'Published'
-                        : widget.request.status == 'Requested'
-                            ? 'Requested'
-                            : widget.request.status == 'Accepted'
-                                ? 'Upcoming'
-                                : widget.request.status == 'Rejected'
-                                    ? 'Rejected'
-                                    : widget.request.status == 'Completed'
-                                        ? 'Completed'
-                                        : '',
-                    color: Colors.white,
+                    text:
+                        '${request.pickupAddress} ➡️ ${request.dropOfAddress}',
+                    color: kDarkGreyColor,
+                    weight: FontWeight.w900,
                   ),
                 ),
+              ],
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            MyText(
+              text: '${request.availableSeats} seats available',
+              color: kDarkGreyColor,
+              weight: FontWeight.w900,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            if (request.status == 'Requested' ||
+                request.status == 'Rejected' ||
+                request.status == 'Accepted' ||
+                request.status == 'Completed') ...[
+              MyText(
+                text: '${request.selectedSeats ?? '0'} seats selected',
+                color: kDarkGreyColor,
+                weight: FontWeight.w900,
+              ),
+              const SizedBox(
+                height: 15,
               ),
             ],
-          ),
-          const SizedBox(height: 20),
-          widget.request.status == 'Rejected' ||
-                  widget.request.status == 'Completed'
-              ? Container()
-              : widget.request.status == 'Published'
-                  ? MyBorderButton(
-                      onTap: () {
-                        Get.dialog(
-                          AlertDialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                            title: Center(
-                              child: MyText(
-                                text: 'Un Publish',
-                                weight: FontWeight.bold,
-                              ),
-                            ),
-                            content: ListView(shrinkWrap: true, children: [
-                              MyText(
-                                textAlign: TextAlign.center,
-                                text:
-                                    'Are you sure you want to un publish this ride?',
-                                color: kPrimaryColor,
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: MyButton(
-                                      onTap: () {
-                                        Get.back();
-                                      },
-                                      buttonText: 'No',
-                                      bgColor: Colors.red,
-                                      textColor: Colors.white,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Expanded(
-                                    child: MyButton(
-                                      onTap: () async {
-                                        Get.back();
-                                        await _allRideController.unPublishRide(
-                                            widget.request.requestId ?? '');
-                                      },
-                                      buttonText: 'Yes',
-                                      textColor: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ]),
-                          ),
-                        );
-                      },
-                      buttonText: 'Un Publish Ride',
-                      borderColor: Colors.red,
-                      textColor: Colors.red,
-                    )
-                  : widget.request.status == 'Accepted'
-                      ? MyBorderButton(
-                          onTap: () {
-                            Get.dialog(
-                              AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                title: Center(
-                                  child: MyText(
-                                    text: 'Completed',
-                                    weight: FontWeight.bold,
-                                  ),
+            MyText(
+              text: '${request.pricePerSeat} per seat',
+              color: kDarkGreyColor,
+              weight: FontWeight.w900,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            Row(
+              children: [
+                const Icon(Icons.calendar_month),
+                const SizedBox(
+                  width: 5,
+                ),
+                MyText(
+                  text: DateFormat('d MMMM, h:mm a')
+                      .format(request.rideDate ?? DateTime.now()),
+                  color: kGreyColor3,
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            request.status == 'Accepted'
+                ? GestureDetector(
+                    onTap: () async {
+                      // openComingSoonDialog();
+                      final ref = await chatController.getOrCreateChat(
+                          request.ownerId!, request.requestedUserId!);
+
+                      Get.to(() => ChatScreen(
+                          chatId: ref.id,
+                          currentUserId:
+                              authController.userModel.value!.userId!));
+                    },
+                    child: Row(
+                      children: [
+                        const Icon(Icons.message),
+                        const SizedBox(width: 3),
+                        MyText(
+                          text: 'Chat',
+                          color: kGreyColor3,
+                        ),
+                      ],
+                    ),
+                  )
+                : Container(),
+            // Row(
+            //   children: [
+            //     const Icon(Icons.timer_sharp),
+            //     const SizedBox(
+            //       width: 5,
+            //     ),
+            //     MyText(
+            //       text: '11:30 AM - 2:30 PM',
+            //       color: kGreyColor3,
+            //     )
+            //   ],
+            // ),
+            const SizedBox(
+              height: 15,
+            ),
+            // Row(
+            //   children: [
+            //     const Icon(Icons.person_2_outlined),
+            //     const SizedBox(
+            //       width: 5,
+            //     ),
+            //     MyText(
+            //       text: '2 Seats Booked',
+            //       color: kGreyColor3,
+            //     )
+            //   ],
+            // ),
+            const Divider(),
+            Row(
+              children: [
+                Expanded(
+                  child: MyText(
+                    text:
+                        'Published on ${DateFormat('d MMMM, h:mm a').format(request.publishDate ?? DateTime.now())}',
+                    color: kGreyColor3,
+                  ),
+                ),
+                SizedBox(width: Get.width * 0.05),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: request.status == 'Rejected'
+                            ? Colors.red
+                            : request.status == 'Accepted'
+                                ? kPrimaryColor
+                                : request.status == 'Completed'
+                                    ? Colors.green
+                                    : request.status == 'Published'
+                                        ? Colors.amber
+                                        : Colors.white),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+                    child: MyText(
+                      textAlign: TextAlign.center,
+                      text: request.status == 'Published'
+                          ? 'Published'
+                          : request.status == 'Requested'
+                              ? 'Requested'
+                              : request.status == 'Accepted'
+                                  ? 'Upcoming'
+                                  : request.status == 'Rejected'
+                                      ? 'Rejected'
+                                      : request.status == 'Completed'
+                                          ? 'Completed'
+                                          : '',
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            request.status == 'Rejected' || request.status == 'Completed'
+                ? Container()
+                : request.status == 'Published'
+                    ? MyBorderButton(
+                        onTap: () {
+                          Get.dialog(
+                            AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)),
+                              title: Center(
+                                child: MyText(
+                                  text: 'Un Publish',
+                                  weight: FontWeight.bold,
                                 ),
-                                content: ListView(shrinkWrap: true, children: [
-                                  MyText(
-                                    textAlign: TextAlign.center,
-                                    text:
-                                        'Are you sure you want to mark this ride as complete?',
-                                    color: kPrimaryColor,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: MyButton(
-                                          onTap: () {
-                                            Get.back();
-                                          },
-                                          buttonText: 'No',
-                                          bgColor: Colors.red,
-                                          textColor: Colors.white,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Expanded(
-                                        child: MyButton(
-                                          onTap: () async {
-                                            Get.back();
-                                            await _allRideController
-                                                .markRideAsComplete(
-                                                    widget.request.requestId ??
-                                                        '');
-                                          },
-                                          buttonText: 'Yes',
-                                          textColor: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ]),
                               ),
-                            );
-                          },
-                          buttonText: 'Mark as Complete',
-                        )
-                      : widget.request.status == 'Requested'
-                          ? widget.request.requestedUsers!.isEmpty
-                              ? Center(child: MyText(text: 'No requests yet'))
-                              : ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount:
-                                      widget.request.requestedUsers?.length ??
-                                          0,
-                                  itemBuilder: (context, index) => ListTile(
-                                    contentPadding: EdgeInsets.zero,
-                                    leading: CircleAvatar(
-                                      radius: 20,
-                                      child: Image.asset(
-                                        Assets.boyIcon,
-                                        width: Get.height * 0.04,
-                                        height: Get.height * 0.08,
-                                        fit: BoxFit.contain,
+                              content: ListView(shrinkWrap: true, children: [
+                                MyText(
+                                  textAlign: TextAlign.center,
+                                  text:
+                                      'Are you sure you want to un publish this ride?',
+                                  color: kPrimaryColor,
+                                ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: MyButton(
+                                        onTap: () {
+                                          Get.back();
+                                        },
+                                        buttonText: 'No',
+                                        bgColor: Colors.red,
+                                        textColor: Colors.white,
                                       ),
                                     ),
-                                    title: MyText(
-                                      text: widget.request
-                                              .requestedUsers?[index].name ??
-                                          '',
-                                      color: kBlackColor,
+                                    const SizedBox(width: 5),
+                                    Expanded(
+                                      child: MyButton(
+                                        onTap: () async {
+                                          Get.back();
+                                          await _allRideController
+                                              .unPublishRide(
+                                                  request.requestId ?? '');
+                                        },
+                                        buttonText: 'Yes',
+                                        textColor: Colors.white,
+                                      ),
                                     ),
-                                    subtitle: MyText(
+                                  ],
+                                ),
+                              ]),
+                            ),
+                          );
+                        },
+                        buttonText: 'Un Publish Ride',
+                        borderColor: Colors.red,
+                        textColor: Colors.red,
+                      )
+                    : request.status == 'Accepted'
+                        ? MyBorderButton(
+                            onTap: () {
+                              Get.dialog(
+                                AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                  title: Center(
+                                    child: MyText(
+                                      text: 'Completed',
+                                      weight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  content:
+                                      ListView(shrinkWrap: true, children: [
+                                    MyText(
+                                      textAlign: TextAlign.center,
                                       text:
-                                          '${widget.request.requestedUsers?[index].selectedSeats ?? ''} seats',
-                                      color: kGreyColor,
+                                          'Are you sure you want to mark this ride as complete?',
+                                      color: kPrimaryColor,
                                     ),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
+                                    const SizedBox(height: 10),
+                                    Row(
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Get.dialog(
-                                              AlertDialog(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15)),
-                                                title: Center(
-                                                  child: MyText(
-                                                    text: 'Reject',
-                                                    weight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                content: ListView(
-                                                    shrinkWrap: true,
-                                                    children: [
-                                                      MyText(
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        text:
-                                                            'Are you sure you want to reject this ride request?',
-                                                        color: kPrimaryColor,
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: MyButton(
-                                                              onTap: () {
-                                                                Get.back();
-                                                              },
-                                                              buttonText: 'No',
-                                                              bgColor:
-                                                                  Colors.red,
-                                                              textColor:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 5),
-                                                          Expanded(
-                                                            child: MyButton(
-                                                              onTap: () async {
-                                                                Get.back();
-                                                                await _allRideController.markRideAsRejected(
-                                                                    widget.request
-                                                                            .requestId ??
-                                                                        '',
-                                                                    widget
-                                                                            .request
-                                                                            .requestedUsers?[index]
-                                                                            .id ??
-                                                                        '');
-                                                              },
-                                                              buttonText: 'Yes',
-                                                              textColor:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ]),
-                                              ),
-                                            );
-                                          },
-                                          child: const Icon(
-                                            Icons.close,
-                                            color: Colors.red,
+                                        Expanded(
+                                          child: MyButton(
+                                            onTap: () {
+                                              Get.back();
+                                            },
+                                            buttonText: 'No',
+                                            bgColor: Colors.red,
+                                            textColor: Colors.white,
                                           ),
                                         ),
                                         const SizedBox(width: 5),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Get.dialog(
-                                              AlertDialog(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15)),
-                                                title: Center(
-                                                  child: MyText(
-                                                    text: 'Accept',
-                                                    weight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                content: ListView(
-                                                    shrinkWrap: true,
-                                                    children: [
-                                                      MyText(
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        text:
-                                                            'Are you sure you want to accept this ride request?',
-                                                        color: kPrimaryColor,
-                                                      ),
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: MyButton(
-                                                              onTap: () {
-                                                                Get.back();
-                                                              },
-                                                              buttonText: 'No',
-                                                              bgColor:
-                                                                  Colors.red,
-                                                              textColor:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 5),
-                                                          Expanded(
-                                                            child: MyButton(
-                                                              onTap: () async {
-                                                                Get.back();
-                                                                await _allRideController
-                                                                    .markRideAsAccepted(
-                                                                  requestId: widget
-                                                                          .request
-                                                                          .requestId ??
-                                                                      '',
-                                                                  userId: widget
-                                                                          .request
-                                                                          .requestedUsers?[
-                                                                              index]
-                                                                          .id ??
-                                                                      '',
-                                                                  selectedSeats: widget
-                                                                          .request
-                                                                          .requestedUsers?[
-                                                                              index]
-                                                                          .selectedSeats ??
-                                                                      0,
-                                                                  phoneNumber: widget
-                                                                          .request
-                                                                          .requestedUsers?[
-                                                                              index]
-                                                                          .phoneNumber ??
-                                                                      '',
-                                                                  userName: widget
-                                                                          .request
-                                                                          .requestedUsers?[
-                                                                              index]
-                                                                          .name ??
-                                                                      '',
-                                                                );
-                                                              },
-                                                              buttonText: 'Yes',
-                                                              textColor:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ]),
-                                              ),
-                                            );
-                                          },
-                                          child: const Icon(
-                                            Icons.done,
-                                            color: kSecondaryColor,
+                                        Expanded(
+                                          child: MyButton(
+                                            onTap: () async {
+                                              Get.back();
+                                              await _allRideController
+                                                  .markRideAsComplete(
+                                                      request.requestId ?? '');
+                                            },
+                                            buttonText: 'Yes',
+                                            textColor: Colors.white,
                                           ),
                                         ),
                                       ],
                                     ),
+                                  ]),
+                                ),
+                              );
+                            },
+                            buttonText: 'Mark as Complete',
+                          )
+                        : request.status == 'Requested'
+                            ? Row(
+                                children: [
+                                  Expanded(
+                                    child: MyBorderButton(
+                                      onTap: () {
+                                        Get.dialog(
+                                          AlertDialog(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(15)),
+                                            title: Center(
+                                              child: MyText(
+                                                text: 'Reject',
+                                                weight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            content: ListView(
+                                                shrinkWrap: true,
+                                                children: [
+                                                  MyText(
+                                                    textAlign: TextAlign.center,
+                                                    text:
+                                                        'Are you sure you want to reject this ride request?',
+                                                    color: kPrimaryColor,
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: MyButton(
+                                                          onTap: () {
+                                                            Get.back();
+                                                          },
+                                                          buttonText: 'No',
+                                                          bgColor: Colors.red,
+                                                          textColor:
+                                                              Colors.white,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Expanded(
+                                                        child: MyButton(
+                                                          onTap: () async {
+                                                            Get.back();
+                                                            await _allRideController
+                                                                .markRideAsRejected(
+                                                                    request.requestId ??
+                                                                        '');
+                                                          },
+                                                          buttonText: 'Yes',
+                                                          textColor:
+                                                              Colors.white,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ]),
+                                          ),
+                                        );
+                                      },
+                                      buttonText: 'Reject',
+                                      borderColor: Colors.red,
+                                      textColor: Colors.red,
+                                    ),
                                   ),
-                                )
-                          : Container(),
-          if (widget.request.status == 'Requested') ...[
-            Center(
-              child: MyButton(
-                onTap: () {},
-                buttonText: 'GO',
-                textColor: Colors.white,
-              ),
-            )
-          ]
-        ],
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: MyBorderButton(
+                                      onTap: () {
+                                        Get.dialog(
+                                          AlertDialog(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(15)),
+                                            title: Center(
+                                              child: MyText(
+                                                text: 'Accept',
+                                                weight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            content: ListView(
+                                                shrinkWrap: true,
+                                                children: [
+                                                  MyText(
+                                                    textAlign: TextAlign.center,
+                                                    text:
+                                                        'Are you sure you want to accept this ride request?',
+                                                    color: kPrimaryColor,
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: MyButton(
+                                                          onTap: () {
+                                                            Get.back();
+                                                          },
+                                                          buttonText: 'No',
+                                                          bgColor: Colors.red,
+                                                          textColor:
+                                                              Colors.white,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Expanded(
+                                                        child: MyButton(
+                                                          onTap: () async {
+                                                            Get.back();
+                                                            await _allRideController.markRideAsAccepted(
+                                                                request.requestId ??
+                                                                    '',
+                                                                request.requestedUserName ??
+                                                                    '',
+                                                                request.requestedUserPhoneNumber ??
+                                                                    '',
+                                                                request.requestedUserId ??
+                                                                    '');
+                                                          },
+                                                          buttonText: 'Yes',
+                                                          textColor:
+                                                              Colors.white,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ]),
+                                          ),
+                                        );
+                                      },
+                                      buttonText: 'Accept',
+                                      borderColor: Colors.green,
+                                      textColor: Colors.green,
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Container(),
+          ],
+        ),
       ),
     );
   }

@@ -11,6 +11,7 @@ class RideRequestModel {
   GeoPoint? pickupLocation;
   GeoPoint? dropoffLocation;
   int? availableSeats;
+  int? selectedSeats;
   DateTime? rideDate;
   String? pricePerSeat;
   String? vehicleName;
@@ -18,11 +19,12 @@ class RideRequestModel {
   String? ownerPhoneNumber;
   String? rideDay;
   DateTime? publishDate;
-  double? routeDistance;
-  double? distanceToPickup;
-  List<RequestedUser>? requestedUsers;
-  List<AcceptedUser>? acceptedUsers;
-  List<String>? rejectedUserIds;
+  String? acceptedUserId;
+  String? acceptedUserPhoneNumber;
+  String? acceptedUserName;
+  String? requestedUserId;
+  String? requestedUserPhoneNumber;
+  String? requestedUserName;
 
   RideRequestModel({
     this.requestId,
@@ -32,6 +34,7 @@ class RideRequestModel {
     this.dropOfAddress,
     this.ownerLocation,
     this.availableSeats,
+    this.selectedSeats,
     this.rideDate,
     this.pricePerSeat,
     this.vehicleName,
@@ -42,11 +45,12 @@ class RideRequestModel {
     this.dropoffLocation,
     this.rideDay,
     this.publishDate,
-    this.routeDistance,
-    this.distanceToPickup,
-    this.requestedUsers,
-    this.acceptedUsers,
-    this.rejectedUserIds,
+    this.acceptedUserId,
+    this.acceptedUserName,
+    this.acceptedUserPhoneNumber,
+    this.requestedUserId,
+    this.requestedUserPhoneNumber,
+    this.requestedUserName,
   });
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -57,6 +61,7 @@ class RideRequestModel {
       'dropOfAddress': dropOfAddress,
       'ownerLocation': ownerLocation,
       'availableSeats': availableSeats,
+      'selectedSeats': selectedSeats,
       'rideDate': rideDate,
       'pricePerSeat': pricePerSeat,
       'vehicleName': vehicleName,
@@ -67,9 +72,12 @@ class RideRequestModel {
       'dropoffLocation': dropoffLocation,
       'rideDay': rideDay,
       'publishDate': publishDate,
-      'requestedUsers': requestedUsers?.map((user) => user.toMap()).toList(),
-      'acceptedUsers': acceptedUsers?.map((user) => user.toMap()).toList(),
-      'rejectedUserIds': rejectedUserIds,
+      'acceptedUserId': acceptedUserId,
+      'acceptedUserName': acceptedUserName,
+      'acceptedUserPhoneNumber': acceptedUserPhoneNumber,
+      'requestedUserId': requestedUserId,
+      'requestedUserPhoneNumber': requestedUserPhoneNumber,
+      'requestedUserName': requestedUserName,
     };
   }
 
@@ -82,6 +90,7 @@ class RideRequestModel {
       dropOfAddress: map['dropOfAddress'],
       ownerLocation: map['ownerLocation'],
       availableSeats: map['availableSeats'],
+      selectedSeats: map['selectedSeats'],
       rideDate: map['rideDate'].toDate(),
       pricePerSeat: map['pricePerSeat'],
       vehicleName: map['vehicleName'],
@@ -92,77 +101,12 @@ class RideRequestModel {
       dropoffLocation: map['dropoffLocation'],
       rideDay: map['rideDay'],
       publishDate: map['publishDate'].toDate(),
-      requestedUsers: map['requestedUsers'] != null
-          ? List<RequestedUser>.from(
-              map['requestedUsers'].map((user) => RequestedUser.fromMap(user)))
-          : [],
-      acceptedUsers: map['acceptedUsers'] != null
-          ? List<AcceptedUser>.from(
-              map['acceptedUsers'].map((user) => AcceptedUser.fromMap(user)))
-          : [],
-      rejectedUserIds: map['rejectedUserIds'] != null
-          ? List<String>.from(map['rejectedUserIds'])
-          : [],
-    );
-  }
-}
-
-class RequestedUser {
-  String? id;
-  String? name;
-  int? selectedSeats;
-  String? phoneNumber;
-  RequestedUser({
-    this.id,
-    this.name,
-    this.selectedSeats,
-    this.phoneNumber,
-  });
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'name': name,
-      'selectedSeats': selectedSeats,
-      'phoneNumber': phoneNumber,
-    };
-  }
-
-  factory RequestedUser.fromMap(Map<String, dynamic> map) {
-    return RequestedUser(
-      id: map['id'],
-      name: map['name'],
-      selectedSeats: map['selectedSeats'],
-      phoneNumber: map['phoneNumber'],
-    );
-  }
-}
-
-class AcceptedUser {
-  String? id;
-  String? name;
-  int? selectedSeats;
-  String? phoneNumber;
-  AcceptedUser({
-    this.id,
-    this.name,
-    this.selectedSeats,
-    this.phoneNumber,
-  });
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'name': name,
-      'selectedSeats': selectedSeats,
-      'phoneNumber': phoneNumber,
-    };
-  }
-
-  factory AcceptedUser.fromMap(Map<String, dynamic> map) {
-    return AcceptedUser(
-      id: map['id'],
-      name: map['name'],
-      selectedSeats: map['selectedSeats'],
-      phoneNumber: map['phoneNumber'],
+      acceptedUserId: map['acceptedUserId'],
+      acceptedUserName: map['acceptedUserName'],
+      acceptedUserPhoneNumber: map['acceptedUserPhoneNumber'],
+      requestedUserId: map['requestedUserId'],
+      requestedUserPhoneNumber: map['requestedUserPhoneNumber'],
+      requestedUserName: map['requestedUserName'],
     );
   }
 }

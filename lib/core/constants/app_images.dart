@@ -791,5 +791,5 @@ class Assets {
     static const String wallet = "assets/images/wallet.png";
       static const String carImage = "assets/images/carimage.png";
 
-  static const String lottieAnimation = "assets/lottie/matching.json";
+
 }

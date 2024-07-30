@@ -106,24 +106,6 @@ class FirebaseCRUDService {
     }
   }
 
-  /// Read a Single Key from a Specific Document
-  Future<dynamic> readDocumentSingleKey({
-    required CollectionReference collectionReference,
-    required String documentId,
-    required String key,
-  }) async {
-    DocumentSnapshot _documentSnapshot =
-        await collectionReference.doc(documentId).get();
-    if (_documentSnapshot.exists) {
-      Map<String, dynamic> data =
-          _documentSnapshot.data() as Map<String, dynamic>;
-      if (data.containsKey(key)) {
-        return data['$key'] ?? [];
-      }
-      return [];
-    }
-  }
-
   Future<List<QueryDocumentSnapshot>?> readAllDocByFieldName({
     required CollectionReference collectionReference,
     required String fieldName,

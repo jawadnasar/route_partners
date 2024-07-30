@@ -31,37 +31,46 @@ class FindRideController extends GetxController {
           'ownerId',
           isNotEqualTo: _authController.userModel.value?.userId,
         )
-        .where('status', whereIn: ['Published', 'Requested'])
+        .where('status', isEqualTo: 'Published')
         .where('rideDay',
             isEqualTo: DateFormat('yyyy-MM-dd').format(selectedDate.value))
-        .where('availableSeats', isGreaterThan: 0)
         .snapshots();
   }
 
-  Future<void> bookRide({
-    required String requestId,
-    required String userId,
-    required String userName,
-    required int selectedSeats,
-    required String phoneNumber,
-  }) async {
+  Future<void> bookRide(String requestId) async {
     isBookLoading.value = true;
-    final RequestedUser requestedUser = RequestedUser(
-      id: userId,
-      name: userName,
-      selectedSeats: selectedSeats,
-      phoneNumber: phoneNumber,
+
+    await _firebaseCRUDService.updateDocumentSingleKey(
+      collection: rideRequestsCollection,
+      docId: requestId,
+      key: 'requestedUserId',
+      value: _authController.userModel.value?.userId,
     );
-    _firebaseCRUDService.updateDocumentSingleKey(
-        collection: rideRequestsCollection,
-        docId: requestId,
-        key: 'requestedUsers',
-        value: FieldValue.arrayUnion([requestedUser.toMap()]));
-    _firebaseCRUDService.updateDocumentSingleKey(
-        collection: rideRequestsCollection,
-        docId: requestId,
-        key: 'status',
-        value: 'Requested');
+    await _firebaseCRUDService.updateDocumentSingleKey(
+      collection: rideRequestsCollection,
+      docId: requestId,
+      key: 'requestedUserName',
+      value:
+          '${_authController.userModel.value?.firstName ?? ''} ${_authController.userModel.value?.lastName ?? ''}',
+    );
+    await _firebaseCRUDService.updateDocumentSingleKey(
+      collection: rideRequestsCollection,
+      docId: requestId,
+      key: 'requestedUserPhoneNumber',
+      value: _authController.userModel.value?.phoneNumber,
+    );
+    await _firebaseCRUDService.updateDocumentSingleKey(
+      collection: rideRequestsCollection,
+      docId: requestId,
+      key: 'selectedSeats',
+      value: numberOfSeats.value,
+    );
+    await _firebaseCRUDService.updateDocumentSingleKey(
+      collection: rideRequestsCollection,
+      docId: requestId,
+      key: 'status',
+      value: 'Requested',
+    );
     isBookLoading.value = false;
   }
 
