@@ -2,9 +2,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
+<<<<<<< HEAD
 import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/core/constants/app_sizes.dart';
 import 'package:route_partners/screens/car_details/car_details.dart';
+=======
+import 'package:route_partners/core/constants/app_sizes.dart';
+>>>>>>> car_hiring
 import 'package:route_partners/screens/car_upload_screens/car_info.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
@@ -65,7 +69,11 @@ class _MyAdsState extends State<MyAds> with TickerProviderStateMixin {
               ),
               Expanded(
                 child: TabBarView(controller: _controller, children: [
+<<<<<<< HEAD
                   uploadedCars.isNotEmpty
+=======
+                  uploadedCars.isEmpty
+>>>>>>> car_hiring
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
@@ -87,6 +95,7 @@ class _MyAdsState extends State<MyAds> with TickerProviderStateMixin {
                             ),
                           ],
                         )
+<<<<<<< HEAD
                       : ListView.separated(
                         separatorBuilder: (context, index) {
                           return const Padding(padding: EdgeInsets.all(5));
@@ -97,6 +106,10 @@ class _MyAdsState extends State<MyAds> with TickerProviderStateMixin {
                             return const CarDetailsContainers();
                           }),
                   const Center(
+=======
+                      : const SizedBox.shrink(),
+                  Center(
+>>>>>>> car_hiring
                     child: Text('Coming Soon'),
                   )
 
@@ -419,6 +432,7 @@ class PopupMenuWidget extends StatelessWidget {
         });
   }
 }
+<<<<<<< HEAD
 
 class CarDetailsContainers extends StatelessWidget {
   const CarDetailsContainers({
@@ -578,3 +592,5 @@ class DividerCustom extends StatelessWidget {
     );
   }
 }
+=======
+>>>>>>> car_hiring

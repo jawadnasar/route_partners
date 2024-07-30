@@ -47,16 +47,56 @@ class _BrowseRidesState extends State<BrowseRides>
         child: StreamBuilder(
             stream: _findRideController.getRideRequestsStream(),
             builder: (context, snapshot) {
+<<<<<<< HEAD
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(
                     color: kPrimaryColor,
+=======
+              log('rebuilding');
+
+              if (snapshot.connectionState == ConnectionState.waiting ||
+                  isLoading) {
+                if (!delayHandled) {
+                  delayHandled = true;
+                  Future.delayed(const Duration(seconds: 2)).then(
+                    (_) {
+                      if (mounted) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
+                    },
+                  );
+                }
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Lottie.asset(
+                        Assets.lottieAnimation,
+                        height: 200,
+                        width: 200,
+                        fit: BoxFit.fill,
+                      ),
+                      const SizedBox(height: 5),
+                      MyText(
+                        text: 'Searching nearby rides',
+                        color: kGreyColor8,
+                      ),
+                    ],
+>>>>>>> car_hiring
                   ),
                 );
               } else if (!snapshot.hasData) {
                 return Center(child: MyText(text: 'No Available Rides'));
               }
               List<RideRequestModel> requests = [];
+<<<<<<< HEAD
+=======
+              List<RideRequestModel> filteredRequests = [];
+              log('Total Requests : ${snapshot.data!.docs.length.toString()}');
+>>>>>>> car_hiring
               snapshot.data?.docs.forEach(
                 (doc) {
                   final Map<String, dynamic> data =
@@ -64,7 +104,51 @@ class _BrowseRidesState extends State<BrowseRides>
                   requests.add(RideRequestModel.fromMap(data));
                 },
               );
+<<<<<<< HEAD
               return requests.isEmpty
+=======
+              for (var request in requests) {
+                RxDouble rideDistance = 0.0.obs;
+                rideDistance.value = Geolocator.distanceBetween(
+                        request.pickupLocation!.latitude,
+                        request.pickupLocation!.longitude,
+                        request.dropoffLocation!.latitude,
+                        request.dropoffLocation!.longitude) /
+                    1000;
+                RxDouble distanceToPickup = 0.0.obs;
+                distanceToPickup.value = Geolocator.distanceBetween(
+                      _authController.userModel.value!.latLng!.latitude,
+                      _authController.userModel.value!.latLng!.longitude,
+                      request.pickupLocation!.latitude,
+                      request.pickupLocation!.longitude,
+                    ) /
+                    1000;
+                request.routeDistance = rideDistance.value;
+                request.distanceToPickup = distanceToPickup.value;
+                if (request.distanceToPickup! < 5) {
+                  List<String> requestedIds = [];
+                  List<String> acceptedIds = [];
+
+                  for (var user in request.requestedUsers!) {
+                    acceptedIds.add(user.id ?? '');
+                  }
+                  for (var user in request.requestedUsers!) {
+                    requestedIds.add(user.id ?? '');
+                  }
+
+                  if (!requestedIds
+                          .contains(_authController.userModel.value!.userId) &&
+                      !acceptedIds
+                          .contains(_authController.userModel.value!.userId) &&
+                      !request.rejectedUserIds!
+                          .contains(_authController.userModel.value!.userId)) {
+                    filteredRequests.add(request);
+                  }
+                }
+                log(distanceToPickup.value.toString());
+              }
+              return filteredRequests.isEmpty
+>>>>>>> car_hiring
                   ? Center(child: MyText(text: 'No Available Rides'))
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,6 +285,7 @@ class _BrowseRidesState extends State<BrowseRides>
                                                   )
                                                 ],
                                               ),
+<<<<<<< HEAD
                                               SizedBox(
                                                 height: Get.height * 0.02,
                                               ),
@@ -301,6 +386,19 @@ class _BrowseRidesState extends State<BrowseRides>
                                               )
                                             ],
                                           ),
+=======
+                                            ),
+                                            const SizedBox(width: 20),
+                                            MyText(
+                                              text: filteredRequests[index]
+                                                      .pricePerSeat ??
+                                                  '0',
+                                              color: kTextColor,
+                                              size: 12,
+                                              weight: FontWeight.w700,
+                                            )
+                                          ],
+>>>>>>> car_hiring
                                         ),
                                       )
                                     : Container();

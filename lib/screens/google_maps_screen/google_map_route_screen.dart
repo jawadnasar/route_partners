@@ -7,9 +7,13 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:route_partners/controllers/auth_controller.dart';
+import 'package:route_partners/controllers/chat_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/model/ride_request_model.dart';
+import 'package:route_partners/model/user_model.dart';
+import 'package:route_partners/screens/chat_screens/chat_screen.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,10 +27,12 @@ class GoogleMapRoute extends StatefulWidget {
       required this.pricePerSeat,
       required this.rideDate,
       required this.publishedDate,
-      required this.name,
+      this.name,
       required this.vehicleName,
-      required this.phoneNumber,
+      this.phoneNumber,
       required this.isCustomerInfo,
+      this.customers,
+      this.ownerId,
       super.key});
   final GeoPoint startLoc;
   final GeoPoint endLoc;
@@ -36,10 +42,13 @@ class GoogleMapRoute extends StatefulWidget {
   final String pricePerSeat;
   final DateTime rideDate;
   final DateTime publishedDate;
-  final String name;
+  final String? name;
   final String vehicleName;
-  final String phoneNumber;
+  final String? phoneNumber;
+  final String? ownerId;
   final bool isCustomerInfo;
+
+  final List<AcceptedUser>? customers;
 
   @override
   State<GoogleMapRoute> createState() => _GoogleMapRouteState();
@@ -52,6 +61,8 @@ class _GoogleMapRouteState extends State<GoogleMapRoute> {
   // final Set<Polyline> _polyline = {};
   PolylinePoints polylinePoints = PolylinePoints();
   Map<PolylineId, Polyline> polylines = {};
+  final _chatController = Get.find<ChatController>();
+  final _authController = Get.find<AuthController>();
   @override
   void initState() {
     super.initState();
@@ -184,58 +195,134 @@ class _GoogleMapRouteState extends State<GoogleMapRoute> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: CircleAvatar(
-                          radius: 20,
-                          child: Image.asset(
-                            Assets.boyIcon,
-                            width: Get.height * 0.04,
-                            height: Get.height * 0.08,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        title: MyText(
-                          text: widget.name,
-                          color: kBlackColor,
-                        ),
-                      ),
-                    ),
-                    Divider(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Image.asset(Assets.carpool),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          SizedBox(
-                            width: Get.width * 0.3,
-                            child: MyText(
-                              text: widget.vehicleName,
-                              color: kGreyColor8,
-                              size: 12,
+                    if (!widget.isCustomerInfo) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: CircleAvatar(
+                            radius: 20,
+                            child: Image.asset(
+                              Assets.boyIcon,
+                              width: Get.height * 0.04,
+                              height: Get.height * 0.08,
+                              fit: BoxFit.contain,
                             ),
                           ),
-                          const Spacer(),
-                          TextButton(
-                              onPressed: () =>
-                                  _launchDialer(widget.phoneNumber),
-                              child: MyText(
-                                text: 'Contact Driver',
-                                color: kPrimaryColor,
-                                size: 12,
-                                weight: FontWeight.w600,
-                              ))
-                        ],
+                          title: MyText(
+                            text: widget.name ?? '',
+                            color: kBlackColor,
+                          ),
+                        ),
                       ),
-                    ),
+                      Divider(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Image.asset(Assets.carpool),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                              width: Get.width * 0.3,
+                              child: MyText(
+                                text: widget.vehicleName,
+                                color: kGreyColor8,
+                                size: 12,
+                              ),
+                            ),
+                            const Spacer(),
+                            TextButton(
+                                onPressed: () =>
+                                    _launchDialer(widget.phoneNumber ?? ''),
+                                child: MyText(
+                                  text: 'Contact Driver',
+                                  color: kPrimaryColor,
+                                  size: 12,
+                                  weight: FontWeight.w600,
+                                ))
+                          ],
+                        ),
+                      ),
+                    ] else ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: widget.customers!.isEmpty
+                            ? Center(
+                                child: MyText(
+                                  text: 'No accepted customers yet',
+                                  paddingTop: 20,
+                                ),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: widget.customers?.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: CircleAvatar(
+                                      radius: 20,
+                                      child: Image.asset(
+                                        Assets.boyIcon,
+                                        width: Get.height * 0.04,
+                                        height: Get.height * 0.08,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                    title: MyText(
+                                      text: widget.customers?[index].name ?? '',
+                                      color: kBlackColor,
+                                    ),
+                                    subtitle: MyText(
+                                      text:
+                                          '${widget.customers?[index].selectedSeats ?? ''} seats',
+                                      color: kGreyColor,
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            final ref = await _chatController
+                                                .getOrCreateChat(
+                                                    widget.ownerId ?? '',
+                                                    widget.customers?[index]
+                                                            .id ??
+                                                        '');
+
+                                            Get.to(() => ChatScreen(
+                                                chatId: ref.id,
+                                                currentUserId: _authController
+                                                    .userModel.value!.userId!));
+                                          },
+                                          child: const Icon(
+                                            Icons.chat,
+                                            color: kPrimaryColor,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        GestureDetector(
+                                          onTap: () => _launchDialer(widget
+                                                  .customers?[index]
+                                                  .phoneNumber ??
+                                              ''),
+                                          child: const Icon(
+                                            Icons.phone,
+                                            color: kPrimaryColor,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 20),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                      )
+                    ]
                   ],
                 ),
               ),
