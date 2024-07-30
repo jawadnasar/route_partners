@@ -36,7 +36,8 @@ class AuthController extends GetxController {
     isLoading.value = true;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final user = await _firebaseAuthService.signUpUsingEmailAndPassword(
-        email: emailController.text, password: passwordController.text);
+        email: emailController.text.trim(),
+        password: passwordController.text.trim());
     if (user != null) {
       final Position? position =
           await GoogleMapsService.instance.getUserLocation();
@@ -64,7 +65,8 @@ class AuthController extends GetxController {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     final user = await _firebaseAuthService.signInUsingEmailAndPassword(
-        email: emailController.text, password: passwordController.text);
+        email: emailController.text.trim(),
+        password: passwordController.text.trim());
     if (user != null) {
       await getUserInfo(user.uid);
       await prefs.setString('route_partners_uid', user.uid);
@@ -126,27 +128,40 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<bool> editUserInfo(String firstName, String lastName) async {
+  Future<bool> editUserInfo(
+      String firstName, String lastName, String phoneNumber) async {
     isEditLoading.value = true;
-    final edited = await _firebaseCrudService.updateDocumentSingleKey(
+    final firstNameEdited = await _firebaseCrudService.updateDocumentSingleKey(
       collection: usersCollection,
       docId: userModel.value!.userId!,
       key: 'firstName',
       value: firstName,
     );
-    final edited2 = await _firebaseCrudService.updateDocumentSingleKey(
+    final lastNameEdited = await _firebaseCrudService.updateDocumentSingleKey(
       collection: usersCollection,
       docId: userModel.value!.userId!,
       key: 'lastName',
       value: lastName,
     );
-    if (edited && edited2) {
+    final phoneNumberEdited =
+        await _firebaseCrudService.updateDocumentSingleKey(
+      collection: usersCollection,
+      docId: userModel.value!.userId!,
+      key: 'phoneNumber',
+      value: phoneNumber,
+    );
+
+    if (firstNameEdited && lastNameEdited && phoneNumberEdited) {
       await getUserInfo(userModel.value!.userId!);
       isEditLoading.value = false;
       return true;
     } else {
       return false;
     }
+  }
+
+  Future<void> logout() async {
+    await _firebaseAuthService.logout();
   }
 
   resetValues() {

@@ -9,20 +9,13 @@ import 'package:route_partners/screens/widget/my_text_widget.dart';
 class MyChats extends StatelessWidget {
   final String currentUserId;
 
-  MyChats({required this.currentUserId});
+  const MyChats({super.key, required this.currentUserId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: AppBar(
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: const Icon(
-            Icons.arrow_back,
-            color: kBlackColor,
-          ),
-        ),
         automaticallyImplyLeading: true,
         centerTitle: true,
         elevation: 0,
@@ -43,16 +36,27 @@ class MyChats extends StatelessWidget {
             .where('users', arrayContains: currentUserId)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+          if (!snapshot.hasData ||
+              snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text('No Chats Yet!'),
+            );
           }
           final chatThreads = snapshot.data!.docs;
           List<Widget> chatThreadWidgets = [];
           for (var chatThread in chatThreads) {
             final chatId = chatThread.id;
             final participants = List<String>.from(chatThread['users']);
-            final otherUserId =
-                participants.firstWhere((id) => id != currentUserId);
+            final otherUserId = participants.firstWhere(
+              (id) => id != currentUserId,
+              orElse: () => '',
+            );
+
+            if (otherUserId.isEmpty) {
+              continue; // Skip this chat thread if no other user is found
+            }
 
             chatThreadWidgets.add(
               FutureBuilder<DocumentSnapshot>(
@@ -79,8 +83,6 @@ class MyChats extends StatelessWidget {
                             ));
                       },
                       child: ListTile(
-                        // contentPadding:
-                        //     const EdgeInsets.only(left: 20, top: 10),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20)),
                         tileColor: Colors.white,
@@ -95,23 +97,6 @@ class MyChats extends StatelessWidget {
                           textAlign: TextAlign.start,
                         ),
                         subtitle: Text('Tap to view messages'),
-                        // trailing: Padding(
-                        //   padding: const EdgeInsets.all(10.0),
-                        //   child: Column(
-                        //     children: [
-                        //       Expanded(
-                        //           child: Text(
-                        //         ChatScreenUtils.formatTime(time!),
-                        //         style: const TextStyle(color: kTextColor4),
-                        //       )),
-                        // const Expanded(
-                        //     child: Icon(
-                        //   Icons.done_all,
-                        //   color: Colors.green,
-                        // )),
-                        //     ],
-                        //   ),
-                        // ),
                       ),
                     ),
                   );
