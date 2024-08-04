@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'dart:developer';
+import 'dart:developer' as pr;
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -60,9 +61,21 @@ class _GoogleMapRouteCustomerState extends State<GoogleMapRouteCustomer> {
   Map<PolylineId, Polyline> polylines = {};
   final _chatController = Get.find<ChatController>();
   final _authController = Get.find<AuthController>();
+  int randomNumber = 0;
   @override
   void initState() {
     super.initState();
+    pr.log(_authController.userModel.value!.interests!.toList().toString());
+    Random random = Random();
+    for (int i = 0; i < 2; i++) {
+      if (_authController.userModel.value!.interests!.isNotEmpty) {
+        randomNumber = 0 +
+            random.nextInt(
+                (_authController.userModel.value!.interests!.length - 1) -
+                    0 +
+                    1);
+      }
+    }
     markers = [
       Marker(
         markerId: const MarkerId('1'),
@@ -137,6 +150,27 @@ class _GoogleMapRouteCustomerState extends State<GoogleMapRouteCustomer> {
                           paddingBottom: 20,
                         ),
                       ),
+                    ),
+                    _authController.userModel.value!.interests!.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: MyText(
+                              text: 'No interest selcted',
+                              color: kDarkGreyColor,
+                              weight: FontWeight.w900,
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: MyText(
+                              text:
+                                  'Showing route with ${_authController.userModel.value?.interests?[randomNumber]}',
+                              color: kPrimaryColor,
+                              weight: FontWeight.w900,
+                            ),
+                          ),
+                    const SizedBox(
+                      height: 15,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -351,9 +385,7 @@ class _GoogleMapRouteCustomerState extends State<GoogleMapRouteCustomer> {
       for (var point in result.points) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       }
-    } else {
-      log(result.errorMessage.toString());
-    }
+    } else {}
 
     addPolyLine(polylineCoordinates);
   }

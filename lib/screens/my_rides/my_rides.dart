@@ -226,6 +226,14 @@ class RideWidget extends StatelessWidget {
             const SizedBox(
               height: 15,
             ),
+            MyText(
+              text: '${request.luggageAllowed ?? '0'} kg per seat',
+              color: kDarkGreyColor,
+              weight: FontWeight.w900,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
             Row(
               children: [
                 const Icon(Icons.calendar_month),

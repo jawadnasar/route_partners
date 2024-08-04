@@ -1,33 +1,50 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:route_partners/controllers/auth_controller.dart';
+import 'package:route_partners/core/constants/firebase_collection_references.dart';
+import 'package:route_partners/model/car_model.dart';
+import 'package:route_partners/services/firebase/firebase_crud.dart';
+import 'package:route_partners/services/firebase/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 
-class CarUploadController extends GetxController implements GetxService {
+class CarUploadController extends GetxController {
+  final _firebaseStorageService = FirebaseStorageService.instance;
+  final _firebaseCrudService = FirebaseCRUDService.instance;
+  final _authController = Get.find<AuthController>();
+  RxList<CarModel> myCarsAds = <CarModel>[].obs;
   List<File> _files = [];
   List<File> get files => _files;
 
-  bool? _isLoading = false;
-  bool? get isLoading => _isLoading;
+  RxBool isLoading = false.obs;
+  RxBool isRequestsLoading = false.obs;
 
-  late TextEditingController capacity;
+  /// Car Info
   late TextEditingController modalYear;
   late TextEditingController carModal;
   late TextEditingController carRegisteredArea;
-  late TextEditingController description;
+  late TextEditingController carExteriorColor;
+
+  /// Contact Info
   late TextEditingController sellerName;
   late TextEditingController price;
-  late TextEditingController? primaryMobNum;
-  late TextEditingController secondaryPhone;
-  late TextEditingController carExteriorColor;
+  late TextEditingController primaryMobNum;
+  late TextEditingController? secondaryPhone;
+
+  late TextEditingController address;
+  late TextEditingController lat;
+  late TextEditingController lng;
   clearAll() {
-    capacity.clear();
-    description.clear();
+    address.clear();
+    lat.clear();
+    lng.clear();
     sellerName.clear();
     price.clear();
-    primaryMobNum?.clear();
-    secondaryPhone.clear();
+    primaryMobNum.clear();
+    secondaryPhone?.clear();
     _files = [];
     update();
   }
@@ -70,19 +87,125 @@ class CarUploadController extends GetxController implements GetxService {
     return null;
   }
 
-  updateIsLoading(bool value) {
-    _isLoading = value;
-    update();
+  Future<void> uploadCar(
+      {required String modelYear,
+      required String carModel,
+      required String registeredArea,
+      required String exteriorColor,
+      required List<File> carImages,
+      required String sellerName,
+      required String pricePerHour,
+      required String primaryMobileNumber,
+      required String? secondaryMobileNumber,
+      required GeoPoint latLng,
+      required String address}) async {
+    isLoading.value = true;
+    final carId = const Uuid().v4();
+    List imagesUrls = [];
+    imagesUrls = await _firebaseStorageService.uploadMultipleImages(
+        imagesPaths: carImages.map((file) => file).toList(), storageRef: carId);
+    log(imagesUrls.toString());
+    final car = CarModel(
+      carId: carId,
+      address: address,
+      carImages: imagesUrls.cast<String>(),
+      carModel: carModel,
+      exteriorColor: exteriorColor,
+      latLng: latLng,
+      modelYear: modelYear,
+      ownerId: _authController.userModel.value?.userId,
+      ownerName: sellerName,
+      ownerPhoneNumber: _authController.userModel.value?.phoneNumber,
+      pricePerHour: pricePerHour,
+      primaryMobileNumber: primaryMobileNumber,
+      registeredArea: registeredArea,
+      secondaryMobileNumber: secondaryMobileNumber,
+      status: 'Published',
+    );
+    // await rentCarsCollection.add(car.toMap());
+    await _firebaseCrudService.createDocument(
+        collectionReference: rentCarsCollection,
+        docId: carId,
+        data: car.toMap());
+
+    isLoading.value = false;
+  }
+
+  Stream<QuerySnapshot<Object?>> getUploadedCars() {
+    return rentCarsCollection
+        .where('ownerId', isEqualTo: _authController.userModel.value?.userId)
+        .snapshots();
+  }
+
+  Future<void> rejectRequest(String carID, String rejectedUserId) async {
+    isRequestsLoading.value = true;
+    await _firebaseCrudService.updateDocumentSingleKey(
+      collection: rentCarsCollection,
+      docId: carID,
+      key: 'rejectedUsersIds',
+      value: FieldValue.arrayUnion([rejectedUserId]),
+    );
+    final snapshot = await _firebaseCrudService.readSingleDocument(
+        collectionReference: rentCarsCollection, docId: carID);
+    if (snapshot != null) {
+      final Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      final CarModel car = CarModel.fromMap(data);
+      if (car.requestedUsers!.isNotEmpty) {
+        final List<CarRequestedUser> users = car.requestedUsers!;
+        users.removeWhere((user) => user.id == rejectedUserId);
+        await _firebaseCrudService.updateDocumentSingleKey(
+            collection: rentCarsCollection,
+            docId: carID,
+            key: 'requestedUsers',
+            value: users.map((user) => user.toMap()).toList());
+      }
+    }
+    Get.back();
+    isRequestsLoading.value = false;
+  }
+
+  Future<void> acceptRequest(String carId, String acceptedUserId) async {
+    isRequestsLoading.value = true;
+    await _firebaseCrudService.updateDocumentSingleKey(
+      collection: rentCarsCollection,
+      docId: carId,
+      key: 'acceptedUserId',
+      value: acceptedUserId,
+    );
+    await _firebaseCrudService.updateDocumentSingleKey(
+      collection: rentCarsCollection,
+      docId: carId,
+      key: 'status',
+      value: 'Accepted',
+    );
+    final snapshot = await _firebaseCrudService.readSingleDocument(
+        collectionReference: rentCarsCollection, docId: carId);
+    if (snapshot != null) {
+      final Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      final CarModel car = CarModel.fromMap(data);
+      if (car.requestedUsers!.isNotEmpty) {
+        final List<CarRequestedUser> users = car.requestedUsers!;
+        users.removeWhere((user) => user.id == acceptedUserId);
+        await _firebaseCrudService.updateDocumentSingleKey(
+            collection: rentCarsCollection,
+            docId: carId,
+            key: 'requestedUsers',
+            value: users.map((user) => user.toMap()).toList());
+      }
+    }
+    Get.back();
+    isRequestsLoading.value = false;
   }
 
   @override
   void onInit() {
     modalYear = TextEditingController();
     carModal = TextEditingController();
-    capacity = TextEditingController();
+    address = TextEditingController();
     carExteriorColor = TextEditingController();
     carRegisteredArea = TextEditingController();
-    description = TextEditingController();
+    lat = TextEditingController();
+    lng = TextEditingController();
     sellerName = TextEditingController();
     price = TextEditingController();
     primaryMobNum = TextEditingController();

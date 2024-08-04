@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:route_partners/controllers/auth_controller.dart';
 import 'package:route_partners/controllers/find_ride_controller.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
@@ -27,6 +28,8 @@ class _BrowseRidesState extends State<BrowseRides>
   TabController? controller;
   final _findRideController = Get.find<FindRideController>();
   final _authController = Get.find<AuthController>();
+  bool isLoading = true;
+  bool delayHandled = false;
   @override
   void initState() {
     controller = TabController(length: 4, vsync: this);
@@ -47,12 +50,6 @@ class _BrowseRidesState extends State<BrowseRides>
         child: StreamBuilder(
             stream: _findRideController.getRideRequestsStream(),
             builder: (context, snapshot) {
-<<<<<<< HEAD
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: kPrimaryColor,
-=======
               log('rebuilding');
 
               if (snapshot.connectionState == ConnectionState.waiting ||
@@ -85,18 +82,14 @@ class _BrowseRidesState extends State<BrowseRides>
                         color: kGreyColor8,
                       ),
                     ],
->>>>>>> car_hiring
                   ),
                 );
               } else if (!snapshot.hasData) {
                 return Center(child: MyText(text: 'No Available Rides'));
               }
               List<RideRequestModel> requests = [];
-<<<<<<< HEAD
-=======
               List<RideRequestModel> filteredRequests = [];
               log('Total Requests : ${snapshot.data!.docs.length.toString()}');
->>>>>>> car_hiring
               snapshot.data?.docs.forEach(
                 (doc) {
                   final Map<String, dynamic> data =
@@ -104,9 +97,6 @@ class _BrowseRidesState extends State<BrowseRides>
                   requests.add(RideRequestModel.fromMap(data));
                 },
               );
-<<<<<<< HEAD
-              return requests.isEmpty
-=======
               for (var request in requests) {
                 RxDouble rideDistance = 0.0.obs;
                 rideDistance.value = Geolocator.distanceBetween(
@@ -148,51 +138,50 @@ class _BrowseRidesState extends State<BrowseRides>
                 log(distanceToPickup.value.toString());
               }
               return filteredRequests.isEmpty
->>>>>>> car_hiring
                   ? Center(child: MyText(text: 'No Available Rides'))
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // TabBar(
-                        //   labelColor: kPrimaryColor,
-                        //   labelStyle: const TextStyle(color: kPrimaryColor),
-                        //   indicatorWeight: 3.0,
-                        //   dividerColor: kGreyColor8,
-                        //   indicatorPadding: const EdgeInsets.all(0),
-                        //   dividerHeight: 20,
-                        //   isScrollable: true,
-                        //   controller: controller,
-                        //   tabs: const [
-                        //     Padding(
-                        //       padding: EdgeInsets.all(8.0),
-                        //       child: Text(
-                        //         'Departure',
-                        //         style: TextStyle(color: kGreyColor8),
-                        //       ),
-                        //     ),
-                        //     Padding(
-                        //       padding: EdgeInsets.all(8.0),
-                        //       child: Text(
-                        //         'Price',
-                        //         style: TextStyle(color: kGreyColor8),
-                        //       ),
-                        //     ),
-                        //     Padding(
-                        //       padding: EdgeInsets.all(8.0),
-                        //       child: Text(
-                        //         'Ratings',
-                        //         style: TextStyle(color: kGreyColor8),
-                        //       ),
-                        //     ),
-                        //     Padding(
-                        //       padding: EdgeInsets.all(8.0),
-                        //       child: Text(
-                        //         'Seat Availability',
-                        //         style: TextStyle(color: kGreyColor8),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
+                        TabBar(
+                          labelColor: kPrimaryColor,
+                          labelStyle: const TextStyle(color: kPrimaryColor),
+                          indicatorWeight: 3.0,
+                          dividerColor: kGreyColor8,
+                          indicatorPadding: const EdgeInsets.all(0),
+                          dividerHeight: 20,
+                          isScrollable: true,
+                          controller: controller,
+                          tabs: const [
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Departure',
+                                style: TextStyle(color: kGreyColor8),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Price',
+                                style: TextStyle(color: kGreyColor8),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Ratings',
+                                style: TextStyle(color: kGreyColor8),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Seat Availability',
+                                style: TextStyle(color: kGreyColor8),
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(
                           height: 20,
                         ),
@@ -205,188 +194,43 @@ class _BrowseRidesState extends State<BrowseRides>
                         ),
                         Flexible(
                           child: ListView.builder(
-                              itemCount: requests.length,
+                              itemCount: filteredRequests.length,
                               shrinkWrap: true,
                               physics: const AlwaysScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
-                                RxDouble rideDistance = 0.0.obs;
-                                rideDistance.value = Geolocator.distanceBetween(
-                                        requests[index]
-                                            .pickupLocation!
-                                            .latitude,
-                                        requests[index]
-                                            .pickupLocation!
-                                            .longitude,
-                                        requests[index]
-                                            .dropoffLocation!
-                                            .latitude,
-                                        requests[index]
-                                            .dropoffLocation!
-                                            .longitude) /
-                                    1000;
-                                RxDouble distanceToPickup = 0.0.obs;
-                                distanceToPickup.value =
-                                    Geolocator.distanceBetween(
-                                          _authController.userModel.value!
-                                              .latLng!.latitude,
-                                          _authController.userModel.value!
-                                              .latLng!.longitude,
-                                          requests[index]
-                                              .pickupLocation!
-                                              .latitude,
-                                          requests[index]
-                                              .pickupLocation!
-                                              .longitude,
-                                        ) /
-                                        1000;
-                                log(distanceToPickup.value.toString());
-                                return distanceToPickup.value < 5
-                                    ? InkWell(
-                                        onTap: () {
-                                          Get.to(() => RideDetails(
-                                                request: requests[index],
-                                                distance: rideDistance.value,
-                                              ));
-                                        },
-                                        child: Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: Colors.white),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 15, vertical: 20),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Expanded(
-                                                    child: MyText(
-                                                      text:
-                                                          '${requests[index].pickupAddress} ➡️ ${requests[index].dropOfAddress}',
-                                                      color: kTextColor,
-                                                      size: 12,
-                                                      weight: FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                  MyText(
-                                                    text: requests[index]
-                                                            .pricePerSeat ??
-                                                        '0',
-                                                    color: kTextColor,
-                                                    size: 12,
-                                                    weight: FontWeight.w700,
-                                                  )
-                                                ],
+                                return InkWell(
+                                  onTap: () {
+                                    Get.to(() => RideDetails(
+                                          request: filteredRequests[index],
+                                          distance: filteredRequests[index]
+                                                  .routeDistance ??
+                                              0.0,
+                                        ));
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.white),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 20),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: MyText(
+                                                text:
+                                                    '${filteredRequests[index].pickupAddress} ➡️ ${filteredRequests[index].dropOfAddress}',
+                                                color: kTextColor,
+                                                size: 12,
+                                                weight: FontWeight.w700,
                                               ),
-<<<<<<< HEAD
-                                              SizedBox(
-                                                height: Get.height * 0.02,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  MyText(
-                                                    text: DateFormat(
-                                                            'd MMMM, h:mm a')
-                                                        .format(requests[index]
-                                                                .rideDate ??
-                                                            DateTime.now()),
-                                                    size: 12,
-                                                    color: kGreyColor8,
-                                                    weight: FontWeight.w900,
-                                                  ),
-                                                  MyText(
-                                                    text:
-                                                        '${requests[index].availableSeats} Seats',
-                                                    size: 12,
-                                                    color: kGreyColor8,
-                                                    weight: FontWeight.w900,
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: Get.height * 0.02,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  // const FaIcon(
-                                                  //   FontAwesomeIcons.person,
-                                                  //   size: 10,
-                                                  //   color: kGreenColor,
-                                                  // ),
-                                                  // const SizedBox(
-                                                  //   width: 5,
-                                                  // ),
-                                                  // MyText(
-                                                  //   text: '6 km',
-                                                  //   size: 12,
-                                                  //   color: kGreyColor8,
-                                                  // ),
-                                                  // const SizedBox(
-                                                  //   width: 5,
-                                                  // ),
-                                                  // const Icon(
-                                                  //   Icons.arrow_forward_ios,
-                                                  //   size: 10,
-                                                  //   color: kGreyColor8,
-                                                  // ),
-                                                  const SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  const FaIcon(
-                                                    FontAwesomeIcons.car,
-                                                    size: 10,
-                                                    color: kGreyColor8,
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  const Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    size: 10,
-                                                    color: kGreyColor8,
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Obx(
-                                                    () => MyText(
-                                                      text:
-                                                          '${rideDistance.toStringAsFixed(2)} km',
-                                                      color: kGreyColor8,
-                                                      size: 12,
-                                                    ),
-                                                  ),
-                                                  // const SizedBox(
-                                                  //   width: 5,
-                                                  // ),
-                                                  // const FaIcon(
-                                                  //   FontAwesomeIcons.person,
-                                                  //   size: 10,
-                                                  //   color: Colors.yellow,
-                                                  // ),
-                                                ],
-                                              ),
-                                              const Divider(
-                                                color: kGreyColor8,
-                                              ),
-                                              DriverProfileDetails(
-                                                title:
-                                                    requests[index].ownerName ??
-                                                        'Driver',
-                                              )
-                                            ],
-                                          ),
-=======
                                             ),
                                             const SizedBox(width: 20),
                                             MyText(
@@ -396,12 +240,116 @@ class _BrowseRidesState extends State<BrowseRides>
                                               color: kTextColor,
                                               size: 12,
                                               weight: FontWeight.w700,
-                                            )
+                                            ),
                                           ],
->>>>>>> car_hiring
                                         ),
-                                      )
-                                    : Container();
+                                        SizedBox(
+                                          height: Get.height * 0.02,
+                                        ),
+                                        MyText(
+                                          text:
+                                              '${filteredRequests[index].luggageAllowed ?? '0'} kg per seat',
+                                          color: kTextColor,
+                                          size: 12,
+                                          weight: FontWeight.w700,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            MyText(
+                                              text: DateFormat('d MMMM, h:mm a')
+                                                  .format(
+                                                      filteredRequests[index]
+                                                              .rideDate ??
+                                                          DateTime.now()),
+                                              size: 12,
+                                              color: kGreyColor8,
+                                              weight: FontWeight.w900,
+                                            ),
+                                            MyText(
+                                              text:
+                                                  '${filteredRequests[index].availableSeats} Seats',
+                                              size: 12,
+                                              color: kGreyColor8,
+                                              weight: FontWeight.w900,
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: Get.height * 0.02,
+                                        ),
+                                        Row(
+                                          children: [
+                                            // const FaIcon(
+                                            //   FontAwesomeIcons.person,
+                                            //   size: 10,
+                                            //   color: kGreenColor,
+                                            // ),
+                                            // const SizedBox(
+                                            //   width: 5,
+                                            // ),
+                                            // MyText(
+                                            //   text: '6 km',
+                                            //   size: 12,
+                                            //   color: kGreyColor8,
+                                            // ),
+                                            // const SizedBox(
+                                            //   width: 5,
+                                            // ),
+                                            // const Icon(
+                                            //   Icons.arrow_forward_ios,
+                                            //   size: 10,
+                                            //   color: kGreyColor8,
+                                            // ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            const FaIcon(
+                                              FontAwesomeIcons.car,
+                                              size: 10,
+                                              color: kGreyColor8,
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            const Icon(
+                                              Icons.arrow_forward_ios,
+                                              size: 10,
+                                              color: kGreyColor8,
+                                            ),
+                                            const SizedBox(
+                                              width: 5,
+                                            ),
+                                            MyText(
+                                              text:
+                                                  '${filteredRequests[index].routeDistance?.toStringAsFixed(2) ?? '0'} km',
+                                              color: kGreyColor8,
+                                              size: 12,
+                                            ),
+
+                                            // const SizedBox(
+                                            //   width: 5,
+                                            // ),
+                                            // const FaIcon(
+                                            //   FontAwesomeIcons.person,
+                                            //   size: 10,
+                                            //   color: Colors.yellow,
+                                            // ),
+                                          ],
+                                        ),
+                                        const Divider(
+                                          color: kGreyColor8,
+                                        ),
+                                        DriverProfileDetails(
+                                          title: filteredRequests[index]
+                                                  .ownerName ??
+                                              'Driver',
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
                               }),
                         )
                       ],

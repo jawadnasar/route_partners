@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 // import 'package:bike_gps/core/utils/snackbars.dart';
@@ -66,14 +67,17 @@ class FirebaseStorageService {
     } on FirebaseException catch (e) {
       CustomSnackBars.instance
           .showFailureSnackbar(title: "Failed", message: '$e');
+      log(e.message.toString());
       return [];
     } on TimeoutException {
       CustomSnackBars.instance
           .showFailureSnackbar(title: "Failed", message: 'Request Timeout');
+
       return [];
     } catch (e) {
       CustomSnackBars.instance
           .showFailureSnackbar(title: "Failed", message: '$e');
+      log(e.toString());
       return [];
     }
   }

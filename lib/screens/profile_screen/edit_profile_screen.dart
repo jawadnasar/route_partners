@@ -128,7 +128,6 @@ class _EditProfileState extends State<EditProfile> {
                 labelText: 'Phone Number',
                 radius: 10,
                 filled: true,
-                readonly: true,
                 controller: _authController.phoneNumberController,
               ),
             ),
@@ -144,14 +143,26 @@ class _EditProfileState extends State<EditProfile> {
                   textColor: Colors.white,
                   showLoading: _authController.isEditLoading.value,
                   onTap: () async {
-                    final isEdited = await _authController.editUserInfo(
-                        _authController.firstController.text,
-                        _authController.lastController.text);
-                    if (isEdited) {
-                      Get.back();
+                    final customSnackbars = CustomSnackBars.instance;
+                    if (_authController.firstController.text.isEmpty) {
+                      customSnackbars.showFailureSnackbar(
+                          title: 'Missing', message: 'First name is required');
+                    } else if (_authController
+                        .phoneNumberController.text.isEmpty) {
+                      customSnackbars.showFailureSnackbar(
+                          title: 'Missing',
+                          message: 'Phone number is required');
                     } else {
-                      CustomSnackBars.instance.showFailureSnackbar(
-                          title: 'Error', message: 'Error Editing User Info');
+                      final isEdited = await _authController.editUserInfo(
+                          _authController.firstController.text,
+                          _authController.lastController.text,
+                          _authController.phoneNumberController.text);
+                      if (isEdited) {
+                        Get.back();
+                      } else {
+                        CustomSnackBars.instance.showFailureSnackbar(
+                            title: 'Error', message: 'Error Editing User Info');
+                      }
                     }
                   },
                 ),

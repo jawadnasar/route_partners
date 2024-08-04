@@ -9,6 +9,7 @@ import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/core/utils/snackbars.dart';
 import 'package:route_partners/screens/dashboard/bottom_navigation_bar.dart';
 import 'package:route_partners/screens/onboarding_screens/onboarding.dart';
+import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -39,16 +40,30 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: kBackgroundColor,
       body: Center(
-        child: CircleAvatar(
-          backgroundColor: kPrimaryColor,
-            radius: 100,
-            backgroundImage: AssetImage(
-              Assets.imagesLogo,
-              
-            )),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Center(
+              child: CircleAvatar(
+                  backgroundColor: kPrimaryColor,
+                  radius: 100,
+                  backgroundImage: AssetImage(
+                    Assets.imagesLogo,
+                  )),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            MyText(
+              text: 'RoutePartners',
+              color: kPrimaryColor,
+              size: 40,
+            )
+          ],
+        ),
       ),
     );
   }

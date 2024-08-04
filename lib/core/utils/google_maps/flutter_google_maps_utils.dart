@@ -27,7 +27,7 @@ class FlutterGoogleMapsUtils {
   }
 
   //initial camera position for google map
-  final CameraPosition kGooglePlex = CameraPosition(
+  final CameraPosition kGooglePlex = const CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
     zoom: 14.4746,
   );
@@ -101,9 +101,9 @@ class FlutterGoogleMapsUtils {
         String street = placemark.street ?? "";
 
         String country = placemark.country ?? "";
-        String formattedStreet = street.isNotEmpty ? "Street " + street : "";
+        String formattedStreet = street.isNotEmpty ? "Street $street" : "";
 
-        address = formattedStreet + "," + " " + country;
+        address = "$formattedStreet, $country";
       }
     } catch (e) {
       log("This was the exception while getting address from latLng: $e");
@@ -118,6 +118,7 @@ class FlutterGoogleMapsUtils {
   String getPhotoUrlFromPhotoRef(
       {required String photoRef, required String mapsApiKey}) {
     //creating imgUrl
+    // ignore: no_leading_underscores_for_local_identifiers
     String _imgUrl =
         "https://maps.googleapis.com/maps/api/place/photo?maxwidth=480&photoreference=$photoRef&key=$mapsApiKey";
 

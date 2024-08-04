@@ -17,6 +17,7 @@ class CreateRideController extends GetxController {
   RxString selectedSeats = '1'.obs;
   var selectedDate = DateTime.now().obs;
   final vehicleNameController = TextEditingController();
+  final luggageController = TextEditingController();
   final pickupLocationController = TextEditingController();
   final dropoffLocationController = TextEditingController();
   final noteController = TextEditingController();
@@ -38,24 +39,26 @@ class CreateRideController extends GetxController {
       double.parse(dropoffLngController.text),
     );
     rideRequest.value = RideRequestModel(
-        requestId: requestId,
-        availableSeats: int.parse(selectedSeats.value),
-        pickupAddress: pickupLocationController.text,
-        dropOfAddress: dropoffLocationController.text,
-        ownerId: _authController.userModel.value?.userId,
-        ownerLocation: _authController.userModel.value?.latLng,
-        pricePerSeat: selectedSeatPrice.value,
-        rideDate: selectedDate.value,
-        rideDay: DateFormat('yyyy-MM-dd').format(selectedDate.value),
-        status: 'Published',
-        vehicleName: vehicleNameController.text,
-        pickupLocation: pickupGeoPoint,
-        dropoffLocation: dropoffGeoPoint,
-        note: noteController.text,
-        ownerPhoneNumber: _authController.userModel.value?.phoneNumber,
-        publishDate: DateTime.now(),
-        ownerName:
-            '${_authController.userModel.value?.firstName ?? ''} ${_authController.userModel.value?.lastName ?? ''}');
+      requestId: requestId,
+      availableSeats: int.parse(selectedSeats.value),
+      pickupAddress: pickupLocationController.text,
+      dropOfAddress: dropoffLocationController.text,
+      ownerId: _authController.userModel.value?.userId,
+      ownerLocation: _authController.userModel.value?.latLng,
+      pricePerSeat: selectedSeatPrice.value,
+      rideDate: selectedDate.value,
+      rideDay: DateFormat('yyyy-MM-dd').format(selectedDate.value),
+      status: 'Published',
+      vehicleName: vehicleNameController.text,
+      pickupLocation: pickupGeoPoint,
+      dropoffLocation: dropoffGeoPoint,
+      note: noteController.text,
+      ownerPhoneNumber: _authController.userModel.value?.phoneNumber,
+      publishDate: DateTime.now(),
+      ownerName:
+          '${_authController.userModel.value?.firstName ?? ''} ${_authController.userModel.value?.lastName ?? ''}',
+      luggageAllowed: luggageController.text,
+    );
     await _firebaseCRUDService.createDocument(
       collectionReference: rideRequestsCollection,
       docId: requestId,

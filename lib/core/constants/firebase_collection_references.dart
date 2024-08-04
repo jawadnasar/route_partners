@@ -4,3 +4,5 @@ CollectionReference usersCollection =
     FirebaseFirestore.instance.collection("users");
 CollectionReference rideRequestsCollection =
     FirebaseFirestore.instance.collection("rideRequests");
+CollectionReference rentCarsCollection =
+    FirebaseFirestore.instance.collection("rentCars");

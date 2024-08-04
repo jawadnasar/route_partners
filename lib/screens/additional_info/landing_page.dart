@@ -157,6 +157,16 @@ class _SCompleteProfileState extends State<Landing> {
                             } else {
                               OnboardingController.instance.onContinue();
                             }
+                          } else if (OnboardingController
+                                  .instance.currentStep.value ==
+                              4) {
+                            if (_authController.selectedInterests.isEmpty) {
+                              CustomSnackBars.instance.showFailureSnackbar(
+                                  title: 'Invalid',
+                                  message: 'Select atleast 1 interest');
+                            } else {
+                              OnboardingController.instance.onContinue();
+                            }
                           }
                         },
                       ),

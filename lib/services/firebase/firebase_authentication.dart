@@ -9,6 +9,7 @@ import 'dart:math' as math;
 // import 'package:bike_gps/view/screens/auth/login/login.dart';
 // import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:route_partners/core/constants/firebase_collection_references.dart';
@@ -254,6 +255,17 @@ class FirebaseAuthService extends GetxController {
               title: 'Retry', message: 'Something went wrong');
           break;
       }
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn().signOut();
+    } on FirebaseAuthException catch (e) {
+      log(e.message.toString());
+    } catch (e) {
+      log(e.toString());
     }
   }
 

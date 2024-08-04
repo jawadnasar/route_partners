@@ -29,82 +29,85 @@ class _CarInformationState extends State<CarInformation> {
     super.initState();
   }
 
+  final cont = Get.find<CarUploadController>();
   @override
   Widget build(BuildContext context) {
-    // var contr = Get.put<CarUploadController>(CarUploadController());
-    return GetBuilder<CarUploadController>(builder: (contr) {
-      return SingleChildScrollView(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(
-            height: 20,
-          ),
-          MyText(
-            text: 'Car Information',
-            size: 20,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          MyTextField(
-            validator: (p0) {
-              if (p0!.isEmpty) {
-                return 'Modal year is empty';
-              }
-              return null;
-            },
-            controller: CarUploadController.i.modalYear,
-            radius: 10,
-            hintText: 'Modal Year',
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          MyTextField(
-            validator: (p0) {
-              if (p0!.isEmpty) {
-                return 'Car Modal is empty';
-              }
-              return null;
-            },
-            controller: CarUploadController.i.carModal,
-            radius: 10,
-            hintText: 'Car Modal',
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          MyTextField(
-            validator: (p0) {
-              if (p0!.isEmpty) {
-                return 'Car Registered Area is empty';
-              }
-              return null;
-            },
-            controller: CarUploadController.i.carRegisteredArea,
-            radius: 10,
-            hintText: 'Car Registered Area',
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          MyTextField(
-            validator: (p0) {
-              if (p0!.isEmpty) {
-                return 'Car exterior color is empty';
-              }
-              return null;
-            },
-            controller: CarUploadController.i.carExteriorColor,
-            radius: 10,
-            hintText: 'Car exterior color',
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-        ],
-      ));
-    });
+    return GetBuilder<CarUploadController>(
+        init: cont,
+        builder: (contr) {
+          return SingleChildScrollView(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              MyText(
+                text: 'Car Information',
+                size: 20,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              MyTextField(
+                keyboardType: TextInputType.number,
+                validator: (p0) {
+                  if (p0!.isEmpty) {
+                    return 'Modal year is empty';
+                  }
+                  return null;
+                },
+                controller: contr.modalYear,
+                radius: 10,
+                hintText: 'Modal Year',
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              MyTextField(
+                validator: (p0) {
+                  if (p0!.isEmpty) {
+                    return 'Car Modal is empty';
+                  }
+                  return null;
+                },
+                controller: contr.carModal,
+                radius: 10,
+                hintText: 'Car Modal',
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              MyTextField(
+                validator: (p0) {
+                  if (p0!.isEmpty) {
+                    return 'Car Registered Area is empty';
+                  }
+                  return null;
+                },
+                controller: contr.carRegisteredArea,
+                radius: 10,
+                hintText: 'Car Registered Area',
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              MyTextField(
+                validator: (p0) {
+                  if (p0!.isEmpty) {
+                    return 'Car exterior color is empty';
+                  }
+                  return null;
+                },
+                controller: contr.carExteriorColor,
+                radius: 10,
+                hintText: 'Car exterior color',
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+            ],
+          ));
+        });
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:route_partners/controllers/car_upload_controller.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/my_textfield_widget.dart';
@@ -17,6 +18,7 @@ class _ContactInformationState extends State<ContactInformation> {
     super.initState();
   }
 
+  final cont = Get.find<CarUploadController>();
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -36,7 +38,7 @@ class _ContactInformationState extends State<ContactInformation> {
               }
               return null;
             },
-            controller: CarUploadController.i.sellerName,
+            controller: cont.sellerName,
             radius: 10,
             hintText: 'Seller Name',
           ),
@@ -54,6 +56,8 @@ class _ContactInformationState extends State<ContactInformation> {
               return null;
             },
             hintText: 'Price per hour',
+            controller: cont.price,
+            keyboardType: TextInputType.number,
           ),
           const SizedBox(
             height: 20,
@@ -66,18 +70,20 @@ class _ContactInformationState extends State<ContactInformation> {
               return null;
             },
             // keyBoardType: TextInputType.phone,
-            controller: CarUploadController.i.primaryMobNum,
+            controller: cont.primaryMobNum,
             radius: 10,
             hintText: 'Primary Mobile Number',
+            keyboardType: TextInputType.phone,
           ),
           const SizedBox(
             height: 20,
           ),
           MyTextField(
             // keyBoardType: TextInputType.phone,
-            controller: CarUploadController.i.secondaryPhone,
+            controller: cont.secondaryPhone,
             radius: 10,
             hintText: 'Secondary Mobile Number',
+            keyboardType: TextInputType.phone,
           ),
           const SizedBox(
             height: 50,

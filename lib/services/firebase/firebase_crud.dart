@@ -36,6 +36,7 @@ class FirebaseCRUDService {
       final errorMessage = getFirestoreErrorMessage(e);
 
       //showing failure snackbar
+      log(errorMessage);
       CustomSnackBars.instance
           .showFailureSnackbar(title: "Error", message: errorMessage);
 
@@ -118,7 +119,7 @@ class FirebaseCRUDService {
       Map<String, dynamic> data =
           _documentSnapshot.data() as Map<String, dynamic>;
       if (data.containsKey(key)) {
-        return data['$key'] ?? [];
+        return data[key] ?? [];
       }
       return [];
     }

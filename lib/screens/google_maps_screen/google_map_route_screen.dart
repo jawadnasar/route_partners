@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'dart:developer';
+import 'dart:developer' as pr;
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:route_partners/core/constants/app_images.dart';
 import 'package:route_partners/model/ride_request_model.dart';
 import 'package:route_partners/model/user_model.dart';
 import 'package:route_partners/screens/chat_screens/chat_screen.dart';
+import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -63,6 +65,8 @@ class _GoogleMapRouteState extends State<GoogleMapRoute> {
   Map<PolylineId, Polyline> polylines = {};
   final _chatController = Get.find<ChatController>();
   final _authController = Get.find<AuthController>();
+  int randomNumber = 0;
+
   @override
   void initState() {
     super.initState();
@@ -88,6 +92,19 @@ class _GoogleMapRouteState extends State<GoogleMapRoute> {
         await getDirections();
       },
     );
+    if (!widget.isCustomerInfo) {
+      pr.log(_authController.userModel.value!.interests!.toList().toString());
+      Random random = Random();
+      for (int i = 0; i < 2; i++) {
+        if (_authController.userModel.value!.interests!.isNotEmpty) {
+          randomNumber = 0 +
+              random.nextInt(
+                  (_authController.userModel.value!.interests!.length - 1) -
+                      0 +
+                      1);
+        }
+      }
+    }
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -142,6 +159,31 @@ class _GoogleMapRouteState extends State<GoogleMapRoute> {
                           paddingBottom: 20,
                         ),
                       ),
+                    ),
+                    if (!widget.isCustomerInfo) ...[
+                      _authController.userModel.value!.interests!.isEmpty
+                          ? Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: MyText(
+                                text: 'No interest selcted',
+                                color: kDarkGreyColor,
+                                weight: FontWeight.w900,
+                              ),
+                            )
+                          : Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: MyText(
+                                text:
+                                    'Showing route with ${_authController.userModel.value?.interests?[randomNumber]}',
+                                color: kPrimaryColor,
+                                weight: FontWeight.w900,
+                              ),
+                            ),
+                    ],
+                    const SizedBox(
+                      height: 15,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -237,15 +279,26 @@ class _GoogleMapRouteState extends State<GoogleMapRoute> {
                             ),
                             const Spacer(),
                             TextButton(
-                                onPressed: () =>
-                                    _launchDialer(widget.phoneNumber ?? ''),
-                                child: MyText(
-                                  text: 'Contact Driver',
-                                  color: kPrimaryColor,
-                                  size: 12,
-                                  weight: FontWeight.w600,
-                                ))
+                              onPressed: () =>
+                                  _launchDialer(widget.phoneNumber ?? ''),
+                              child: MyText(
+                                text: 'Contact Driver',
+                                color: kPrimaryColor,
+                                size: 12,
+                                weight: FontWeight.w600,
+                              ),
+                            )
                           ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: MyBorderButton(
+                          onTap: () => _launchDialer('15'),
+                          buttonText: 'Emergency',
+                          bgColor: Colors.red,
+                          borderColor: Colors.white,
+                          textColor: Colors.white,
                         ),
                       ),
                     ] else ...[
@@ -365,7 +418,7 @@ class _GoogleMapRouteState extends State<GoogleMapRoute> {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       }
     } else {
-      log(result.errorMessage.toString());
+      pr.log(result.errorMessage.toString());
     }
 
     addPolyLine(polylineCoordinates);

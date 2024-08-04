@@ -1,67 +1,260 @@
-
 import 'dart:async';
-
+import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:route_partners/controllers/address_controller.dart';
+import 'package:route_partners/core/constants/app_sizes.dart';
+import 'package:route_partners/screens/widget/my_textfield_widget.dart';
 
 class CarLocationScreen extends StatefulWidget {
-  const CarLocationScreen({super.key});
-
-  
-  
+  const CarLocationScreen(
+      {this.controller, this.latController, this.lngController, super.key});
+  final TextEditingController? controller;
+  final TextEditingController? latController;
+  final TextEditingController? lngController;
 
   @override
   State<CarLocationScreen> createState() => _CarLocationScreenState();
 }
 
 class _CarLocationScreenState extends State<CarLocationScreen> {
-  late GoogleMapController googleMapController;
-  final Completer<GoogleMapController> completer = Completer();
-  List<Marker> markers = [];
-  // final Set<Polyline> _polyline = {};
-  PolylinePoints polylinePoints = PolylinePoints();
-  Map<PolylineId, Polyline> polylines = {};
+  Completer<GoogleMapController> mapController = Completer();
+
+  String? selectedRoute = 'Islamabad Highway';
   @override
   void initState() {
-    super.initState();
-    
-    // _polyline.add(
-    //   Polyline(
-    //       polylineId: const PolylineId('1'),
-    //       visible: true,
-    //       points: widget.latlng,
-    //       color: kPrimaryColor),
-    // );
-    
-  }
+    AddressController.i.getcurrentLocation().then((value) {
+      AddressController.i.latitude = value.latitude;
+      AddressController.i.longitude = value.longitude;
+      AddressController.i.initialAddress(value.latitude, value.longitude);
+      log('latitude: ${AddressController.i.latitude} , longitude ${AddressController.i.longitude}');
 
-  void onMapCreated(GoogleMapController controller) {
-    googleMapController = controller;
-    if (!completer.isCompleted) {
-      completer.complete(controller);
-    }
+      widget.controller?.text = AddressController.address!;
+      widget.latController?.text = AddressController.i.latitude.toString();
+      widget.lngController?.text = AddressController.i.longitude.toString();
+      log('Address : ${AddressController.address}');
+      log('Address : ${AddressController.i.latitude.toString()}');
+      log('Address : ${AddressController.i.longitude.toString()}');
+      AddressController.i.controller.text = AddressController.address!;
+      AddressController.i.markers.clear();
+      AddressController.i.markers.add(Marker(
+          infoWindow: const InfoWindow(
+              title: 'Current Location',
+              snippet: 'This is my current Location'),
+          position: LatLng(
+              AddressController.i.latitude!, AddressController.i.longitude!),
+          markerId: const MarkerId('1')));
+    });
+
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          GoogleMap(
-            trafficEnabled: true,
-            onMapCreated: onMapCreated,
-            // polylines: _polyline,
-            markers: markers.toSet(),
-            polylines: Set<Polyline>.of(polylines.values),
-            initialCameraPosition: const CameraPosition(
-              target:
-                  LatLng(33.27,33.25),
-              zoom: 15.0,
+      resizeToAvoidBottomInset: false,
+      body: Padding(
+        padding: AppSizes.DEFAULT,
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                SizedBox(
+                  height: Get.height * 0.5,
+                  child: GetBuilder<AddressController>(builder: (address) {
+                    return address.latitude != null && address.longitude != null
+                        ? GoogleMap(
+                            // myLocationEnabled: true,
+                            onTap: (argument) async {
+                              setState(() {
+                                address.markers.clear();
+                                address.markers.add(Marker(
+                                    infoWindow: const InfoWindow(
+                                        title: 'Current Location',
+                                        snippet: 'This is my current Location'),
+                                    position: LatLng(
+                                        argument.latitude, argument.longitude),
+                                    markerId: const MarkerId('1')));
+                                address.currentPlaceList.clear();
+                              });
+                              GoogleMapController controller =
+                                  await mapController.future;
+
+                              controller.animateCamera(
+                                  CameraUpdate.newCameraPosition(CameraPosition(
+                                      zoom: 14,
+                                      target: LatLng(argument.latitude,
+                                          argument.longitude))));
+                              // log(AddressController.i.currentLocation
+                              //         .toString() +
+                              //     'hahah');
+                              // log('ARG LAT : ${argument.latitude}');
+                              // log('ARG LNG : ${argument.longitude}');
+
+                              List<Placemark>? placemark =
+                                  await placemarkFromCoordinates(
+                                argument.latitude,
+                                argument.longitude,
+                              );
+
+                              address.updateAddress(
+                                  '${placemark[0].subLocality} ${placemark[0].locality} ${placemark[0].country} ${placemark[0].street} ${placemark[0].postalCode}');
+                              log(AddressController.address.toString());
+                              address.currentLocation =
+                                  await locationFromAddress(
+                                      AddressController.address!);
+                              widget.controller?.text =
+                                  AddressController.address!;
+                              widget.latController?.text = AddressController
+                                  .i.currentLocation!.last.latitude
+                                  .toString();
+                              widget.lngController?.text = AddressController
+                                  .i.currentLocation!.last.longitude
+                                  .toString();
+                              log('Address : ${widget.controller!.text.toString()}');
+                              log('LAT : ${widget.latController?.text}');
+                              log('LNG : ${widget.lngController?.text}');
+                            },
+                            initialCameraPosition: CameraPosition(
+                                target: LatLng(AddressController.i.latitude!,
+                                    AddressController.i.longitude!),
+                                zoom: 14),
+                            mapType: MapType.normal,
+                            markers: Set.of(AddressController.i.markers),
+                            onMapCreated: (controller) {
+                              mapController.complete(controller);
+                            },
+                          )
+                        : const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                  }),
+                ),
+                Column(
+                  children: [
+                    GetBuilder<AddressController>(builder: (cont) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: MyTextField(
+                              filled: true,
+                              fillColor: Colors.white,
+                              controller: cont.controller,
+                              onChanged: (value) {
+                                log(value.toString());
+                                setState(() {
+                                  AddressController.i.getSuggestion(value);
+                                });
+                              },
+                              hintText: 'Search ',
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+                    GetBuilder<AddressController>(builder: (address) {
+                      return ListView.builder(
+                          itemCount: address.currentPlaceList.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            var data = address.currentPlaceList[index];
+                            return InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  address.currentPlaceList.clear();
+                                  address.markers.clear();
+                                });
+
+                                GoogleMapController controller =
+                                    await mapController.future;
+                                controller.animateCamera(
+                                    CameraUpdate.newCameraPosition(
+                                        CameraPosition(
+                                            zoom: 10,
+                                            target: LatLng(
+                                                AddressController
+                                                    .i
+                                                    .currentLocation!
+                                                    .reversed
+                                                    .last
+                                                    .latitude,
+                                                AddressController
+                                                    .i
+                                                    .currentLocation!
+                                                    .reversed
+                                                    .last
+                                                    .longitude))));
+                                // log(AddressController.i.currentLocation
+                                //     .toString());
+
+                                List<Placemark>? placemark =
+                                    await placemarkFromCoordinates(
+                                        address.currentLocation!.last.latitude,
+                                        address
+                                            .currentLocation!.last.longitude);
+
+                                address.updateAddress(
+                                    '${placemark[0].country} ${placemark[0].subLocality} ${placemark[0].locality} ${placemark[0].street} ${placemark[0].postalCode} ${placemark[0].administrativeArea} ${placemark[0].subAdministrativeArea} ${placemark[0].country}');
+                                log(" hello world : ${AddressController.address.toString()}");
+                                address.currentLocation =
+                                    await locationFromAddress(
+                                        AddressController.address!);
+                                CameraUpdate.newCameraPosition(CameraPosition(
+                                    zoom: 10,
+                                    target: LatLng(
+                                        address.currentLocation!.reversed.last
+                                            .latitude,
+                                        address.currentLocation!.reversed.last
+                                            .longitude)));
+                                widget.controller?.text =
+                                    AddressController.address!;
+                                AddressController.i.controller.text =
+                                    data['description'];
+                                widget.latController?.text = AddressController
+                                    .i.currentLocation!.last.latitude
+                                    .toString();
+                                widget.lngController?.text = AddressController
+                                    .i.currentLocation!.last.longitude
+                                    .toString();
+                                log('Address : ${AddressController.address}');
+                                log('LAT : ${widget.latController?.text}');
+                                log('LNG : ${widget.lngController?.text}');
+                                address.markers.add(Marker(
+                                    infoWindow: const InfoWindow(
+                                        title: 'Current Location',
+                                        snippet: 'This is my current Location'),
+                                    position: LatLng(
+                                        address.currentLocation!.reversed.last
+                                            .latitude,
+                                        address.currentLocation!.reversed.last
+                                            .longitude),
+                                    markerId: const MarkerId('1')));
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              },
+                              child: Container(
+                                color: Colors.white,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    AddressController.i.currentPlaceList[index]
+                                        ['description'],
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ),
+                            );
+                          });
+                    }),
+                  ],
+                ),
+              ],
             ),
-          ),
-          
-        ],
+          ],
+        ),
       ),
     );
   }

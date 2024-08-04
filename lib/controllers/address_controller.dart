@@ -15,7 +15,7 @@ class AddressController extends GetxController implements GetxService {
   double? latitude;
   double? longitude;
   late TextEditingController controller;
-  final Completer<GoogleMapController> mapController = Completer();
+
   List<dynamic> currentPlaceList = [];
   List<Location>? currentLocation = [];
   static String? _address;
@@ -40,7 +40,8 @@ class AddressController extends GetxController implements GetxService {
 
   Future<Position> getcurrentLocation() async {
     await Geolocator.requestPermission().then((value) {});
-    return Geolocator.getCurrentPosition();
+    return Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.bestForNavigation);
   }
 
   getSuggestion(String query) async {
@@ -90,7 +91,9 @@ class AddressController extends GetxController implements GetxService {
     List<Placemark>? placemark =
         await placemarkFromCoordinates(latitudee, longitudee);
     updateAddress(
-        '${placemark[0].subLocality} ${placemark[0].locality} ${placemark[0].country} ${placemark[0].street}');
+        '${placemark[0].subLocality} ${placemark[0].locality} ${placemark[0].country} ${placemark[0].street} ${placemark[0].postalCode}');
+
+    onClose() {}
   }
 
   static AddressController get i => Get.put(AddressController());

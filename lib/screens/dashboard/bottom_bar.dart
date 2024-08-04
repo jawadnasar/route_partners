@@ -77,42 +77,42 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 20,
               ),
-              TabBar(
-                onTap: (value) {
-                  setState(() {
-                    selectedTab = value;
-                  });
-                },
-                indicatorSize: TabBarIndicatorSize.tab,
-                labelColor: Colors.white,
-                isScrollable: true,
-                tabAlignment: TabAlignment.start,
-                // Selected tab text color
-                unselectedLabelColor: kGreyColor3, // Unselected tab text color
-                labelStyle: const TextStyle(color: Colors.white),
-                splashBorderRadius: BorderRadius.circular(5),
-                indicator: BoxDecoration(
-                    color: kPrimaryColor,
-                    borderRadius: BorderRadius.circular(40)),
-                tabs: const [
-                  Tab(child: Text('     Find a ride     ')),
-                  Tab(
-                    child: Text(
-                      '     Create a ride     ',
-                      style: TextStyle(fontFamily: AppFonts.DM_SANS),
+              Center(
+                child: TabBar(
+                  onTap: (value) {
+                    setState(() {
+                      selectedTab = value;
+                    });
+                  },
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  labelColor: Colors.white,
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
+                  // Selected tab text color
+                  unselectedLabelColor:
+                      kGreyColor3, // Unselected tab text color
+                  labelStyle: const TextStyle(color: Colors.white),
+                  splashBorderRadius: BorderRadius.circular(5),
+                  indicator: BoxDecoration(
+                      color: kPrimaryColor,
+                      borderRadius: BorderRadius.circular(40)),
+                  tabs: const [
+                    Tab(child: Text('     Find a ride     ')),
+                    Tab(
+                      child: Text(
+                        '     Create a ride     ',
+                        style: TextStyle(fontFamily: AppFonts.DM_SANS),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-
+              const SizedBox(height: 20),
               Expanded(
                 child: TabBarView(children: [
                   ListView(
                     children: [
-                      stepperContainer(
-                        title: 'Enter Pickup Location',
-                        controller:
-                            _findRideController.pickupLocationController,
+                      InkWell(
                         onTap: () {
                           Get.to(() => GoogleMapsScreen(
                                 controller: _findRideController
@@ -123,6 +123,21 @@ class _HomePageState extends State<HomePage> {
                                     _findRideController.pickupLngController,
                               ));
                         },
+                        child: stepperContainer(
+                          onTap: () {
+                            Get.to(() => GoogleMapsScreen(
+                                  controller: _findRideController
+                                      .pickupLocationController,
+                                  latController:
+                                      _findRideController.pickupLatController,
+                                  lngController:
+                                      _findRideController.pickupLngController,
+                                ));
+                          },
+                          title: 'Enter Pickup Location',
+                          controller:
+                              _findRideController.pickupLocationController,
+                        ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,10 +170,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
-                      stepperContainer(
-                        title: 'Enter Drop Location',
-                        controller:
-                            _findRideController.dropoffLocationController,
+                      InkWell(
                         onTap: () {
                           Get.to(() => GoogleMapsScreen(
                                 controller: _findRideController
@@ -169,6 +181,21 @@ class _HomePageState extends State<HomePage> {
                                     _findRideController.dropoffLngController,
                               ));
                         },
+                        child: stepperContainer(
+                          title: 'Enter Drop Location',
+                          controller:
+                              _findRideController.dropoffLocationController,
+                          onTap: () {
+                            Get.to(() => GoogleMapsScreen(
+                                  controller: _findRideController
+                                      .dropoffLocationController,
+                                  latController:
+                                      _findRideController.dropoffLatController,
+                                  lngController:
+                                      _findRideController.dropoffLngController,
+                                ));
+                          },
+                        ),
                       ),
                       const SizedBox(
                         height: 25,
@@ -449,6 +476,24 @@ class _HomePageState extends State<HomePage> {
                             controller:
                                 _createRideController.vehicleNameController,
                           ),
+                          MyText(
+                            text: 'Enter luggage per seat (kg)',
+                            color: kGreyColor6,
+                            weight: FontWeight.w900,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          MyTextField(
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 10),
+                            hintText: 'Enter luggage limit per person',
+                            fillColor: kPrimaryColor.withOpacity(0.05),
+                            filled: true,
+                            focusBorderColor: kGreyColor9,
+                            keyboardType: TextInputType.number,
+                            controller: _createRideController.luggageController,
+                          ),
                           const SizedBox(
                             height: 10,
                           ),
@@ -598,32 +643,30 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  stepperContainer(
+  Widget stepperContainer(
       {TextEditingController? controller,
       void Function()? onTap,
       String? title}) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        children: [
-          const Stack(
-            children: [
-              StepperLeadingIcon(),
-            ],
+    return Row(
+      children: [
+        const Stack(
+          children: [
+            StepperLeadingIcon(),
+          ],
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: MyTextField(
+            onTap: onTap,
+            filled: true,
+            controller: controller,
+            hintText: '$title',
+            readonly: true,
           ),
-          const SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: MyTextField(
-              filled: true,
-              controller: controller,
-              hintText: '$title',
-              readonly: true,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

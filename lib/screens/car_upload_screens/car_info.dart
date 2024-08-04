@@ -1,16 +1,23 @@
 // ignore_for_file: unnecessary_null_comparison, unrelated_type_equality_checks
 
 import 'dart:async';
+import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:route_partners/controllers/address_controller.dart';
 import 'package:route_partners/controllers/car_upload_controller.dart';
+import 'package:route_partners/core/bindings/bindings.dart';
 import 'package:route_partners/core/constants/app_colors.dart';
 import 'package:route_partners/core/constants/app_images.dart';
+import 'package:route_partners/core/utils/snackbars.dart';
 import 'package:route_partners/screens/car_upload_screens/car_information.dart';
 import 'package:route_partners/screens/car_upload_screens/contact_information.dart';
 import 'package:route_partners/screens/car_upload_screens/google_maps_screen.dart';
 import 'package:route_partners/screens/car_upload_screens/upload_photos.dart';
+import 'package:route_partners/screens/dashboard/bottom_navigation_bar.dart';
+import 'package:route_partners/screens/google_maps_screen/google_maps_screen.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';
@@ -27,6 +34,7 @@ class CarInfo extends StatefulWidget {
 
 class _CarInfoState extends State<CarInfo> {
   final _formKey = GlobalKey<FormState>();
+  final cont = Get.find<CarUploadController>();
 
   int _pageIndex = 0;
   List<String> steps = [
@@ -43,7 +51,11 @@ class _CarInfoState extends State<CarInfo> {
     const CarInformation(),
     UploadPhotos(),
     const ContactInformation(),
-    const CarLocationScreen()
+    CarLocationScreen(
+      controller: CarUploadController.i.address,
+      latController: CarUploadController.i.lat,
+      lngController: CarUploadController.i.lng,
+    )
   ];
 
   @override
@@ -59,9 +71,14 @@ class _CarInfoState extends State<CarInfo> {
 
   @override
   Widget build(BuildContext context) {
-    var cont = Get.put<CarUploadController>(CarUploadController());
     return Scaffold(
-      appBar: simpleAppBar(title: 'Upload a car for hiring'),
+      appBar: simpleAppBar(
+        title: 'Upload a car for hiring',
+        onLeadingTap: () {
+          AddressController.i.controller.clear();
+          Get.back();
+        },
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -155,20 +172,53 @@ class _CarInfoState extends State<CarInfo> {
                 ),
               ),
               _pageIndex == 3
-                  ? MyButton(
-                      buttonText: 'Post your AD',
-                      onTap: () {
-                        modalBottomSheetSuccess(context);
-                      },
-                      bgColor: kPrimaryColor,
-                      textColor: Colors.white,
+                  ? Obx(
+                      () => cont.isLoading.value
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: kPrimaryColor,
+                              ),
+                            )
+                          : MyButton(
+                              buttonText: 'Post your AD',
+                              onTap: () async {
+                                if (cont.address.text.isEmpty ||
+                                    cont.lat.text.isEmpty ||
+                                    cont.lng.text.isEmpty) {
+                                  CustomSnackBars.instance.showFailureSnackbar(
+                                      title: 'Error',
+                                      message: 'Select location');
+                                } else {
+                                  await cont.uploadCar(
+                                    carImages: cont.files,
+                                    address: cont.address.text,
+                                    carModel: cont.carModal.text,
+                                    exteriorColor: cont.carExteriorColor.text,
+                                    latLng: GeoPoint(
+                                        double.parse(cont.lat.text),
+                                        double.parse(cont.lng.text)),
+                                    modelYear: cont.modalYear.text,
+                                    pricePerHour: cont.price.text,
+                                    primaryMobileNumber:
+                                        cont.primaryMobNum.text,
+                                    registeredArea: cont.carRegisteredArea.text,
+                                    secondaryMobileNumber:
+                                        cont.secondaryPhone?.text,
+                                    sellerName: cont.sellerName.text,
+                                  );
+                                  modalBottomSheetSuccess(context);
+                                }
+                              },
+                              bgColor: kPrimaryColor,
+                              textColor: Colors.white,
+                            ),
                     )
                   : MyButton(
                       bgColor: kGreyColor8,
                       buttonText: 'Next',
                       onTap: () async {
                         validateAndNavigate(
-                            context, _formKey, _controller, _pageIndex, cont);
+                            context, _formKey, _controller, _pageIndex);
                       },
                       textColor: Colors.white,
                     ),
@@ -179,22 +229,33 @@ class _CarInfoState extends State<CarInfo> {
     );
   }
 
-  void validateAndNavigate(BuildContext context, GlobalKey<FormState> formKey,
-      PageController controller, int pageIndex, CarUploadController cont) {
+  void validateAndNavigate(
+    BuildContext context,
+    GlobalKey<FormState> formKey,
+    PageController controller,
+    int pageIndex,
+  ) {
     if (pageIndex < 4 && formKey.currentState!.validate()) {
+      if (pageIndex == 1) {
+        if (cont.files.isEmpty) {
+          CustomSnackBars.instance.showFailureSnackbar(
+              title: 'Error', message: 'Add atleast 1 image');
+          return;
+        }
+      }
       switch (pageIndex) {
         case 0:
-        // if (cont.selectedCity == null ||
-        //     cont.selectedModalYear == null ||
-        //     cont.carMakesItem == null ||
-        //     cont.carModals == null ||
-        //     cont.area == null ||
-        //     cont.exterior == null) {
-        //   CustomSnackBars.instance.showFailureSnackbar(
-        //       title: 'Fill in the required Fields',
-        //       message: 'Please fill in the required fields to continue');
-        // } else {
-        //   _navigateToNextPage(controller, pageIndex);
+          // if (cont.selectedCity == null ||
+          //     cont.selectedModalYear == null ||
+          //     cont.carMakesItem == null ||
+          //     cont.carModals == null ||
+          //     cont.area == null ||
+          //     cont.exterior == null) {
+          //   CustomSnackBars.instance.showFailureSnackbar(
+          //       title: 'Fill in the required Fields',
+          //       message: 'Please fill in the required fields to continue');
+          // } else {
+          _navigateToNextPage(controller, pageIndex);
         // }
         // break;
 
@@ -209,7 +270,7 @@ class _CarInfoState extends State<CarInfo> {
           //       message: 'Please fill in the required fields to continue');
           //   log(cont.mileage.toString());
           // } else {
-          //   _navigateToNextPage(controller, pageIndex);
+          _navigateToNextPage(controller, pageIndex);
           // }
           break;
 
@@ -220,7 +281,7 @@ class _CarInfoState extends State<CarInfo> {
           //       title: 'Required Fields',
           //       message: 'Please fill in the required fields to continue');
           // } else {
-          //   _navigateToNextPage(controller, pageIndex);
+          _navigateToNextPage(controller, pageIndex);
           // }
           break;
 
@@ -233,14 +294,15 @@ class _CarInfoState extends State<CarInfo> {
 
   void _navigateToNextPage(PageController controller, int pageIndex) {
     controller.nextPage(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 500),
       curve: Curves.easeIn,
     );
   }
 }
 
 String watsapp() {
-  if (CarUploadController.i.whatsapp == true) {
+  final cont = Get.find<CarUploadController>();
+  if (cont.whatsapp == true) {
     return '1';
   } else {
     return '0';
@@ -249,6 +311,7 @@ String watsapp() {
 
 Future<dynamic> modalBottomSheetSuccess(BuildContext context) {
   return showModalBottomSheet(
+    isDismissible: false,
     context: context,
     builder: (BuildContext context) {
       return Container(
@@ -279,7 +342,17 @@ Future<dynamic> modalBottomSheetSuccess(BuildContext context) {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(
-              height: 50,
+              height: 20,
+            ),
+            MyButton(
+              onTap: () {
+                Get.offAll(() => const DashBoard(), binding: HomeBindings());
+              },
+              buttonText: 'OK',
+              textColor: Colors.white,
+            ),
+            const SizedBox(
+              height: 30,
             ),
           ],
         ),

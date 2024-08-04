@@ -4,6 +4,7 @@ import 'package:route_partners/core/bindings/bindings.dart';
 import 'package:route_partners/screens/additional_info/date_of_birth.dart';
 import 'package:route_partners/screens/additional_info/enter_email.dart';
 import 'package:route_partners/screens/additional_info/enter_first_name.dart';
+import 'package:route_partners/screens/additional_info/interests_screen.dart';
 import 'package:route_partners/screens/additional_info/select_gender.dart';
 import 'package:route_partners/screens/dashboard/bottom_navigation_bar.dart';
 
@@ -16,20 +17,24 @@ class OnboardingController extends GetxController {
 
   final List<Map<String, dynamic>> steps = [
     {
-      'progress': 0.25,
+      'progress': 0.2,
       'child': EnterFirstAndLastName(),
     },
     {
-      'progress': 0.50,
+      'progress': 0.4,
       'child': EnterEmail(),
     },
     {
-      'progress': 0.75,
+      'progress': 0.6,
       'child': DateOfBirth(),
     },
     {
-      'progress': 1.0,
+      'progress': 0.8,
       'child': const SelectGender(),
+    },
+    {
+      'progress': 1.0,
+      'child': Interests(),
     },
     // {
     //   'progress': 0.4,

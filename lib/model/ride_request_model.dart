@@ -18,20 +18,12 @@ class RideRequestModel {
   String? ownerPhoneNumber;
   String? rideDay;
   DateTime? publishDate;
-<<<<<<< HEAD
-  String? acceptedUserId;
-  String? acceptedUserPhoneNumber;
-  String? acceptedUserName;
-  String? requestedUserId;
-  String? requestedUserPhoneNumber;
-  String? requestedUserName;
-=======
   double? routeDistance;
   double? distanceToPickup;
   List<RequestedUser>? requestedUsers;
   List<AcceptedUser>? acceptedUsers;
   List<String>? rejectedUserIds;
->>>>>>> car_hiring
+  String? luggageAllowed;
 
   RideRequestModel({
     this.requestId,
@@ -51,20 +43,12 @@ class RideRequestModel {
     this.dropoffLocation,
     this.rideDay,
     this.publishDate,
-<<<<<<< HEAD
-    this.acceptedUserId,
-    this.acceptedUserName,
-    this.acceptedUserPhoneNumber,
-    this.requestedUserId,
-    this.requestedUserPhoneNumber,
-    this.requestedUserName,
-=======
     this.routeDistance,
     this.distanceToPickup,
     this.requestedUsers,
     this.acceptedUsers,
     this.rejectedUserIds,
->>>>>>> car_hiring
+    this.luggageAllowed,
   });
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -88,6 +72,7 @@ class RideRequestModel {
       'requestedUsers': requestedUsers?.map((user) => user.toMap()).toList(),
       'acceptedUsers': acceptedUsers?.map((user) => user.toMap()).toList(),
       'rejectedUserIds': rejectedUserIds,
+      'luggageAllowed': luggageAllowed,
     };
   }
 
@@ -121,6 +106,7 @@ class RideRequestModel {
       rejectedUserIds: map['rejectedUserIds'] != null
           ? List<String>.from(map['rejectedUserIds'])
           : [],
+      luggageAllowed: map['luggageAllowed'],
     );
   }
 }

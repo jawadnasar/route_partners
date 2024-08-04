@@ -22,7 +22,7 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     var bottomBarCont = Get.put<BottomBarController>(BottomBarController());
-    final _authController = Get.find<AuthController>();
+    final authController = Get.find<AuthController>();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -67,12 +67,12 @@ class _DashBoardState extends State<DashBoard> {
               ),
               BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.person_4,
+                  Icons.ads_click,
                   color: bottomBarCont.selectedIndex == 3
                       ? kPrimaryColor
                       : kGreyColor,
                 ),
-                label: 'My Ads',
+                label: 'My Cars',
               ),
               BottomNavigationBarItem(
                 icon: Icon(
@@ -95,7 +95,7 @@ class _DashBoardState extends State<DashBoard> {
               HomePage(),
               MyRides(),
               MyChats(
-                currentUserId: _authController.userModel.value!.userId!,
+                currentUserId: authController.userModel.value?.userId ?? "",
               ),
               MyAds(),
               ProfileScreen()

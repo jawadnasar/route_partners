@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:route_partners/controllers/all_rides_controller.dart';
 import 'package:route_partners/controllers/auth_controller.dart';
+import 'package:route_partners/controllers/car_hire_controller.dart';
+import 'package:route_partners/controllers/car_upload_controller.dart';
 import 'package:route_partners/controllers/chat_controller.dart';
 import 'package:route_partners/controllers/create_ride_controller.dart';
 import 'package:route_partners/controllers/find_ride_controller.dart';
@@ -21,5 +23,13 @@ class HomeBindings implements Bindings {
     Get.put<FindRideController>(FindRideController());
     Get.put<AllRidesController>(AllRidesController());
     Get.put<ChatController>(ChatController());
+    Get.put<CarHireController>(CarHireController());
+  }
+}
+
+class CarUploadBindings implements Bindings {
+  @override
+  void dependencies() {
+    Get.put<CarUploadController>(CarUploadController());
   }
 }
