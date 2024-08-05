@@ -16,7 +16,7 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _chatController = Get.find<ChatController>();
+    final chatController = Get.find<ChatController>();
     ScrollController scrollController = ScrollController();
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -129,7 +129,7 @@ class MessageBubble extends StatelessWidget {
   final bool isMe;
   final String userProfileImage;
 
-  MessageBubble(
+  const MessageBubble(
       {required this.sender,
       required this.text,
       required this.isMe,
@@ -138,7 +138,7 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(10.0),
       child: Row(
         mainAxisAlignment:
             isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -156,19 +156,19 @@ class MessageBubble extends StatelessWidget {
             children: [
               Text(
                 sender,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12.0,
                   color: Colors.black54,
                 ),
               ),
               Material(
                 borderRadius: isMe
-                    ? BorderRadius.only(
+                    ? const BorderRadius.only(
                         topLeft: Radius.circular(30.0),
                         bottomLeft: Radius.circular(30.0),
                         bottomRight: Radius.circular(30.0),
                       )
-                    : BorderRadius.only(
+                    : const BorderRadius.only(
                         topRight: Radius.circular(30.0),
                         bottomLeft: Radius.circular(30.0),
                         bottomRight: Radius.circular(30.0),
@@ -177,7 +177,7 @@ class MessageBubble extends StatelessWidget {
                 color: isMe ? Colors.lightBlueAccent : Colors.white,
                 child: Padding(
                   padding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
                   child: Text(
                     text,
                     style: TextStyle(

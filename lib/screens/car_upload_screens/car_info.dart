@@ -1,7 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison, unrelated_type_equality_checks
-
 import 'dart:async';
-import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +14,6 @@ import 'package:route_partners/screens/car_upload_screens/contact_information.da
 import 'package:route_partners/screens/car_upload_screens/google_maps_screen.dart';
 import 'package:route_partners/screens/car_upload_screens/upload_photos.dart';
 import 'package:route_partners/screens/dashboard/bottom_navigation_bar.dart';
-import 'package:route_partners/screens/google_maps_screen/google_maps_screen.dart';
 import 'package:route_partners/screens/widget/my_button_widget.dart';
 import 'package:route_partners/screens/widget/my_text_widget.dart';
 import 'package:route_partners/screens/widget/simple_app_bar_widget.dart';

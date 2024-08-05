@@ -257,12 +257,15 @@ class _CarDetailsState extends State<CarDetails>
                     MyText(
                       text: 'Car Location',
                       size: 20,
+                      weight: FontWeight.bold,
                     ),
                     const SizedBox(
                       height: 10,
                     ),
-                    Text(widget.car.address ??
-                        'Islamabad, Pakistan, Street 45 River Gardens'),
+                    MyText(
+                      text: '${widget.car.address}',
+                      size: 12,
+                    ),
                     const SizedBox(
                       height: 10,
                     ),
@@ -291,20 +294,26 @@ class _CarDetailsState extends State<CarDetails>
                       MyText(
                         text: 'Contact Information',
                         size: 20,
+                        weight: FontWeight.bold,
                       ),
                       const SizedBox(
                         height: 15,
                       ),
                       MyText(
-                        text: widget.car.ownerName ?? 'User',
-                        size: 20,
+                        text: "Name : ${widget.car.ownerName ?? 'User'}",
+                        size: 15,
                       ),
                       const SizedBox(
                         height: 10,
                       ),
-                      MyText(
-                        text: widget.car.ownerPhoneNumber ?? '03359305593',
-                        size: 20,
+                      Row(
+                        children: [
+                          MyText(
+                            text:
+                                "Contact No : ${widget.car.ownerPhoneNumber ?? '03359305593'}",
+                            size: 15,
+                          ),
+                        ],
                       ),
                     ] else ...[
                       Obx(

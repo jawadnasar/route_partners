@@ -351,6 +351,9 @@ class CarDetailsContainers extends StatelessWidget {
       },
       child: Stack(
         children: [
+          const SizedBox(
+            height: 10,
+          ),
           Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
@@ -392,26 +395,19 @@ class CarDetailsContainers extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  car.carModel ?? 'My Car',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge
-                                      ?.copyWith(fontSize: 13),
+                                MyText(
+                                  text: car.carModel ?? 'My Car',
                                 ),
                               ],
                             ),
                           ),
                           Expanded(
-                            flex: 6,
+                            flex: 8,
                             child: Row(
                               children: [
-                                Text(
-                                  'PKR ${car.pricePerHour ?? '0'} /hr',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge
-                                      ?.copyWith(fontSize: 15),
+                                MyText(
+                                  size: 12,
+                                  text: 'PKR ${car.pricePerHour ?? '0'} /hr',
                                 )
                               ],
                             ),
@@ -420,13 +416,12 @@ class CarDetailsContainers extends StatelessWidget {
                             flex: 4,
                             child: Row(
                               children: [
-                                Text(
-                                  car.modelYear ?? '2000',
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                                MyText(
+                                  size: 12,
+                                  text: car.modelYear ?? '2000',
                                 ),
                                 SizedBox(
-                                  width: Get.width * 0.03,
+                                  width: Get.width * 0.02,
                                 ),
                                 DividerCustom(
                                   color: kGreyColor,
@@ -434,15 +429,14 @@ class CarDetailsContainers extends StatelessWidget {
                                   width: 1,
                                 ),
                                 SizedBox(
-                                  width: Get.width * 0.03,
+                                  width: Get.width * 0.02,
                                 ),
-                                Text(
-                                  car.registeredArea ?? 'ISL',
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                                MyText(
+                                  size: 12,
+                                  text: car.registeredArea ?? 'ISL',
                                 ),
                                 SizedBox(
-                                  width: Get.width * 0.03,
+                                  width: Get.width * 0.02,
                                 ),
                                 DividerCustom(
                                   color: kDarkGreyColor,
@@ -450,12 +444,10 @@ class CarDetailsContainers extends StatelessWidget {
                                   width: 1,
                                 ),
                                 SizedBox(
-                                  width: Get.width * 0.03,
+                                  width: Get.width * 0.02,
                                 ),
-                                Text(
-                                  car.exteriorColor ?? 'White',
-                                  style:
-                                      Theme.of(context).textTheme.titleMedium,
+                                MyText(
+                                  text: car.exteriorColor ?? 'White',
                                 ),
                               ],
                             ),

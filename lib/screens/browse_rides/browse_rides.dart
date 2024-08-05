@@ -106,25 +106,16 @@ class _BrowseRidesState extends State<BrowseRides>
                         request.dropoffLocation!.longitude) /
                     1000;
                 RxDouble distanceToPickup = 0.0.obs;
-                // distanceToPickup.value = Geolocator.distanceBetween(
-                //       _authController.userModel.value!.latLng!.latitude,
-                //       _authController.userModel.value!.latLng!.longitude,
-                //       request.pickupLocation!.latitude,
-                //       request.pickupLocation!.longitude,
-                //     ) /
-                //     1000;
                 distanceToPickup.value = Geolocator.distanceBetween(
-                      double.parse(
-                          _findRideController.pickupLatController.text),
-                      double.parse(
-                          _findRideController.pickupLngController.text),
+                      _authController.userModel.value!.latLng!.latitude,
+                      _authController.userModel.value!.latLng!.longitude,
                       request.pickupLocation!.latitude,
                       request.pickupLocation!.longitude,
                     ) /
                     1000;
                 request.routeDistance = rideDistance.value;
                 request.distanceToPickup = distanceToPickup.value;
-                if (request.distanceToPickup! < 10) {
+                if (request.distanceToPickup! < 5) {
                   List<String> requestedIds = [];
                   List<String> acceptedIds = [];
 

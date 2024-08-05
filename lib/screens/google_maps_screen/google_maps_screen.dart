@@ -121,168 +121,159 @@ class _GoogleMapsScreenState extends State<GoogleMapsScreen> {
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: simpleAppBar(
-            title: 'Select a Route',
-            onLeadingTap: () {
-              AddressController.i.controller.clear();
-            }),
-      ),
-      body: WillPopScope(
-        onWillPop: () async {
+        child: simpleAppBar(title: 'Select a Route', onLeadingTap: (){
+          Get.back();
           AddressController.i.controller.clear();
-          return Future.value(true);
-        },
-        child: Padding(
-          padding: AppSizes.DEFAULT,
-          child: Column(
-            children: [
-              SizedBox(height: Get.height * 0.02),
-              Stack(
-                children: [
-                  SizedBox(
-                    height: Get.height * 0.5,
-                    child: GetBuilder<AddressController>(
-                      builder: (address) {
-                        return address.latitude != null &&
-                                address.longitude != null
-                            ? GoogleMap(
-                                onTap: _onMapTap,
-                                initialCameraPosition: CameraPosition(
-                                  target: LatLng(AddressController.i.latitude!,
-                                      AddressController.i.longitude!),
-                                  zoom: 14,
-                                ),
-                                mapType: MapType.normal,
-                                markers: Set.of(AddressController.i.markers),
-                                onMapCreated: (controller) =>
-                                    mapController.complete(controller),
-                              )
-                            : const Center(child: CircularProgressIndicator());
+        }),
+
+      ),
+      body: Padding(
+        padding: AppSizes.DEFAULT,
+        child: Column(
+          children: [
+            SizedBox(height: Get.height * 0.02),
+            Stack(
+              children: [
+                SizedBox(
+                  height: Get.height * 0.5,
+                  child: GetBuilder<AddressController>(
+                    builder: (address) {
+                      return address.latitude != null &&
+                              address.longitude != null
+                          ? GoogleMap(
+                              onTap: _onMapTap,
+                              initialCameraPosition: CameraPosition(
+                                target: LatLng(AddressController.i.latitude!,
+                                    AddressController.i.longitude!),
+                                zoom: 14,
+                              ),
+                              mapType: MapType.normal,
+                              markers: Set.of(AddressController.i.markers),
+                              onMapCreated: (controller) =>
+                                  mapController.complete(controller),
+                            )
+                          : const Center(child: CircularProgressIndicator());
+                    },
+                  ),
+                ),
+                Column(
+                  children: [
+                    GetBuilder<AddressController>(
+                      builder: (cont) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: MyTextField(
+                                filled: true,
+                                fillColor: Colors.white,
+                                controller: cont.controller,
+                                onChanged: (value) {
+                                  log(value);
+                                  AddressController.i.getSuggestion(value);
+                                },
+                                hintText: 'Search',
+                              ),
+                            ),
+                          ],
+                        );
                       },
                     ),
-                  ),
-                  Column(
-                    children: [
-                      GetBuilder<AddressController>(
-                        builder: (cont) {
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: MyTextField(
-                                  filled: true,
-                                  fillColor: Colors.white,
-                                  controller: cont.controller,
-                                  onChanged: (value) {
-                                    log(value);
-                                    AddressController.i.getSuggestion(value);
-                                  },
-                                  hintText: 'Search',
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                      GetBuilder<AddressController>(
-                        builder: (address) {
-                          return ListView.builder(
-                            itemCount: address.currentPlaceList.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () async {
-                                  final selectedPlace = address
-                                      .currentPlaceList[index]['description'];
-                                  if (selectedPlace != null) {
-                                    final locations = await locationFromAddress(
-                                        selectedPlace);
-                                    if (locations.isNotEmpty) {
-                                      final newLocation = locations.first;
+                    GetBuilder<AddressController>(
+                      builder: (address) {
+                        return ListView.builder(
+                          itemCount: address.currentPlaceList.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () async {
+                                final selectedPlace = address
+                                    .currentPlaceList[index]['description'];
+                                if (selectedPlace != null) {
+                                  final locations =
+                                      await locationFromAddress(selectedPlace);
+                                  if (locations.isNotEmpty) {
+                                    final newLocation = locations.first;
 
-                                      setState(() {
-                                        address.currentPlaceList.clear();
-                                        address.markers.clear();
-                                        address.markers.add(Marker(
-                                          infoWindow: const InfoWindow(
-                                            title: 'Selected Location',
-                                            snippet:
-                                                'This is the selected Location',
-                                          ),
-                                          position: LatLng(newLocation.latitude,
-                                              newLocation.longitude),
-                                          markerId: const MarkerId('1'),
-                                        ));
-                                      });
-                                      AddressController.i.controller.text =
-                                          selectedPlace;
-                                      final controller =
-                                          await mapController.future;
-                                      controller.animateCamera(
-                                          CameraUpdate.newCameraPosition(
-                                        CameraPosition(
-                                          zoom: 14,
-                                          target: LatLng(newLocation.latitude,
-                                              newLocation.longitude),
+                                    setState(() {
+                                      address.currentPlaceList.clear();
+                                      address.markers.clear();
+                                      address.markers.add(Marker(
+                                        infoWindow: const InfoWindow(
+                                          title: 'Selected Location',
+                                          snippet:
+                                              'This is the selected Location',
                                         ),
+                                        position: LatLng(newLocation.latitude,
+                                            newLocation.longitude),
+                                        markerId: const MarkerId('1'),
                                       ));
+                                    });
+                                    AddressController.i.controller.text = selectedPlace;
+                                    final controller =
+                                        await mapController.future;
+                                    controller.animateCamera(
+                                        CameraUpdate.newCameraPosition(
+                                      CameraPosition(
+                                        zoom: 14,
+                                        target: LatLng(newLocation.latitude,
+                                            newLocation.longitude),
+                                      ),
+                                    ));
 
-                                      final placemark =
-                                          await placemarkFromCoordinates(
-                                              newLocation.latitude,
-                                              newLocation.longitude);
-                                      address.updateAddress(
-                                        '${placemark[0].subLocality} ${placemark[0].locality} ${placemark[0].country} ${placemark[0].street}',
-                                      );
+                                    final placemark =
+                                        await placemarkFromCoordinates(
+                                            newLocation.latitude,
+                                            newLocation.longitude);
+                                    address.updateAddress(
+                                      '${placemark[0].subLocality} ${placemark[0].locality} ${placemark[0].country} ${placemark[0].street}',
+                                    );
 
-                                      widget.controller?.text =
-                                          AddressController.address!;
-                                      widget.latController?.text =
-                                          newLocation.latitude.toString();
-                                      widget.lngController?.text =
-                                          newLocation.longitude.toString();
+                                    widget.controller?.text =
+                                        AddressController.address!;
+                                    widget.latController?.text =
+                                        newLocation.latitude.toString();
+                                    widget.lngController?.text =
+                                        newLocation.longitude.toString();
 
-                                      log('Address: ${AddressController.address}');
-                                      log('Latitude: ${widget.latController?.text}');
-                                      log('Longitude: ${widget.lngController?.text}');
-                                      FocusManager.instance.primaryFocus
-                                          ?.unfocus();
-                                    }
+                                    log('Address: ${AddressController.address}');
+                                    log('Latitude: ${widget.latController?.text}');
+                                    log('Longitude: ${widget.lngController?.text}');
+                                    FocusManager.instance.primaryFocus?.unfocus();
+
                                   }
-                                },
-                                child: Container(
-                                  color: Colors.white,
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    AddressController.i.currentPlaceList[index]
-                                        ['description']!,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                }
+                              },
+                              child: Container(
+                                color: Colors.white,
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  AddressController.i.currentPlaceList[index]
+                                      ['description']!,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 50),
-              MyButton(
-                textSize: 14,
-                buttonText: 'PROCEED',
-                weight: FontWeight.w900,
-                onTap: () {
-                  Get.back();
-                },
-                bgColor: kPrimaryColor,
-                textColor: Colors.white,
-              ),
-            ],
-          ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 50),
+            MyButton(
+              textSize: 14,
+              buttonText: 'PROCEED',
+              weight: FontWeight.w900,
+              onTap: () => Get.back(),
+              bgColor: kPrimaryColor,
+              textColor: Colors.white,
+            ),
+          ],
         ),
       ),
     );

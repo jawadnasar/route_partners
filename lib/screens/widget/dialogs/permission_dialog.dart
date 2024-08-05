@@ -57,6 +57,7 @@ class PermissionDialog extends StatelessWidget {
               icon,
               height: 133,
             ),
+            // ignore: prefer_const_constructors
             SizedBox(
               height: 18,
             ),
