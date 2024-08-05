@@ -8,6 +8,9 @@ import 'package:route_partners/screens/additional_info/interests_screen.dart';
 import 'package:route_partners/screens/additional_info/select_gender.dart';
 import 'package:route_partners/screens/dashboard/bottom_navigation_bar.dart';
 
+/**
+ * On boarding progress bar
+ */
 class OnboardingController extends GetxController {
   static final OnboardingController instance =
       Get.put<OnboardingController>(OnboardingController());

@@ -11,6 +11,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+/**
+  * This class controls the address (reseting, updating, current location) calling in the app
+ */
+
 class AddressController extends GetxController implements GetxService {
   double? latitude;
   double? longitude;
@@ -22,6 +26,7 @@ class AddressController extends GetxController implements GetxService {
   static String? get address => _address;
   String sessionTOKEN = '1223344';
 
+  /* Reseting the current address when called */
   resetAddress() {
     _address = null;
     latitude = null;
@@ -29,6 +34,7 @@ class AddressController extends GetxController implements GetxService {
     update();
   }
 
+  /* Making changes to the address and take the pointer to the new address */
   updateAddress(String value) {
     _address = value;
     if (value == '') {
@@ -38,6 +44,10 @@ class AddressController extends GetxController implements GetxService {
     update();
   }
 
+  /**
+    * Getting the current location of the user
+    * This will ask for permission for getting the location of the use for the first time
+   */
   Future<Position> getcurrentLocation() async {
     await Geolocator.requestPermission().then((value) {});
     return Geolocator.getCurrentPosition(
@@ -87,9 +97,13 @@ class AddressController extends GetxController implements GetxService {
     super.onInit();
   }
 
+  /** 
+    * Geeting the address of the user and updating it accordingly
+   */
   initialAddress(double latitudee, double longitudee) async {
     List<Placemark>? placemark =
         await placemarkFromCoordinates(latitudee, longitudee);
+        // Calling by address or postal code
     updateAddress(
         '${placemark[0].subLocality} ${placemark[0].locality} ${placemark[0].country} ${placemark[0].street} ${placemark[0].postalCode}');
 

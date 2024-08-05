@@ -11,6 +11,11 @@ import 'package:route_partners/services/firebase/firebase_crud.dart';
 import 'package:route_partners/services/firebase/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
 
+/**
+ * Uploading my cars
+ * Methods include to upload a new car including its information and uploading its pictures
+ * Other methods include accepting or rejecting requests about mycar
+ */
 class CarUploadController extends GetxController {
   final _firebaseStorageService = FirebaseStorageService.instance;
   final _firebaseCrudService = FirebaseCRUDService.instance;

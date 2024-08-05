@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+/**
+ * Checking about the avaialbility of the ride seats here
+ */
 class RideDetailsController extends GetxController {
   int numberOfSeats = 1;
 

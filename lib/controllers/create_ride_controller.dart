@@ -8,6 +8,9 @@ import 'package:route_partners/model/ride_request_model.dart';
 import 'package:route_partners/services/firebase/firebase_crud.dart';
 import 'package:uuid/uuid.dart';
 
+/**
+ * Creating a ride from 1 location to another by giving the endpoints and seats availability for other customers
+ */
 class CreateRideController extends GetxController {
   final _firebaseCRUDService = FirebaseCRUDService.instance;
   final _authController = Get.find<AuthController>();

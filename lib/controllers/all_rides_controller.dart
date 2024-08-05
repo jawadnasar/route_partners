@@ -8,6 +8,13 @@ import 'package:route_partners/model/ride_request_model.dart';
 import 'package:route_partners/model/user_model.dart';
 import 'package:route_partners/services/firebase/firebase_crud.dart';
 
+/**
+ * All rides are controlled from here including 
+ * Knowing about Status of the ride
+ * Publishing Ride
+ * Accepting Ride
+ * Rejecting Ride
+ */
 class AllRidesController extends GetxController {
   final _authController = Get.find<AuthController>();
   final _firebaseCrudService = FirebaseCRUDService.instance;

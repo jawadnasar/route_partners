@@ -5,6 +5,12 @@ import 'package:route_partners/core/constants/firebase_collection_references.dar
 import 'package:route_partners/model/car_model.dart';
 import 'package:route_partners/services/firebase/firebase_crud.dart';
 
+/**
+ * Having methods like 
+ * Getting the cars information which I posted
+ * Checking for available online cars
+ * Requesting for booking a car
+ */
 class CarHireController extends GetxController {
   final _firebaseCrudService = FirebaseCRUDService.instance;
   RxList<CarModel> availableCars = <CarModel>[].obs;

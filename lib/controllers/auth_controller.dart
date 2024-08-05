@@ -10,6 +10,13 @@ import 'package:route_partners/services/firebase/firebase_crud.dart';
 import 'package:route_partners/services/google_maps/google_maps.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/**
+ * Authentication controller is used for authenticating the user
+ * Signing up the user
+ * Logging in
+ * User info (getting, editing, etc.)
+ * Loging Out user
+ */
 class AuthController extends GetxController {
   final _generalController = Get.find<GeneralController>();
   final _firebaseAuthService = FirebaseAuthService.instance;

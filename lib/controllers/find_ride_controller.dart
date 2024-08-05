@@ -8,6 +8,10 @@ import 'package:route_partners/core/constants/firebase_collection_references.dar
 import 'package:route_partners/model/ride_request_model.dart';
 import 'package:route_partners/services/firebase/firebase_crud.dart';
 
+/**
+ * Searching to find a ride near to me
+ * Booking a ride 
+ */
 class FindRideController extends GetxController {
   final _firebaseCRUDService = FirebaseCRUDService.instance;
   final _authController = Get.find<AuthController>();
