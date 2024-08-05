@@ -166,8 +166,6 @@ class FoundCarsForRent extends StatelessWidget {
                   // }
                   if (car.rejectedUsersIds == null ||
                       car.rejectedUsersIds!.isEmpty) {
-                    log('is mai aa rha ');
-
                     filteredCars.add(car);
                   } else {
                     if (!car.rejectedUsersIds!
